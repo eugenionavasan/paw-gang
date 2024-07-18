@@ -3,6 +3,7 @@ import { StyleSheet, Text, View, TextInput, Image, FlatList, ActivityIndicator }
 import axios from 'axios';
 import debounce from 'lodash.debounce';
 import Constants from 'expo-constants';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import ErrorBoundary from './errorBoundary.jsx';
 import CustomButton from './customButton.jsx';
 
@@ -61,7 +62,7 @@ const DogParks = () => {
   }, [locationInput]);
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <View style={styles.logoDiv}>
         <Image source={require('./assets/logo.jpg')} style={styles.logo} />
       </View>
@@ -72,7 +73,11 @@ const DogParks = () => {
         value={locationInput}
         onChangeText={(text) => setLocationInput(text)}
       />
-      {isLoading && <ActivityIndicator size="large" color="#0000ff" />}
+      {isLoading && (
+        <View style={styles.loaderContainer}>
+          <ActivityIndicator size="large" color="#ffffff" />
+        </View>
+      )}
       {error && <Text style={styles.errorText}>Error: {error}</Text>}
       <FlatList
         data={dogParks}
@@ -92,7 +97,7 @@ const DogParks = () => {
           </View>
         )}
       />
-    </View>
+    </SafeAreaView>
   );
 };
 
@@ -108,16 +113,17 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#333',
-    paddingTop: 50,
   },
   logoDiv: {
     backgroundColor: '#cfcec9',
     padding: 10,
     alignItems: 'center',
+    width: '100%',
+    paddingTop: Constants.statusBarHeight,
   },
   logo: {
-    width: 200,
-    height: 100,
+    width: 150,
+    height: 75,
     resizeMode: 'contain',
   },
   label: {
@@ -135,6 +141,11 @@ const styles = StyleSheet.create({
     marginLeft: 20,
     marginRight: 20,
     color: '#f9f9f9',
+  },
+  loaderContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   errorText: {
     color: 'red',
