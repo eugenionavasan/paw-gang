@@ -14,7 +14,7 @@ const Tab = createBottomTabNavigator();
 function SearchStack() {
   return (
     <Stack.Navigator>
-      <Stack.Screen name="SearchMain" component={SearchScreen} options={{ headerShown: false }} />
+      <Stack.Screen name="Back" component={SearchScreen} options={{ headerShown: false }} />
       <Stack.Screen name="ParkSchedule" component={ParkSchedule} />
     </Stack.Navigator>
   );

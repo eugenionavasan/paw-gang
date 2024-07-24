@@ -96,6 +96,7 @@ const SearchScreen = () => {
         <TextInput
           style={styles.input}
           placeholder="Enter location..."
+          placeholderTextColor = "#9DA2AB"
           value={locationInput}
           onChangeText={(text) => setLocationInput(text)}
         />
@@ -143,6 +144,7 @@ const styles = StyleSheet.create({
   },
   label: {
     fontSize: 18,
+    fontWeight: 'bold',
     marginVertical: 20,
     marginLeft: 20,
     color: '#f9f9f9',
