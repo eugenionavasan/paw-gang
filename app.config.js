@@ -12,12 +12,13 @@ export default {
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
     "splash": {
-      "image": "./assets/splash.png",
+      "image": "./assets/logo.jpg",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#cfcec9"
     },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "simulator": true
     },
     "android": {
       "adaptiveIcon": {

@@ -1,111 +1,53 @@
-import { useState, useEffect } from 'react';
-import { StyleSheet, Text, View, TextInput, Image, FlatList, ActivityIndicator } from 'react-native';
-import axios from 'axios';
-import debounce from 'lodash.debounce';
+import { View, Image, StyleSheet } from 'react-native';
+import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import Icon from 'react-native-vector-icons/Ionicons';
 import Constants from 'expo-constants';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import ErrorBoundary from './errorBoundary.jsx';
-import CustomButton from './customButton.jsx';
+import SearchScreen from './SearchScreen';
+import PlanScreen from './PlanScreen';
+import ParkSchedule from './ParkSchedule';
 
-const DogParks = () => {
-  const [locationInput, setLocationInput] = useState('');
-  const [dogParks, setDogParks] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState(null);
+const Stack = createStackNavigator();
+const Tab = createBottomTabNavigator();
 
-  const apiKey = Constants.expoConfig.extra.googleMapsApiKey;
-
-  const fetchDogParks = async (location) => {
-    if (location.trim() === '') {
-      setDogParks([]);
-      return;
-    }
-
-    setIsLoading(true);
-    setError(null);
-    try {
-      const geocodeResponse = await axios.get(
-        `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(location)}&key=${apiKey}`
-      );
-
-      const geocodeResults = geocodeResponse.data.results;
-      if (geocodeResults?.length > 0) {
-        const { lat, lng } = geocodeResults[0].geometry.location;
-
-        const placesResponse = await axios.get(
-          `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${lat},${lng}&radius=5000&type=park&keyword=dog%20park&key=${apiKey}`
-        );
-
-        setDogParks(placesResponse.data.results || []);
-      } else {
-        setDogParks([]);
-        setError('Location not found.');
-      }
-    } catch (err) {
-      setError(err.message || 'An error occurred.');
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const getPhotoUrl = (photoReference) => {
-    return `https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=${photoReference}&key=${apiKey}`;
-  };
-
-  const debouncedFetchDogParks = debounce(fetchDogParks, 1000);
-
-  useEffect(() => {
-    debouncedFetchDogParks(locationInput);
-    return () => {
-      debouncedFetchDogParks.cancel();
-    };
-  }, [locationInput]);
-
+function SearchStack() {
   return (
-    <SafeAreaView style={styles.container}>
-      <View style={styles.logoDiv}>
-        <Image source={require('./assets/logo.jpg')} style={styles.logo} />
-      </View>
-      <Text style={styles.label}>Search for a dog park near you:</Text>
-      <TextInput
-        style={styles.input}
-        placeholder="Enter location..."
-        value={locationInput}
-        onChangeText={(text) => setLocationInput(text)}
-      />
-      {isLoading && (
-        <View style={styles.loaderContainer}>
-          <ActivityIndicator size="large" color="#ffffff" />
-        </View>
-      )}
-      {error && <Text style={styles.errorText}>Error: {error}</Text>}
-      <FlatList
-        data={dogParks}
-        keyExtractor={(item) => item.place_id}
-        renderItem={({ item }) => (
-          <View style={styles.parkItem}>
-            <Text style={styles.parkName}>{item.name}</Text>
-            {item.photos && item.photos.length > 0 && (
-              <Image
-                style={styles.parkImage}
-                source={{ uri: getPhotoUrl(item.photos[0].photo_reference) }}
-              />
-            )}
-            <Text>{item.vicinity}</Text>
-            <Text>Rating: {item.rating}</Text>
-            <CustomButton title="Plan visit🐾" onPress={() => {}} />
-          </View>
-        )}
-      />
-    </SafeAreaView>
+    <Stack.Navigator>
+      <Stack.Screen name="SearchMain" component={SearchScreen} options={{ headerShown: false }} />
+      <Stack.Screen name="ParkSchedule" component={ParkSchedule} />
+    </Stack.Navigator>
   );
-};
+}
 
 export default function App() {
   return (
-    <ErrorBoundary>
-      <DogParks />
-    </ErrorBoundary>
+    <NavigationContainer>
+      <View style={styles.logoDiv}>
+        <Image source={require('./assets/logo.jpg')} style={styles.logo} />
+      </View>
+      <Tab.Navigator
+        screenOptions={({ route }) => ({
+          tabBarIcon: ({ focused, color, size }) => {
+            let iconName;
+
+            if (route.name === 'SearchTab') {
+              iconName = focused ? 'search' : 'search-outline';
+            } else if (route.name === 'MyPlansTab') {
+              iconName = focused ? 'list' : 'list-outline';
+            }
+
+            return <Icon name={iconName || 'list-outline'} size={size} color={color} />;
+          },
+          tabBarActiveTintColor: '#008CBA',
+          tabBarInactiveTintColor: 'gray',
+          headerShown: false,
+        })}
+      >
+        <Tab.Screen name="SearchTab" component={SearchStack} options={{ title: 'Search' }} />
+        <Tab.Screen name="MyPlansTab" component={PlanScreen} options={{ title: 'My Plans' }} />
+      </Tab.Navigator>
+    </NavigationContainer>
   );
 }
 
@@ -125,49 +67,5 @@ const styles = StyleSheet.create({
     width: 150,
     height: 75,
     resizeMode: 'contain',
-  },
-  label: {
-    fontSize: 18,
-    marginVertical: 20,
-    marginLeft: 20,
-    color: '#f9f9f9',
-  },
-  input: {
-    height: 40,
-    borderColor: 'gray',
-    borderWidth: 1,
-    marginBottom: 20,
-    paddingHorizontal: 10,
-    marginLeft: 20,
-    marginRight: 20,
-    color: '#f9f9f9',
-  },
-  loaderContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  errorText: {
-    color: 'red',
-    marginBottom: 20,
-    marginLeft: 20,
-  },
-  parkItem: {
-    backgroundColor: '#f9f9f9',
-    borderRadius: 5,
-    padding: 10,
-    marginHorizontal: 20,
-    marginBottom: 20,
-  },
-  parkName: {
-    fontSize: 18,
-    fontWeight: 'bold',
-  },
-  parkImage: {
-    width: '100%',
-    height: 200,
-    borderRadius: 5,
-    marginBottom: 10,
-    objectFit: 'cover',
   },
 });
