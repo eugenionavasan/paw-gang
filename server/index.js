@@ -13,11 +13,12 @@ app.use(bodyParser.json()); //parsing the data from the client
 app.use(router); //using the router
 
 const PORT = 3000;
+const LOCAL_IP_ADRESS = '192.168.1.102';
 
 //connecting to the db and running the server
 
 connectToDatabase().then(() => {
-  app.listen(PORT, () => {
-    console.log(`Server is running on http://localhost:${PORT}`);
+  app.listen(PORT, LOCAL_IP_ADRESS, () => {
+    console.log(`Server is running on http://${LOCAL_IP_ADRESS}:${PORT}`);
   });
 });

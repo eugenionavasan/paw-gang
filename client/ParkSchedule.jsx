@@ -1,7 +1,9 @@
-import { useState, useEffect } from 'react';
-import { View, Text, FlatList, StyleSheet, Button, TextInput, Modal, TouchableOpacity, Alert } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, FlatList, StyleSheet, Button, TextInput, Modal, TouchableOpacity, Alert, Image } from 'react-native';
 import moment from 'moment-timezone';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
+
+const SERVER_URL = 'http://192.168.1.102:3000';
 
 const initialEvents = {};
 
@@ -10,16 +12,16 @@ const ParkSchedule = ({ route }) => {
   const [selectedDate, setSelectedDate] = useState(moment().tz('Europe/Madrid'));
   const [events, setEvents] = useState(initialEvents);
   const [modalVisible, setModalVisible] = useState(false);
-  const [newEvent, setNewEvent] = useState({ user: '', date: '' });
+  const [newEvent, setNewEvent] = useState({ user: '', date: '', dog_avatar: '' });
   const [isTimePickerVisible, setTimePickerVisibility] = useState(false);
 
   useEffect(() => {
     const fetchEvents = async () => {
       try {
-        const response = await fetch(`http://localhost:3000/events/park/${place_id}`);
+        const response = await fetch(`${SERVER_URL}/events/park/${place_id}`);
         const data = await response.json();
         const formattedEvents = data.reduce((acc, event) => {
-          const dateKey = moment(event.date.$date).tz('Europe/Madrid').format('YYYY-MM-DD');
+          const dateKey = moment(event.date.$date || event.date).tz('Europe/Madrid').format('YYYY-MM-DD');
           if (!acc[dateKey]) {
             acc[dateKey] = [];
           }
@@ -37,13 +39,12 @@ const ParkSchedule = ({ route }) => {
 
   const handlePrevDay = () => {
     const newDate = selectedDate.clone().subtract(1, 'day');
-    if (newDate.isSameOrAfter(moment().tz('Europe/Madrid'), 'day')) {
-      setSelectedDate(newDate);
-    }
+    setSelectedDate(newDate);
   };
 
   const handleNextDay = () => {
-    setSelectedDate(selectedDate.clone().add(1, 'day'));
+    const newDate = selectedDate.clone().add(1, 'day');
+    setSelectedDate(newDate);
   };
 
   const handleSaveEvent = () => {
@@ -51,7 +52,7 @@ const ParkSchedule = ({ route }) => {
     const eventToAdd = {
       ...newEvent,
       date: eventDate.toISOString(),
-      id: `${selectedDate.format('YYYY-MM-DD')}-${newEvent.date}-${newEvent.user}`, // Unique key
+      id: `${selectedDate.format('YYYY-MM-DD')}-${newEvent.date}-${newEvent.user}`,
     };
     const dateKey = selectedDate.format('YYYY-MM-DD');
 
@@ -65,25 +66,23 @@ const ParkSchedule = ({ route }) => {
       [dateKey]: [...(prevEvents[dateKey] || []), eventToAdd],
     }));
     setModalVisible(false);
-    setNewEvent({ user: '', date: '' });
+    setNewEvent({ user: '', date: '', dog_avatar: '' });
   };
 
   const renderEvent = ({ item }) => (
     <View style={styles.event}>
-      <Text style={styles.eventUser}>{item.user}</Text>
+      <Image source={{ uri: item.dog_avatar }} style={styles.dogAvatar} />
     </View>
   );
 
   const renderItem = ({ item }) => {
     const dayEvents = events[selectedDate.format('YYYY-MM-DD')] || [];
     const slotEvents = dayEvents.filter(event =>
-      moment.tz(event.date, 'Europe/Madrid').isSame(selectedDate.clone().hour(moment(item, 'HH:mm').hour()), 'hour') // Adjust time zone
+      moment.tz(event.date, 'Europe/Madrid').isSame(selectedDate.clone().hour(moment(item, 'HH:mm').hour()), 'hour') 
     );
 
-    console.log('Rendering slot:', item, 'with events:', slotEvents); // Debugging the render logic
-
     return (
-      <View style={styles.slot}>
+      <View style={[styles.slot, slotEvents.length > 0 && styles.slotWithEvent]}>
         <Text style={styles.time}>{item}</Text>
         {slotEvents.length > 0 && (
           <FlatList
@@ -109,16 +108,15 @@ const ParkSchedule = ({ route }) => {
   };
 
   const handleConfirm = (time) => {
-    const formattedTime = moment(time).tz('Europe/Madrid').minute(0).format('HH:mm'); 
+    const formattedTime = moment(time).tz('Europe/Madrid').minute(0).format('HH:mm'); // Adjust time zone
     setNewEvent({ ...newEvent, date: formattedTime });
     hideTimePicker();
   };
 
   return (
     <View style={styles.container}>
-      <Text style={styles.placeId}>Place ID: {place_id}</Text>
       <View style={styles.header}>
-        <Button title="Prev Day" onPress={handlePrevDay} disabled={selectedDate.isSameOrBefore(moment().tz('Europe/Madrid'), 'day')} />
+        <Button title="Prev Day" onPress={handlePrevDay} />
         <Text style={styles.date}>{selectedDate.format('dddd, D MMM')}</Text>
         <Button title="Next Day" onPress={handleNextDay} />
       </View>
@@ -148,6 +146,12 @@ const ParkSchedule = ({ route }) => {
               {newEvent.date ? newEvent.date : 'Start Time (HH:00)'}
             </Text>
           </TouchableOpacity>
+          <TextInput
+            style={styles.input}
+            placeholder="Dog Avatar URL"
+            value={newEvent.dog_avatar}
+            onChangeText={(text) => setNewEvent({ ...newEvent, dog_avatar: text })}
+          />
           <DateTimePickerModal
             isVisible={isTimePickerVisible}
             mode="time"
@@ -168,6 +172,7 @@ const ParkSchedule = ({ route }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: '#f5f5f5',
   },
   placeId: {
     textAlign: 'center',
@@ -191,29 +196,33 @@ const styles = StyleSheet.create({
   slot: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: 10,
+    paddingVertical: 35,
     paddingHorizontal: 20,
     borderBottomWidth: 1,
     borderBottomColor: '#eee',
   },
+  slotWithEvent: {
+    paddingVertical: 0,
+  },
   time: {
-    width: 50,
+    width: 60,
     fontSize: 16,
     fontWeight: 'bold',
   },
   eventList: {
     flex: 1,
-    paddingLeft: 10,
+    paddingLeft: 0,
   },
   event: {
-    backgroundColor: '#e3f2fd',
+    backgroundColor: '#f5f5f5',
     borderRadius: 5,
     padding: 10,
-    marginHorizontal: 5,
+    marginHorizontal: 0,
   },
-  eventUser: {
-    fontSize: 16,
-    fontWeight: 'bold',
+  dogAvatar: {
+    width: 90, 
+    height: 90, 
+    borderRadius: 40,
   },
   addButton: {
     backgroundColor: '#007bff',
