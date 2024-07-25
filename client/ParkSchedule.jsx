@@ -1,18 +1,19 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, FlatList, StyleSheet, Button, TextInput, Modal, TouchableOpacity, Alert, Image } from 'react-native';
+import { useState, useEffect } from 'react';
+import { View, Text, FlatList, StyleSheet, Button, Modal, TouchableOpacity, Alert, Image } from 'react-native';
 import moment from 'moment-timezone';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
+import axios from 'axios';
 
 const SERVER_URL = 'http://192.168.1.102:3000';
 
 const initialEvents = {};
 
 const ParkSchedule = ({ route }) => {
-  const { place_id } = route.params;
+  const { place_id, name, vicinity } = route.params;
   const [selectedDate, setSelectedDate] = useState(moment().tz('Europe/Madrid'));
   const [events, setEvents] = useState(initialEvents);
   const [modalVisible, setModalVisible] = useState(false);
-  const [newEvent, setNewEvent] = useState({ user: '', date: '', dog_avatar: '' });
+  const [newEventDate, setNewEventDate] = useState('');
   const [isTimePickerVisible, setTimePickerVisibility] = useState(false);
 
   useEffect(() => {
@@ -47,28 +48,34 @@ const ParkSchedule = ({ route }) => {
     setSelectedDate(newDate);
   };
 
-  const handleSaveEvent = () => {
-    const eventDate = moment.tz(`${selectedDate.format('YYYY-MM-DD')} ${newEvent.date}`, 'YYYY-MM-DD HH:mm', 'Europe/Madrid');
+  const handleSaveEvent = async () => {
+    const eventDate = moment.tz(`${selectedDate.format('YYYY-MM-DD')} ${newEventDate}`, 'YYYY-MM-DD HH:mm', 'Europe/Madrid').toISOString();
+  
     const eventToAdd = {
-      ...newEvent,
-      date: eventDate.toISOString(),
-      id: `${selectedDate.format('YYYY-MM-DD')}-${newEvent.date}-${newEvent.user}`,
+      place_id,
+      park_name: name,
+      adress: vicinity,
+      date: eventDate,
+      user: 'eugenio',
+      dog_avatar: 'https://i.ibb.co/86gL7yK/Whats-App-Image-2024-07-25-at-15-20-30-modified.png',
     };
-    const dateKey = selectedDate.format('YYYY-MM-DD');
-
-    if (selectedDate.isBefore(moment().tz('Europe/Madrid'), 'day')) {
-      Alert.alert('Error', 'You cannot add events to past days.');
-      return;
+  
+    try {
+      await axios.post(`${SERVER_URL}/events`, eventToAdd);
+  
+      const dateKey = selectedDate.format('YYYY-MM-DD');
+      setEvents((prevEvents) => ({
+        ...prevEvents,
+        [dateKey]: [...(prevEvents[dateKey] || []), eventToAdd],
+      }));
+  
+      setModalVisible(false);
+      setNewEventDate('');
+    } catch (error) {
+      console.error('Error saving event:', error);
+      Alert.alert('Error', 'An error occurred while saving the event.');
     }
-
-    setEvents((prevEvents) => ({
-      ...prevEvents,
-      [dateKey]: [...(prevEvents[dateKey] || []), eventToAdd],
-    }));
-    setModalVisible(false);
-    setNewEvent({ user: '', date: '', dog_avatar: '' });
   };
-
   const renderEvent = ({ item }) => (
     <View style={styles.event}>
       <Image source={{ uri: item.dog_avatar }} style={styles.dogAvatar} />
@@ -78,7 +85,7 @@ const ParkSchedule = ({ route }) => {
   const renderItem = ({ item }) => {
     const dayEvents = events[selectedDate.format('YYYY-MM-DD')] || [];
     const slotEvents = dayEvents.filter(event =>
-      moment.tz(event.date, 'Europe/Madrid').isSame(selectedDate.clone().hour(moment(item, 'HH:mm').hour()), 'hour') 
+      moment.tz(event.date, 'Europe/Madrid').isSame(selectedDate.clone().hour(moment(item, 'HH:mm').hour()), 'hour')
     );
 
     return (
@@ -109,7 +116,7 @@ const ParkSchedule = ({ route }) => {
 
   const handleConfirm = (time) => {
     const formattedTime = moment(time).tz('Europe/Madrid').minute(0).format('HH:mm'); // Adjust time zone
-    setNewEvent({ ...newEvent, date: formattedTime });
+    setNewEventDate(formattedTime);
     hideTimePicker();
   };
 
@@ -135,23 +142,11 @@ const ParkSchedule = ({ route }) => {
       >
         <View style={styles.modalContent}>
           <Text style={styles.modalTitle}>Plan your visit 🐶</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="User"
-            value={newEvent.user}
-            onChangeText={(text) => setNewEvent({ ...newEvent, user: text })}
-          />
           <TouchableOpacity onPress={showTimePicker} style={styles.input}>
-            <Text style={newEvent.date ? styles.inputText : styles.placeholderText}>
-              {newEvent.date ? newEvent.date : 'Start Time (HH:00)'}
+            <Text style={newEventDate ? styles.inputText : styles.placeholderText}>
+              {newEventDate ? newEventDate : 'Start Time (HH:00)'}
             </Text>
           </TouchableOpacity>
-          <TextInput
-            style={styles.input}
-            placeholder="Dog Avatar URL"
-            value={newEvent.dog_avatar}
-            onChangeText={(text) => setNewEvent({ ...newEvent, dog_avatar: text })}
-          />
           <DateTimePickerModal
             isVisible={isTimePickerVisible}
             mode="time"

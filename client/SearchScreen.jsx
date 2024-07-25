@@ -85,8 +85,8 @@ const SearchScreen = () => {
     }
   };
 
-  const handlePlanVisit = (place_id) => {
-    navigation.navigate('ParkSchedule', { place_id });
+  const handlePlanVisit = (place_id, name, vicinity) => {
+    navigation.navigate('ParkSchedule', { place_id, name, vicinity });
   };
 
   return (
@@ -127,7 +127,7 @@ const SearchScreen = () => {
             )}
             <Text>{item.vicinity}</Text>
             <Text>Rating: {item.rating}</Text>
-            <CustomButton title="Plan visit 🐾" onPress={() => handlePlanVisit(item.place_id)} />
+            <CustomButton title="Plan visit 🐾" onPress={() => handlePlanVisit(item.place_id, item.name, item.vicinity)} />
           </View>
         )}
       />
