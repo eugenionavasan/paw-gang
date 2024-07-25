@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { View, Text, FlatList, StyleSheet, Button, TextInput, Modal, TouchableOpacity, Alert } from 'react-native';
 import moment from 'moment';
+import DateTimePickerModal from 'react-native-modal-datetime-picker';
 
 const initialEvents = {};
 
@@ -10,6 +11,7 @@ const ParkSchedule = ({ route }) => {
   const [events, setEvents] = useState(initialEvents);
   const [modalVisible, setModalVisible] = useState(false);
   const [newEvent, setNewEvent] = useState({ title: '', startTime: '' });
+  const [isTimePickerVisible, setTimePickerVisibility] = useState(false);
 
   const handlePrevDay = () => {
     const newDate = selectedDate.clone().subtract(1, 'day');
@@ -69,6 +71,20 @@ const ParkSchedule = ({ route }) => {
 
   const hours = Array.from({ length: 24 }, (_, i) => moment({ hour: i }).format('HH:00'));
 
+  const showTimePicker = () => {
+    setTimePickerVisibility(true);
+  };
+
+  const hideTimePicker = () => {
+    setTimePickerVisibility(false);
+  };
+
+  const handleConfirm = (time) => {
+    const formattedTime = moment(time).minute(0).format('HH:mm');
+    setNewEvent({ ...newEvent, startTime: formattedTime });
+    hideTimePicker();
+  };
+
   return (
     <View style={styles.container}>
       <Text style={styles.placeId}>Place ID: {place_id}</Text>
@@ -83,7 +99,7 @@ const ParkSchedule = ({ route }) => {
         keyExtractor={(item) => item}
       />
       <TouchableOpacity style={styles.addButton} onPress={() => setModalVisible(true)}>
-        <Text style={styles.addButtonText}>Add Event</Text>
+        <Text style={styles.addButtonText}>Add visit 🐕</Text>
       </TouchableOpacity>
       <Modal
         visible={modalVisible}
@@ -91,19 +107,24 @@ const ParkSchedule = ({ route }) => {
         onRequestClose={() => setModalVisible(false)}
       >
         <View style={styles.modalContent}>
-          <Text style={styles.modalTitle}>Plan your visit!</Text>
+          <Text style={styles.modalTitle}>Plan your visit 🐶</Text>
           <TextInput
             style={styles.input}
             placeholder="Title"
             value={newEvent.title}
             onChangeText={(text) => setNewEvent({ ...newEvent, title: text })}
           />
-          <TextInput
-            style={styles.input}
-            placeholder="Start Time (HH:00)"
-            value={newEvent.startTime}
-            onChangeText={(text) => setNewEvent({ ...newEvent, startTime: text })}
-            keyboardType="numeric"
+          <TouchableOpacity onPress={showTimePicker} style={styles.input}>
+            <Text style={newEvent.startTime ? styles.inputText : styles.placeholderText}>
+              {newEvent.startTime ? newEvent.startTime : 'Start Time (HH:00)'}
+            </Text>
+          </TouchableOpacity>
+          <DateTimePickerModal
+            isVisible={isTimePickerVisible}
+            mode="time"
+            onConfirm={handleConfirm}
+            onCancel={hideTimePicker}
+            minuteInterval={60}
           />
           <View style={styles.modalButtons}>
             <Button title="Cancel" onPress={() => setModalVisible(false)} />
@@ -190,6 +211,15 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     marginBottom: 20,
     paddingHorizontal: 10,
+    justifyContent: 'center',
+  },
+  inputText: {
+    fontSize: 16,
+    color: '#000',
+  },
+  placeholderText: {
+    fontSize: 16,
+    color: '#ccc',
   },
   modalButtons: {
     flexDirection: 'row',
