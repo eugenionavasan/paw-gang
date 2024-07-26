@@ -14,7 +14,11 @@ const Tab = createBottomTabNavigator();
 function SearchStack() {
   return (
     <Stack.Navigator>
-      <Stack.Screen name="Back" component={SearchScreen} options={{ headerShown: false }} />
+      <Stack.Screen
+        name="Back"
+        component={SearchScreen}
+        options={{ headerShown: false }}
+      />
       <Stack.Screen name="ParkSchedule" component={ParkSchedule} />
     </Stack.Navigator>
   );
@@ -37,15 +41,29 @@ export default function App() {
               iconName = focused ? 'list' : 'list-outline';
             }
 
-            return <Icon name={iconName || 'list-outline'} size={size} color={color} />;
+            return (
+              <Icon
+                name={iconName || 'list-outline'}
+                size={size}
+                color={color}
+              />
+            );
           },
           tabBarActiveTintColor: '#008CBA',
           tabBarInactiveTintColor: 'gray',
           headerShown: false,
         })}
       >
-        <Tab.Screen name="SearchTab" component={SearchStack} options={{ title: 'Search' }} />
-        <Tab.Screen name="MyPlansTab" component={PlanScreen} options={{ title: 'My Plans' }} />
+        <Tab.Screen
+          name="SearchTab"
+          component={SearchStack}
+          options={{ title: 'Search' }}
+        />
+        <Tab.Screen
+          name="MyPlansTab"
+          component={PlanScreen}
+          options={{ title: 'My Plans' }}
+        />
       </Tab.Navigator>
     </NavigationContainer>
   );
@@ -53,19 +71,19 @@ export default function App() {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
     backgroundColor: '#333',
-  },
-  logoDiv: {
-    backgroundColor: '#cfcec9',
-    padding: 10,
-    alignItems: 'center',
-    width: '100%',
-    paddingTop: Constants.statusBarHeight,
+    flex: 1,
   },
   logo: {
-    width: 150,
     height: 75,
     resizeMode: 'contain',
+    width: 150,
+  },
+  logoDiv: {
+    alignItems: 'center',
+    backgroundColor: '#cfcec9',
+    padding: 10,
+    paddingTop: Constants.statusBarHeight,
+    width: '100%',
   },
 });

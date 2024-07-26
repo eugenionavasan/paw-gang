@@ -1,33 +1,33 @@
 import 'dotenv/config';
 
 export default {
-  "expo": {
-    "name": "paw-gang",
-    "slug": "paw-gang",
-    "version": "1.0.0",
-    "extra": {
-      "googleMapsApiKey": process.env.GOOGLE_MAPS_API_KEY,
+  expo: {
+    name: 'paw-gang',
+    slug: 'paw-gang',
+    version: '1.0.0',
+    extra: {
+      googleMapsApiKey: process.env.GOOGLE_MAPS_API_KEY,
     },
-    "orientation": "portrait",
-    "icon": "./assets/icon.png",
-    "userInterfaceStyle": "light",
-    "splash": {
-      "image": "./assets/logo.jpg",
-      "resizeMode": "contain",
-      "backgroundColor": "#cfcec9"
+    orientation: 'portrait',
+    icon: './assets/icon.png',
+    userInterfaceStyle: 'light',
+    splash: {
+      image: './assets/logo.jpg',
+      resizeMode: 'contain',
+      backgroundColor: '#cfcec9',
     },
-    "ios": {
-      "supportsTablet": true,
-      "simulator": true
+    ios: {
+      supportsTablet: true,
+      simulator: true,
     },
-    "android": {
-      "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
-      }
+    android: {
+      adaptiveIcon: {
+        foregroundImage: './assets/adaptive-icon.png',
+        backgroundColor: '#ffffff',
+      },
     },
-    "web": {
-      "favicon": "./assets/favicon.png"
-    }
-  }
-}
+    web: {
+      favicon: './assets/favicon.png',
+    },
+  },
+};

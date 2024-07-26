@@ -1,21 +1,21 @@
 import { TouchableOpacity, Text, StyleSheet } from 'react-native';
 
-const CustomButton = ({ onPress, title }) => {
+function CustomButton({ onPress, title }) {
   return (
     <TouchableOpacity style={styles.button} onPress={onPress}>
       <Text style={styles.buttonText}>{title}</Text>
     </TouchableOpacity>
   );
-};
+}
 
 const styles = StyleSheet.create({
   button: {
-    backgroundColor: '#008CBA',
-    paddingVertical: 10,
-    paddingHorizontal: 15,
-    borderRadius: 5,
     alignItems: 'center',
+    backgroundColor: '#008CBA',
+    borderRadius: 5,
     marginTop: 10,
+    paddingHorizontal: 15,
+    paddingVertical: 10,
   },
   buttonText: {
     color: '#ffffff',

@@ -12,7 +12,7 @@ class ErrorBoundary extends Component {
   }
 
   componentDidCatch(error, errorInfo) {
-    console.error("ErrorBoundary caught an error", error, errorInfo);
+    console.error('ErrorBoundary caught an error', error, errorInfo);
   }
 
   render() {
@@ -24,19 +24,19 @@ class ErrorBoundary extends Component {
       );
     }
 
-    return this.props.children; 
+    return this.props.children;
   }
 }
 
 const styles = StyleSheet.create({
   container: {
+    alignItems: 'center',
     flex: 1,
     justifyContent: 'center',
-    alignItems: 'center',
   },
   errorText: {
-    fontSize: 18,
     color: 'red',
+    fontSize: 18,
   },
 });
 

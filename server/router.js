@@ -1,7 +1,12 @@
 const express = require('express');
-const router = express.Router();
-const { getEventsbyPark, getEventsbyUser, getEvents, postEvents } = require('./controllers/controllers.js');
 
+const router = express.Router();
+const {
+  getEventsbyPark,
+  getEventsbyUser,
+  getEvents,
+  postEvents,
+} = require('./controllers/controllers.js');
 
 router.get('/events/', getEvents);
 router.get('/events/park/:place_id', getEventsbyPark);

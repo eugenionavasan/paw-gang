@@ -1,5 +1,14 @@
 import { useState, useEffect } from 'react';
-import { StyleSheet, Text, View, TextInput, Image, FlatList, ActivityIndicator, TouchableOpacity } from 'react-native';
+import {
+  StyleSheet,
+  Text,
+  View,
+  TextInput,
+  Image,
+  FlatList,
+  ActivityIndicator,
+  TouchableOpacity,
+} from 'react-native';
 import axios from 'axios';
 import Constants from 'expo-constants';
 import * as Location from 'expo-location';
@@ -8,7 +17,7 @@ import { useNavigation } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import CustomButton from './customButton';
 
-const SearchScreen = () => {
+function SearchScreen() {
   const [locationInput, setLocationInput] = useState('');
   const [dogParks, setDogParks] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -27,7 +36,7 @@ const SearchScreen = () => {
     setError(null);
     try {
       const geocodeResponse = await axios.get(
-        `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(location)}&key=${apiKey}`
+        `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(location)}&key=${apiKey}`,
       );
 
       const geocodeResults = geocodeResponse.data.results;
@@ -35,7 +44,7 @@ const SearchScreen = () => {
         const { lat, lng } = geocodeResults[0].geometry.location;
 
         const placesResponse = await axios.get(
-          `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${lat},${lng}&radius=5000&type=park&keyword=dog%20park&key=${apiKey}`
+          `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${lat},${lng}&radius=5000&type=park&keyword=dog%20park&key=${apiKey}`,
         );
 
         setDogParks(placesResponse.data.results || []);
@@ -74,7 +83,7 @@ const SearchScreen = () => {
       const { latitude, longitude } = location.coords;
 
       const placesResponse = await axios.get(
-        `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${latitude},${longitude}&radius=5000&type=park&keyword=dog%20park&key=${apiKey}`
+        `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${latitude},${longitude}&radius=5000&type=park&keyword=dog%20park&key=${apiKey}`,
       );
 
       setDogParks(placesResponse.data.results || []);
@@ -96,7 +105,7 @@ const SearchScreen = () => {
         <TextInput
           style={styles.input}
           placeholder="Enter location..."
-          placeholderTextColor = "#9DA2AB"
+          placeholderTextColor="#9DA2AB"
           value={locationInput}
           onChangeText={(text) => setLocationInput(text)}
         />
@@ -127,75 +136,81 @@ const SearchScreen = () => {
             )}
             <Text>{item.vicinity}</Text>
             <Text>Rating: {item.rating}</Text>
-            <CustomButton title="Plan visit 🐾" onPress={() => handlePlanVisit(item.place_id, item.name, item.vicinity)} />
+            <CustomButton
+              title="Plan visit 🐾"
+              onPress={() =>
+                handlePlanVisit(item.place_id, item.name, item.vicinity)
+              }
+            />
           </View>
         )}
       />
     </SafeAreaView>
   );
-};
+}
 
 export default SearchScreen;
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#333',
-  },
-  label: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginVertical: 20,
-    marginLeft: 20,
-    color: '#f9f9f9',
-  },
-  inputContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginHorizontal: 20,
-    marginBottom: 20,
-  },
-  input: {
-    flex: 1,
-    height: 40,
-    borderColor: 'gray',
-    borderWidth: 1,
-    paddingHorizontal: 10,
-    color: '#f9f9f9',
-  },
   button: {
+    alignItems: 'center',
     backgroundColor: '#008CBA',
-    padding: 10,
-    marginLeft: 10,
     borderRadius: 5,
     justifyContent: 'center',
-    alignItems: 'center',
+    marginLeft: 10,
+    padding: 10,
   },
-  loaderContainer: {
+  container: {
+    backgroundColor: '#333',
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
   },
   errorText: {
     color: 'red',
     marginBottom: 20,
     marginLeft: 20,
   },
+  input: {
+    borderColor: 'gray',
+    borderWidth: 1,
+    color: '#f9f9f9',
+    flex: 1,
+    height: 40,
+    paddingHorizontal: 10,
+  },
+  inputContainer: {
+    alignItems: 'center',
+    flexDirection: 'row',
+    marginBottom: 20,
+    marginHorizontal: 20,
+  },
+  label: {
+    color: '#f9f9f9',
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginLeft: 20,
+    marginVertical: 20,
+  },
+  loaderContainer: {
+    alignItems: 'center',
+    flex: 1,
+    justifyContent: 'center',
+  },
+  parkImage: {
+    borderRadius: 5,
+    height: 200,
+    marginBottom: 10,
+    objectFit: 'cover',
+    width: '100%',
+  },
   parkItem: {
     backgroundColor: '#f9f9f9',
     borderRadius: 5,
-    padding: 10,
+    marginBottom: 20,
     marginHorizontal: 20,
-    marginBottom: 20,},
-    parkName: {
+    padding: 10,
+  },
+  parkName: {
     fontSize: 18,
     fontWeight: 'bold',
-    },
-    parkImage: {
-    width: '100%',
-    height: 200,
-    borderRadius: 5,
-    marginBottom: 10,
-    objectFit: 'cover',
-    },
-    });
+  },
+});

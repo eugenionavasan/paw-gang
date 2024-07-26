@@ -1,6 +1,5 @@
 const mongoose = require('mongoose');
 
-
 const connectToDatabase = async () => {
   try {
     await mongoose.connect('mongodb://localhost:27017/pawgang');
@@ -10,4 +9,4 @@ const connectToDatabase = async () => {
   }
 };
 
-module.exports = connectToDatabase; 
+module.exports = connectToDatabase;

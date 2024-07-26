@@ -1,6 +1,6 @@
 const models = require('../models/events.js');
 
-//GET EVENTS (I don't need this one but i am having it for thunderclient testing purposes)
+// GET EVENTS (I don't need this one but i am having it for thunderclient testing purposes)
 
 const getEvents = async (req, res) => {
   try {
@@ -12,7 +12,7 @@ const getEvents = async (req, res) => {
   }
 };
 
-//GET EVENTS by place_id
+// GET EVENTS by place_id
 
 const getEventsbyPark = async (req, res) => {
   try {
@@ -28,7 +28,7 @@ const getEventsbyPark = async (req, res) => {
   }
 };
 
-//GET EVENTS by user
+// GET EVENTS by user
 
 const getEventsbyUser = async (req, res) => {
   try {
@@ -42,18 +42,25 @@ const getEventsbyUser = async (req, res) => {
   } catch (error) {
     res.status(500).json({ message: 'Internal Server Error', error });
   }
-}
+};
 
-//POST EVENT 
+// POST EVENT
 
 const postEvents = async (req, res) => {
   try {
     const { place_id, park_name, adress, date, user, dog_avatar } = req.body;
 
-    if (!place_id ||!park_name ||!adress || !date || !user || !dog_avatar) {
+    if (!place_id || !park_name || !adress || !date || !user || !dog_avatar) {
       return res.status(400).json({ error: 'Missing required parameters.' });
     }
-    const newEvent = await  models.create({ place_id, park_name, adress, date, user, dog_avatar });
+    const newEvent = await models.create({
+      place_id,
+      park_name,
+      adress,
+      date,
+      user,
+      dog_avatar,
+    });
     res.status(201);
     res.json(newEvent);
   } catch (error) {
@@ -62,4 +69,4 @@ const postEvents = async (req, res) => {
   }
 };
 
-module.exports = { getEventsbyPark, getEventsbyUser, getEvents, postEvents }; //exporting the functions to be used in the router
+module.exports = { getEventsbyPark, getEventsbyUser, getEvents, postEvents }; // exporting the functions to be used in the router
