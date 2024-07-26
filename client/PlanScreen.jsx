@@ -18,6 +18,9 @@ function PlanScreen() {
       const upcomingEvents = response.data.filter(event =>
         moment(event.date).tz('Europe/Madrid').isSameOrAfter(currentTime, 'minute')
       );
+
+      upcomingEvents.sort((a, b) => moment(a.date).tz('Europe/Madrid') - moment(b.date).tz('Europe/Madrid'));
+      
       setEvents(upcomingEvents);
     } catch (error) {
       console.error('Error fetching events:', error);
