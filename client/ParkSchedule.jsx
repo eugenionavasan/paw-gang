@@ -16,7 +16,6 @@ import axios from 'axios';
 
 const SERVER_URL = 'http://192.168.1.103:3000';
 
-
 function ParkSchedule({ route }) {
   const { place_id, name, vicinity } = route.params;
   const [selectedDate, setSelectedDate] = useState(
@@ -31,12 +30,10 @@ function ParkSchedule({ route }) {
   useEffect(() => {
     const fetchEvents = async () => {
       try {
-        const response = await fetch(`${SERVER_URL}/events/park/${place_id}`);
-        const data = await response.json();
+        const response = await axios.get(`${SERVER_URL}/events/park/${place_id}`);
+        const data = response.data;
         const formattedEvents = data.reduce((acc, event) => {
-          const dateKey = moment(event.date.$date || event.date)
-            .tz('Europe/Madrid')
-            .format('YYYY-MM-DD');
+          const dateKey = moment(event.date).tz('Europe/Madrid').format('YYYY-MM-DD');
           if (!acc[dateKey]) {
             acc[dateKey] = [];
           }
@@ -68,13 +65,11 @@ function ParkSchedule({ route }) {
   };
 
   const handleSaveEvent = async () => {
-    const eventDate = moment
-      .tz(
-        `${selectedDate.format('YYYY-MM-DD')} ${newEventDate}`,
-        'YYYY-MM-DD HH:mm',
-        'Europe/Madrid',
-      )
-      .toISOString();
+    const eventDate = moment.tz(
+      `${selectedDate.format('YYYY-MM-DD')} ${newEventDate}`,
+      'YYYY-MM-DD HH:mm',
+      'Europe/Madrid'
+    ).toISOString();
 
     const eventToAdd = {
       place_id,
@@ -102,6 +97,7 @@ function ParkSchedule({ route }) {
       Alert.alert('Error', 'An error occurred while saving the event.');
     }
   };
+
   const renderEvent = ({ item }) => (
     <View style={styles.event}>
       <Image source={{ uri: item.dog_avatar }} style={styles.dogAvatar} />
@@ -111,12 +107,10 @@ function ParkSchedule({ route }) {
   const renderItem = ({ item }) => {
     const dayEvents = events[selectedDate.format('YYYY-MM-DD')] || [];
     const slotEvents = dayEvents.filter((event) =>
-      moment
-        .tz(event.date, 'Europe/Madrid')
-        .isSame(
-          selectedDate.clone().hour(moment(item, 'HH:mm').hour()),
-          'hour',
-        ),
+      moment(event.date).tz('Europe/Madrid').isSame(
+        selectedDate.clone().hour(moment(item, 'HH:mm').hour()),
+        'hour',
+      ),
     );
 
     return (
@@ -153,7 +147,7 @@ function ParkSchedule({ route }) {
     const formattedTime = moment(time)
       .tz('Europe/Madrid')
       .minute(0)
-      .format('HH:mm'); // Adjust time zone
+      .format('HH:mm');
     setNewEventDate(formattedTime);
     hideTimePicker();
   };

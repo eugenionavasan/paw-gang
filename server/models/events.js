@@ -12,13 +12,14 @@ const events = new Schema({
   date: {
     type: Date,
     required: true,
-    get: (date) => moment(date).tz('Europe/Madrid').format('YYYY-MM-DD HH:00'),
-    set: (date) =>
-      moment.tz(date, 'YYYY-MM-DD HH:00', 'Europe/Madrid').toDate(),
+    set: (date) => moment.tz(date, 'Europe/Madrid').toDate(),
+    get: (date) => moment(date).tz('Europe/Madrid').format()
   },
   user: { type: String, required: true },
   dog_avatar: { type: String, required: true },
 });
+
+events.set('toJSON', { getters: true });
 
 const Events = mongoose.model('Events', events);
 
