@@ -35,6 +35,6 @@ PawGang is a unique mobile application designed for dog owners who want to sched
 - **Manage Visits**: View and manage all your planned visits in the "My Plans" section.
 - **Park Schedule**: View the schedule of each park to see when other dogs will be visiting and plan accordingly.
 
-![Paw Gang homepage](assets/homepage.png)
+![Paw Gang homepage](assets/homepage.png)       ![Paw Gang schedule](assets/schedule.png)
 
 PawGang is the perfect app for dog lovers who want to ensure their pets have plenty of opportunities to socialize and play with other dogs. Plan your visits, meet other dog owners, and let your furry friends have a great time at the park!
