@@ -16,7 +16,7 @@ const getEvents = async (req, res) => {
 
 const getEventsbyPark = async (req, res) => {
   try {
-    const { place_id } = req.params; // Or use req.query if the place_id is passed as a query parameter
+    const { place_id } = req.params;
     if (!place_id) {
       return res.status(400).json({ message: 'place_id is required' });
     }
@@ -32,7 +32,7 @@ const getEventsbyPark = async (req, res) => {
 
 const getEventsbyUser = async (req, res) => {
   try {
-    const { user } = req.params; // Or use req.query if the user is passed as a query parameter
+    const { user } = req.params; 
     if (!user) {
       return res.status(400).json({ message: 'user is required' });
     }
@@ -69,11 +69,11 @@ const postEvents = async (req, res) => {
   }
 };
 
-//DELETE PLAN
+//DELETE EVENT
 
 const deleteEvent = async (req, res) => {
   try {
-    const { _id } = req.params; // 
+    const { _id } = req.params; 
 
     if (!_id) {
       return res.status(400).json({ message: '_id is required' });
