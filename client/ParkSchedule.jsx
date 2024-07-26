@@ -16,14 +16,13 @@ import axios from 'axios';
 
 const SERVER_URL = 'http://192.168.1.103:3000';
 
-const initialEvents = {};
 
 function ParkSchedule({ route }) {
   const { place_id, name, vicinity } = route.params;
   const [selectedDate, setSelectedDate] = useState(
     moment().tz('Europe/Madrid'),
   );
-  const [events, setEvents] = useState(initialEvents);
+  const [events, setEvents] = useState({});
   const [modalVisible, setModalVisible] = useState(false);
   const [newEventDate, setNewEventDate] = useState('');
   const [isTimePickerVisible, setTimePickerVisibility] = useState(false);

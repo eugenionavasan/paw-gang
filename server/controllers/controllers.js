@@ -69,4 +69,60 @@ const postEvents = async (req, res) => {
   }
 };
 
-module.exports = { getEventsbyPark, getEventsbyUser, getEvents, postEvents }; // exporting the functions to be used in the router
+//DELETE PLAN
+
+const deleteEvent = async (req, res) => {
+  try {
+    const { _id } = req.params; // 
+
+    if (!_id) {
+      return res.status(400).json({ message: '_id is required' });
+    }
+
+    const deletedEvent = await models.findByIdAndDelete(_id);
+
+    if (!deletedEvent) {
+      return res.status(404).json({ message: 'Event not found' });
+    }
+
+    res.status(200).json({ message: 'Event deleted successfully', deletedEvent });
+  } catch (error) {
+    console.error('Error deleting event:', error);
+    res.status(500).json({ message: 'Internal Server Error', error: error.message });
+  }
+}
+
+  //EDIT EVENT only the date
+
+const editEvent = async (req, res) => {
+  try {
+    const { _id } = req.params;
+    const { date } = req.body;
+
+    if (!_id) {
+      return res.status(400).json({ message: '_id is required' });
+    }
+
+    if (!date) {
+      return res.status(400).json({ message: 'date is required for updating' });
+    }
+
+    const updatedEvent = await models.findByIdAndUpdate(
+      _id,
+      { date },
+      { new: true, runValidators: true }
+    );
+
+    if (!updatedEvent) {
+      return res.status(404).json({ message: 'Event not found' });
+    }
+
+    res.status(200).json({ message: 'Event updated successfully', updatedEvent });
+  } catch (error) {
+    console.error('Error updating event:', error);
+    res.status(500).json({ message: 'Internal Server Error', error: error.message });
+  }
+};
+
+
+module.exports = { getEventsbyPark, getEventsbyUser, getEvents, postEvents, deleteEvent, editEvent }; // exporting the functions to be used in the router
