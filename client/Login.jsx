@@ -6,7 +6,7 @@
 /* eslint-disable react-native/no-inline-styles */
 /* eslint-disable react-native/no-color-literals */
 /* eslint-disable import/no-extraneous-dependencies */
-import { useState } from 'react';
+import React, { useState } from 'react';
 import {
   StyleSheet,
   SafeAreaView,
@@ -25,11 +25,11 @@ export default function Login({ navigation }) {
   });
 
   const handleSignIn = () => {
-    navigation.navigate('Main');
+    navigation.replace('Main');
   };
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: '#e8ecf4' }}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: '#333' }}>
       <View style={styles.container}>
         <KeyboardAwareScrollView>
           <View style={styles.header}>
@@ -37,10 +37,11 @@ export default function Login({ navigation }) {
               alt="App Logo"
               resizeMode="contain"
               style={styles.headerImg}
-              source={require('./assets/icon.png')} />
+              source={require('./assets/icon.png')}
+            />
 
             <Text style={styles.title}>
-              Sign in to <Text style={{ color: '#075eec' }}>Paw Gang</Text>
+              Sign in to <Text style={{ color: '#008CBA' }}>Paw Gang</Text>
             </Text>
 
             <Text style={styles.subtitle}>
@@ -57,11 +58,12 @@ export default function Login({ navigation }) {
                 autoCorrect={false}
                 clearButtonMode="while-editing"
                 keyboardType="email-address"
-                onChangeText={email => setForm({ ...form, email })}
+                onChangeText={(email) => setForm({ ...form, email })}
                 placeholder="john@example.com"
-                placeholderTextColor="#B5B5B5"
+                placeholderTextColor="#fafafa"
                 style={styles.inputControl}
-                value={form.email} />
+                value={form.email}
+              />
             </View>
 
             <View style={styles.input}>
@@ -70,12 +72,13 @@ export default function Login({ navigation }) {
               <TextInput
                 autoCorrect={false}
                 clearButtonMode="while-editing"
-                onChangeText={password => setForm({ ...form, password })}
+                onChangeText={(password) => setForm({ ...form, password })}
                 placeholder="********"
-                placeholderTextColor="#B5B5B5"
+                placeholderTextColor="#fafafa"
                 style={styles.inputControl}
                 secureTextEntry={true}
-                value={form.password} />
+                value={form.password}
+              />
             </View>
 
             <View style={styles.formAction}>
@@ -103,6 +106,7 @@ export default function Login({ navigation }) {
 
 const styles = StyleSheet.create({
   container: {
+    backgroundColor: '#333',
     paddingVertical: 24,
     // eslint-disable-next-line react-native/sort-styles
     paddingHorizontal: 0,
@@ -113,7 +117,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 31,
     fontWeight: '700',
-    color: '#1D2A32',
+    color: '#ffffff',
     marginBottom: 6,
   },
   subtitle: {
@@ -148,13 +152,13 @@ const styles = StyleSheet.create({
   formLink: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#075eec',
+    color: '#ffffff',
     textAlign: 'center',
   },
   formFooter: {
     fontSize: 15,
     fontWeight: '600',
-    color: '#222',
+    color: '#ffffff',
     textAlign: 'center',
     letterSpacing: 0.15,
   },
@@ -165,17 +169,17 @@ const styles = StyleSheet.create({
   inputLabel: {
     fontSize: 17,
     fontWeight: '600',
-    color: '#222',
+    color: '#ffffff',
     marginBottom: 8,
   },
   inputControl: {
     height: 50,
-    backgroundColor: '#fff',
+    backgroundColor: '#333',
     paddingHorizontal: 16,
     borderRadius: 12,
     fontSize: 15,
     fontWeight: '500',
-    color: '#222',
+    color: '#fafafa',
     borderWidth: 1,
     borderColor: '#C9D3DB',
     borderStyle: 'solid',
@@ -189,8 +193,8 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     paddingHorizontal: 20,
     borderWidth: 1,
-    backgroundColor: '#075eec',
-    borderColor: '#075eec',
+    backgroundColor: '#008CBA',
+    borderColor: '#008CBA',
   },
   btnText: {
     fontSize: 18,

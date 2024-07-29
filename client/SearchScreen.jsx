@@ -14,7 +14,6 @@ import {
 import axios from 'axios';
 import Constants from 'expo-constants';
 import * as Location from 'expo-location';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import CustomButton from './customButton';
@@ -101,7 +100,7 @@ function SearchScreen() {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
       <Text style={styles.label}>Search for a dog park near you:</Text>
       <View style={styles.inputContainer}>
         <TextInput
@@ -147,7 +146,7 @@ function SearchScreen() {
           </View>
         )}
       />
-    </SafeAreaView>
+    </View>
   );
 }
 

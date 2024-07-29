@@ -211,7 +211,7 @@ function ParkSchedule({ route }) {
 const styles = StyleSheet.create({
   addButton: {
     alignItems: 'center',
-    backgroundColor: '#007bff',
+    backgroundColor: '#008CBA',
     justifyContent: 'center',
     padding: 15,
   },

@@ -1,20 +1,19 @@
-/* eslint-disable no-console */
-/* eslint-disable react-native/sort-styles */
-/* eslint-disable react-native/no-color-literals */
-/* eslint-disable no-underscore-dangle */
-/* eslint-disable prettier/prettier */
-import { View, Text, StyleSheet, FlatList, TouchableOpacity, Alert } from 'react-native';
+import { View, Text, StyleSheet, FlatList, TouchableOpacity, Alert, Modal, Button } from 'react-native';
 import React, { useState } from 'react';
 import axios from 'axios';
 import moment from 'moment-timezone';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { useFocusEffect } from '@react-navigation/native';
+import DateTimePickerModal from 'react-native-modal-datetime-picker';
 
 const SERVER_URL = 'http://192.168.1.100:3000/events/user/eugenio';
 
 function PlanScreen() {
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [isTimePickerVisible, setTimePickerVisibility] = useState(false);
+  const [selectedEvent, setSelectedEvent] = useState(null);
+  const [newEventTime, setNewEventTime] = useState(null);
 
   const fetchEvents = async () => {
     try {
@@ -42,11 +41,41 @@ function PlanScreen() {
 
   const handleDelete = async (_id) => {
     try {
-      await axios.delete(`http://192.168.1.103:3000/events/${_id}`);
+      await axios.delete(`http://192.168.1.100:3000/events/${_id}`);
       setEvents((prevEvents) => prevEvents.filter((item) => item._id !== _id));
     } catch (error) {
       console.error('Error deleting event:', error);
       Alert.alert('Error', 'An error occurred while deleting the event.');
+    }
+  };
+
+  const handleEdit = (event) => {
+    setSelectedEvent(event);
+    setTimePickerVisibility(true);
+  };
+
+  const handleConfirm = async (time) => {
+    const newTime = moment(time).tz('Europe/Madrid').format('HH:mm');
+    setNewEventTime(newTime);
+
+    const updatedEventDate = moment(selectedEvent.date).tz('Europe/Madrid').set({
+      hour: moment(time).hour(),
+      minute: 0,
+      second: 0
+    }).toISOString();
+
+    try {
+      await axios.put(`http://192.168.1.100:3000/events/${selectedEvent._id}`, {
+        ...selectedEvent,
+        date: updatedEventDate,
+      });
+
+      fetchEvents(); // Refresh the events list
+      setTimePickerVisibility(false);
+      setSelectedEvent(null);
+    } catch (error) {
+      console.error('Error updating event:', error);
+      Alert.alert('Error', 'An error occurred while updating the event.');
     }
   };
 
@@ -57,7 +86,7 @@ function PlanScreen() {
       <Text style={styles.eventText}>
         Date: {moment(item.date).tz('Europe/Madrid').format('MMMM Do YYYY, HH:mm')}
       </Text>
-      <TouchableOpacity style={styles.editButton}>
+      <TouchableOpacity style={styles.editButton} onPress={() => handleEdit(item)}>
         <Icon name="hammer-outline" size={20} color="#fff" />
       </TouchableOpacity>
       <TouchableOpacity style={styles.deleteButton} onPress={() => handleDelete(item._id)}>
@@ -81,6 +110,13 @@ function PlanScreen() {
         renderItem={renderItem}
         keyExtractor={(item) => item._id}
         ListEmptyComponent={<Text style={styles.text}>No upcoming events found</Text>}
+      />
+      <DateTimePickerModal
+        isVisible={isTimePickerVisible}
+        mode="time"
+        onConfirm={handleConfirm}
+        onCancel={() => setTimePickerVisibility(false)}
+        minuteInterval={60}
       />
     </View>
   );
