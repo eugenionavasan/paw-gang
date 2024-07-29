@@ -10,8 +10,7 @@ function ProfileScreen() {
   const navigation = useNavigation();
 
   const handleLogout = () => {
-    // Navigate to the Login screen
-    navigation.navigate('Login');
+    navigation.replace('Login');
   };
 
   return (

@@ -16,7 +16,6 @@ import {
   TouchableOpacity,
   TextInput,
 } from 'react-native';
-import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 
 export default function Login({ navigation }) {
   const [form, setForm] = useState({
@@ -31,7 +30,6 @@ export default function Login({ navigation }) {
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: '#cfcec9' }}>
       <View style={styles.container}>
-        <KeyboardAwareScrollView>
           <View style={styles.header}>
             <Image
               alt="App Logo"
@@ -91,7 +89,6 @@ export default function Login({ navigation }) {
 
             <Text style={styles.formLink}>Forgot password?</Text>
           </View>
-        </KeyboardAwareScrollView>
 
         <TouchableOpacity style={{ marginTop: 'auto' }}>
           <Text style={styles.formFooter}>
@@ -125,7 +122,6 @@ const styles = StyleSheet.create({
     fontWeight: '500',
     color: 'black',
   },
-  /** Header */
   header: {
     alignItems: 'center',
     justifyContent: 'center',
@@ -138,7 +134,6 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     marginBottom: 36,
   },
-  /** Form */
   form: {
     marginBottom: 24,
     paddingHorizontal: 24,
@@ -163,7 +158,6 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     letterSpacing: 0.15,
   },
-  /** Input */
   input: {
     marginBottom: 16,
   },
@@ -185,7 +179,6 @@ const styles = StyleSheet.create({
     borderColor: 'black',
     borderStyle: 'solid',
   },
-  /** Button */
   btn: {
     flexDirection: 'row',
     alignItems: 'center',
