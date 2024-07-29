@@ -4,7 +4,7 @@
 /* eslint-disable no-underscore-dangle */
 /* eslint-disable no-unused-vars */
 /* eslint-disable prettier/prettier */
-import { View, Text, StyleSheet, FlatList, TouchableOpacity, Alert, Modal, Button } from 'react-native';
+import { View, Text, StyleSheet, FlatList, TouchableOpacity, Alert, ImageBackground  } from 'react-native';
 import React, { useState } from 'react';
 import axios from 'axios';
 import moment from 'moment-timezone';
@@ -142,7 +142,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
   },
   eventItem: {
-    backgroundColor: '#f5f5f5',
+    backgroundColor: '#ccc',
     borderRadius: 5,
     padding: 15,
     marginVertical: 8,

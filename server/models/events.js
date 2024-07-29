@@ -13,7 +13,7 @@ const events = new Schema({
     type: Date,
     required: true,
     set: (date) => moment.tz(date, 'Europe/Madrid').toDate(),
-    get: (date) => moment(date).tz('Europe/Madrid').format()
+    get: (date) => moment(date).tz('Europe/Madrid').format(),
   },
   user: { type: String, required: true },
   dog_avatar: { type: String, required: true },

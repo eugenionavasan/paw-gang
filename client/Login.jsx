@@ -57,7 +57,7 @@ export default function Login({ navigation }) {
                 clearButtonMode="while-editing"
                 keyboardType="email-address"
                 onChangeText={(email) => setForm({ ...form, email })}
-                placeholder="john@example.com"
+                placeholder="hachiko@example.com"
                 placeholderTextColor="grey"
                 style={styles.inputControl}
                 value={form.email}

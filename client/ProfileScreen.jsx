@@ -15,7 +15,10 @@ function ProfileScreen() {
 
   return (
     <View style={styles.container}>
-      <Image source={require('./assets/avatar-Luffy.png')} style={styles.image} />
+      <Image
+        source={require('./assets/avatar-Luffy.png')}
+        style={styles.image}
+      />
       <Text style={styles.text}>User: testuser</Text>
       <Text style={styles.text}>Name: Eugenio</Text>
       <Text style={styles.text}>Dog Name: Luffy</Text>
@@ -70,6 +73,8 @@ const styles = StyleSheet.create({
     marginVertical: 10,
     paddingHorizontal: 20,
     paddingVertical: 10,
+    width: 125,
+    alignItems: 'center',
   },
   logoutButtonText: {
     color: 'white',
