@@ -2,9 +2,18 @@
 /* eslint-disable global-require */
 /* eslint-disable prettier/prettier */
 /* eslint-disable react-native/no-color-literals */
+import React from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 
 function ProfileScreen() {
+  const navigation = useNavigation();
+
+  const handleLogout = () => {
+    // Navigate to the Login screen
+    navigation.navigate('Login');
+  };
+
   return (
     <View style={styles.container}>
       <Image source={require('./assets/avatar-Luffy.png')} style={styles.image} />
@@ -15,7 +24,7 @@ function ProfileScreen() {
       <TouchableOpacity style={styles.button}>
         <Text style={styles.buttonText}>Edit Profile</Text>
       </TouchableOpacity>
-      <TouchableOpacity style={styles.logoutButton}>
+      <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
         <Text style={styles.logoutButtonText}>Log Out</Text>
       </TouchableOpacity>
     </View>
@@ -36,13 +45,13 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     height: 200,
     width: 200,
-    marginBottom: 20, 
+    marginBottom: 20,
   },
   text: {
     color: '#fff',
     fontWeight: 'bold',
     fontSize: 20,
-    marginBottom: 10, 
+    marginBottom: 10,
   },
   button: {
     backgroundColor: '#008CBA',
@@ -64,7 +73,6 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
   },
   logoutButtonText: {
-    backgroundColor: 'red',
     color: 'white',
     fontSize: 16,
     fontWeight: 'bold',

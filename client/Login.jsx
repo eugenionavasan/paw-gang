@@ -29,7 +29,7 @@ export default function Login({ navigation }) {
   };
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: '#333' }}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: '#cfcec9' }}>
       <View style={styles.container}>
         <KeyboardAwareScrollView>
           <View style={styles.header}>
@@ -37,7 +37,7 @@ export default function Login({ navigation }) {
               alt="App Logo"
               resizeMode="contain"
               style={styles.headerImg}
-              source={require('./assets/icon.png')}
+              source={require('./assets/logo.jpg')}
             />
 
             <Text style={styles.title}>
@@ -60,7 +60,7 @@ export default function Login({ navigation }) {
                 keyboardType="email-address"
                 onChangeText={(email) => setForm({ ...form, email })}
                 placeholder="john@example.com"
-                placeholderTextColor="#fafafa"
+                placeholderTextColor="grey"
                 style={styles.inputControl}
                 value={form.email}
               />
@@ -74,7 +74,7 @@ export default function Login({ navigation }) {
                 clearButtonMode="while-editing"
                 onChangeText={(password) => setForm({ ...form, password })}
                 placeholder="********"
-                placeholderTextColor="#fafafa"
+                placeholderTextColor="grey"
                 style={styles.inputControl}
                 secureTextEntry={true}
                 value={form.password}
@@ -106,7 +106,7 @@ export default function Login({ navigation }) {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: '#333',
+    backgroundColor: '#cfcec9',
     paddingVertical: 24,
     // eslint-disable-next-line react-native/sort-styles
     paddingHorizontal: 0,
@@ -117,13 +117,13 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 31,
     fontWeight: '700',
-    color: '#ffffff',
+    color: 'black',
     marginBottom: 6,
   },
   subtitle: {
     fontSize: 15,
     fontWeight: '500',
-    color: '#929292',
+    color: 'black',
   },
   /** Header */
   header: {
@@ -132,8 +132,9 @@ const styles = StyleSheet.create({
     marginVertical: 36,
   },
   headerImg: {
-    width: 120,
-    height: 120,
+    backgroundColor: '#cfcec9',
+    width: 400,
+    height: 200,
     alignSelf: 'center',
     marginBottom: 36,
   },
@@ -152,13 +153,13 @@ const styles = StyleSheet.create({
   formLink: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#ffffff',
+    color: 'black',
     textAlign: 'center',
   },
   formFooter: {
     fontSize: 15,
     fontWeight: '600',
-    color: '#ffffff',
+    color: 'black',
     textAlign: 'center',
     letterSpacing: 0.15,
   },
@@ -169,19 +170,19 @@ const styles = StyleSheet.create({
   inputLabel: {
     fontSize: 17,
     fontWeight: '600',
-    color: '#ffffff',
+    color: 'black',
     marginBottom: 8,
   },
   inputControl: {
     height: 50,
-    backgroundColor: '#333',
+    backgroundColor: '#cfcec9',
     paddingHorizontal: 16,
     borderRadius: 12,
     fontSize: 15,
     fontWeight: '500',
-    color: '#fafafa',
+    color: 'black',
     borderWidth: 1,
-    borderColor: '#C9D3DB',
+    borderColor: 'black',
     borderStyle: 'solid',
   },
   /** Button */
