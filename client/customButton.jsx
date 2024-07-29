@@ -1,3 +1,4 @@
+/* eslint-disable react-native/no-color-literals */
 import { TouchableOpacity, Text, StyleSheet } from 'react-native';
 
 function CustomButton({ onPress, title }) {

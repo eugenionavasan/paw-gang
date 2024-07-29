@@ -1,4 +1,6 @@
-import { useState, useEffect } from 'react';
+/* eslint-disable react-native/no-color-literals */
+/* eslint-disable camelcase */
+import { useState } from 'react';
 import {
   StyleSheet,
   Text,

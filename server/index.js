@@ -1,3 +1,5 @@
+/* eslint-disable no-console */
+/* eslint-disable import/no-extraneous-dependencies */
 const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
@@ -12,7 +14,7 @@ app.use(bodyParser.json()); // parsing the data from the client
 app.use(router); // using the router
 
 const PORT = 3000;
-const LOCAL_IP_ADRESS = '192.168.1.103';
+const LOCAL_IP_ADRESS = '192.168.1.100';
 
 // connecting to the db and running the server
 

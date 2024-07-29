@@ -1,11 +1,16 @@
+/* eslint-disable no-console */
+/* eslint-disable react-native/sort-styles */
+/* eslint-disable react-native/no-color-literals */
+/* eslint-disable no-underscore-dangle */
+/* eslint-disable prettier/prettier */
 import { View, Text, StyleSheet, FlatList, TouchableOpacity, Alert } from 'react-native';
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import axios from 'axios';
 import moment from 'moment-timezone';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { useFocusEffect } from '@react-navigation/native';
 
-const SERVER_URL = 'http://192.168.1.103:3000/events/user/eugenio';
+const SERVER_URL = 'http://192.168.1.100:3000/events/user/eugenio';
 
 function PlanScreen() {
   const [events, setEvents] = useState([]);

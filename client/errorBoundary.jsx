@@ -1,3 +1,7 @@
+/* eslint-disable no-console */
+/* eslint-disable react-native/no-color-literals */
+/* eslint-disable react/destructuring-assignment */
+/* eslint-disable no-unused-vars */
 import { Component } from 'react';
 import { Text, View, StyleSheet } from 'react-native';
 

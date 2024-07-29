@@ -1,5 +1,11 @@
+/* eslint-disable react/jsx-props-no-spreading */
+/* eslint-disable prettier/prettier */
+/* eslint-disable react-native/no-unused-styles */
+/* eslint-disable react-native/no-color-literals */
+/* eslint-disable react/no-unstable-nested-components */
+/* eslint-disable global-require */
 import { View, Image, StyleSheet } from 'react-native';
-import { NavigationContainer } from '@react-navigation/native';
+import { NavigationContainer, useNavigationState } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Icon from 'react-native-vector-icons/Ionicons';
@@ -7,6 +13,7 @@ import Constants from 'expo-constants';
 import SearchScreen from './SearchScreen';
 import PlanScreen from './PlanScreen';
 import ParkSchedule from './ParkSchedule';
+import Login from './Login.jsx';
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -15,7 +22,7 @@ function SearchStack() {
   return (
     <Stack.Navigator>
       <Stack.Screen
-        name="Back"
+        name="Search"
         component={SearchScreen}
         options={{ headerShown: false }}
       />
@@ -24,47 +31,72 @@ function SearchStack() {
   );
 }
 
+function LogoHeader() {
+  const routes = useNavigationState(state => state.routes);
+  const currentRouteName = routes[routes.length - 1]?.name;
+
+  if (currentRouteName === 'Login') {
+    return null;
+  }
+
+  return (
+    <View style={styles.logoDiv}>
+      <Image source={require('./assets/logo.jpg')} style={styles.logo} />
+    </View>
+  );
+}
+
+function MainTabs() {
+  return (
+    <Tab.Navigator
+      screenOptions={({ route }) => ({
+        tabBarIcon: ({ focused, color, size }) => {
+          let iconName;
+
+          if (route.name === 'SearchTab') {
+            iconName = focused ? 'search' : 'search-outline';
+          } else if (route.name === 'MyPlansTab') {
+            iconName = focused ? 'list' : 'list-outline';
+          }
+
+          return (
+            <Icon
+              name={iconName || 'list-outline'}
+              size={size}
+              color={color}
+            />
+          );
+        },
+        tabBarActiveTintColor: '#008CBA',
+        tabBarInactiveTintColor: 'gray',
+        headerShown: false,
+      })}
+    >
+      <Tab.Screen
+        name="SearchTab"
+        component={SearchStack}
+        options={{ title: 'Search' }}
+      />
+      <Tab.Screen
+        name="MyPlansTab"
+        component={PlanScreen}
+        options={{ title: 'My Plans' }}
+      />
+    </Tab.Navigator>
+  );
+}
+
 export default function App() {
   return (
     <NavigationContainer>
-      <View style={styles.logoDiv}>
-        <Image source={require('./assets/logo.jpg')} style={styles.logo} />
-      </View>
-      <Tab.Navigator
-        screenOptions={({ route }) => ({
-          tabBarIcon: ({ focused, color, size }) => {
-            let iconName;
-
-            if (route.name === 'SearchTab') {
-              iconName = focused ? 'search' : 'search-outline';
-            } else if (route.name === 'MyPlansTab') {
-              iconName = focused ? 'list' : 'list-outline';
-            }
-
-            return (
-              <Icon
-                name={iconName || 'list-outline'}
-                size={size}
-                color={color}
-              />
-            );
-          },
-          tabBarActiveTintColor: '#008CBA',
-          tabBarInactiveTintColor: 'gray',
-          headerShown: false,
-        })}
-      >
-        <Tab.Screen
-          name="SearchTab"
-          component={SearchStack}
-          options={{ title: 'Search' }}
+      <Stack.Navigator initialRouteName="Login">
+        <Stack.Screen name="Login" component={Login} options={{ headerShown: false }} />
+        <Stack.Screen
+          name="Main"
+          component={MainTabs}
+          options={{ header: (props) => <LogoHeader {...props} /> }}
         />
-        <Tab.Screen
-          name="MyPlansTab"
-          component={PlanScreen}
-          options={{ title: 'My Plans' }}
-        />
-      </Tab.Navigator>
+      </Stack.Navigator>
     </NavigationContainer>
   );
 }
