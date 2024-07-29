@@ -1,3 +1,9 @@
+/* eslint-disable no-console */
+/* eslint-disable react-native/sort-styles */
+/* eslint-disable react-native/no-color-literals */
+/* eslint-disable no-underscore-dangle */
+/* eslint-disable no-unused-vars */
+/* eslint-disable prettier/prettier */
 import { View, Text, StyleSheet, FlatList, TouchableOpacity, Alert, Modal, Button } from 'react-native';
 import React, { useState } from 'react';
 import axios from 'axios';

@@ -14,6 +14,7 @@ import SearchScreen from './SearchScreen';
 import PlanScreen from './PlanScreen';
 import ParkSchedule from './ParkSchedule';
 import Login from './Login.jsx';
+import ProfileScreen from './ProfileScreen';
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -52,6 +53,8 @@ function MainTabs() {
               iconName = focused ? 'search' : 'search-outline';
             } else if (route.name === 'MyPlansTab') {
               iconName = focused ? 'list' : 'list-outline';
+            } else if (route.name === 'ProfileTab') {
+              iconName = focused ? 'person' : 'person-outline';
             }
 
             return (
@@ -76,6 +79,11 @@ function MainTabs() {
           name="MyPlansTab"
           component={PlanScreen}
           options={{ title: 'My Plans' }}
+        />
+        <Tab.Screen
+          name="ProfileTab"
+          component={ProfileScreen}
+          options={{ title: 'Profile' }}
         />
       </Tab.Navigator>
     </>
