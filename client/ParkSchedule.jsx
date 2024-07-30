@@ -81,7 +81,7 @@ function ParkSchedule({ route }) {
     const eventToAdd = {
       place_id,
       park_name: name,
-      adress: vicinity,
+      address: vicinity,
       date: eventDate,
       user: 'eugenio',
       dog_avatar:

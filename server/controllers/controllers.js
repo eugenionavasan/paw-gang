@@ -48,15 +48,15 @@ const getEventsbyUser = async (req, res) => {
 
 const postEvents = async (req, res) => {
   try {
-    const { place_id, park_name, adress, date, user, dog_avatar } = req.body;
+    const { place_id, park_name, address, date, user, dog_avatar } = req.body;
 
-    if (!place_id || !park_name || !adress || !date || !user || !dog_avatar) {
+    if (!place_id || !park_name || !address || !date || !user || !dog_avatar) {
       return res.status(400).json({ error: 'Missing required parameters.' });
     }
     const newEvent = await models.create({
       place_id,
       park_name,
-      adress,
+      address,
       date,
       user,
       dog_avatar,
