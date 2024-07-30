@@ -24,7 +24,7 @@ const getEventsbyPark = async (req, res) => {
     const events = await models.find({ place_id });
     res.status(200).json(events);
   } catch (error) {
-    res.status(500).json({ message: 'Internal Server Error', error });
+    res.status(500).json({ message: 'Internal Server Error'});
   }
 };
 
@@ -40,7 +40,7 @@ const getEventsbyUser = async (req, res) => {
     const events = await models.find({ user });
     res.status(200).json(events);
   } catch (error) {
-    res.status(500).json({ message: 'Internal Server Error', error });
+    res.status(500).json({ message: 'Internal Server Error'});
   }
 };
 
@@ -64,7 +64,7 @@ const postEvents = async (req, res) => {
     res.status(201);
     res.json(newEvent);
   } catch (error) {
-    console.error('Error:', error);
+    console.error('Internal server error');
     res.status(500);
   }
 };
@@ -120,7 +120,7 @@ const editEvent = async (req, res) => {
     res.status(200).json({ message: 'Event updated successfully', updatedEvent });
   } catch (error) {
     console.error('Error updating event:', error);
-    res.status(500).json({ message: 'Internal Server Error', error: error.message });
+    res.status(500).json({ message: 'Internal Server Error'});
   }
 };
 
