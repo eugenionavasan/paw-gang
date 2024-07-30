@@ -88,7 +88,7 @@ function PlanScreen() {
   const renderItem = ({ item }) => (
     <View style={styles.eventItem}>
       <Text style={styles.eventText}>Park Name: {item.park_name}</Text>
-      <Text style={styles.eventText}>Address: {item.adress}</Text>
+      <Text style={styles.eventText}>Address: {item.address}</Text>
       <Text style={styles.eventText}>
         Date: {moment(item.date).tz('Europe/Madrid').format('MMMM Do YYYY, HH:mm')}
       </Text>
@@ -140,6 +140,7 @@ const styles = StyleSheet.create({
   text: {
     color: '#fff',
     fontSize: 20,
+    top: 50,
   },
   eventItem: {
     backgroundColor: '#ccc',
