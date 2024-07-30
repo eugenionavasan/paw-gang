@@ -3,7 +3,7 @@
 
 PawGang is a unique mobile application designed for dog owners who want to schedule visits to dog parks and create social encounters for their furry friends. The app helps dog owners plan and coordinate visits, ensuring their pets can socialize, exercise, and have fun together.
 
-## What you need to make it run locally:
+## How to make it run locally:
 
 1. **Set an .env file on your client folder:**
    - Place your Google API key as it follows -> GOOGLE_MAPS_API_KEY=YOUR_KEY
