@@ -21,7 +21,7 @@ import moment from 'moment-timezone';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import axios from 'axios';
 
-const SERVER_URL = 'http://192.168.1.100:3000';
+const SERVER_URL = 'http://192.168.1.103:3000';
 
 function ParkSchedule({ route }) {
   const { place_id, name, vicinity } = route.params;

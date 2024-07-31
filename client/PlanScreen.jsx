@@ -12,7 +12,7 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import { useFocusEffect } from '@react-navigation/native';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
 
-const SERVER_URL = 'http://192.168.1.100:3000/events/user/eugenio';
+const SERVER_URL = 'http://192.168.1.103:3000';
 
 function PlanScreen() {
   const [events, setEvents] = useState([]);
@@ -23,7 +23,7 @@ function PlanScreen() {
 
   const fetchEvents = async () => {
     try {
-      const response = await axios.get(SERVER_URL);
+      const response = await axios.get(`${SERVER_URL}/events/user/eugenio`);
       const currentTime = moment().tz('Europe/Madrid');
       const upcomingEvents = response.data.filter(event =>
         moment(event.date).tz('Europe/Madrid').isSameOrAfter(currentTime, 'minute')
@@ -47,7 +47,7 @@ function PlanScreen() {
 
   const handleDelete = async (_id) => {
     try {
-      await axios.delete(`http://192.168.1.100:3000/events/${_id}`);
+      await axios.delete(`${SERVER_URL}/events/${_id}`);
       setEvents((prevEvents) => prevEvents.filter((item) => item._id !== _id));
     } catch (error) {
       console.error('Error deleting event:', error);
@@ -71,7 +71,7 @@ function PlanScreen() {
     }).toISOString();
 
     try {
-      await axios.put(`http://192.168.1.100:3000/events/${selectedEvent._id}`, {
+      await axios.put(`${SERVER_URL}/events/${selectedEvent._id}`, {
         ...selectedEvent,
         date: updatedEventDate,
       });

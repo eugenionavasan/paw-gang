@@ -3,15 +3,21 @@
 
 PawGang is a unique mobile application designed for dog owners who want to schedule visits to dog parks and create social encounters for their furry friends. The app helps dog owners plan and coordinate visits, ensuring their pets can socialize, exercise, and have fun together.
 
-## How to make it run locally:
+## How to install and make it run locally:
 
-1. **Set an .env file on your client folder:**
-   - Place your Google API key as it follows -> GOOGLE_MAPS_API_KEY=YOUR_KEY
+1. **Install the dependencies on the client and server folder.**
+   -cd client, npm i, then cd ../server and npm i again.
 
-2. **Replace the IP addresses with your own:**
+2. **Set an .env file on your client folder:**
+   - Place your Google Maps API key on the .env file as it follows -> GOOGLE_MAPS_API_KEY=YOUR_KEY
+
+3. **Replace the IP addresses with your own:**
    - On server/index.js const LOCAL_IP_ADRESS = 'YOUR_IP';
-   - On client/PlanScreen.jsx, you need to set your IP in the SERVER_URL const and in the two axios requests.
+   - On client/PlanScreen.jsx, you need to set your IP in the SERVER_URL const.
    - On client/ParkSchedule.jsx, you need to set your IP in the SERVER_URL const.
+
+4. **The app has been design exclusively to work on an iOS system.**
+   - I worked the whole time with an iOS simulator, so some features may not work or fit properly in an Android/Web systems.
 
 ## Key Features:
 
