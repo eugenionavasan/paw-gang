@@ -6,7 +6,7 @@ PawGang is a unique mobile application designed for dog owners who want to sched
 ## How to install and make it run locally:
 
 1. **Install the dependencies on the client and server folder.**
-   -cd client, npm i, then cd ../server and npm i again.
+   - cd client, npm i, then cd ../server and npm i again.
 
 2. **Set an .env file on your client folder:**
    - Place your Google Maps API key on the .env file as it follows -> GOOGLE_MAPS_API_KEY=YOUR_KEY
