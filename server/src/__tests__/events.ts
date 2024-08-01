@@ -34,6 +34,8 @@ afterAll((done) => {
 });
 
 describe('event endpoints', () => {
+  let eventId: string;
+
   test('testing endpoint is valid: /events', async () => {
     const response = await request.get('/events');
     expect(response.status).toBe(200);
@@ -58,5 +60,22 @@ describe('event endpoints', () => {
     expect(response.body.date).toBe(newEvent.date);
     expect(response.body.user).toBe(newEvent.user);
     expect(response.body.dog_avatar).toBe(newEvent.dog_avatar);
+
+    eventId = response.body._id;
+  });
+  test('DELETE /events/:id - should delete the event', async () => {
+    if (!eventId) {
+      throw new Error('No event ID found for deletion test');
+    }
+
+    const response = await request.delete(`/events/${eventId}`);
+    expect(response.status).toBe(200);
+    expect(response.body).toHaveProperty(
+      'message',
+      'Event deleted successfully',
+    );
+
+    const checkResponse = await request.get(`/events/${eventId}`);
+    expect(checkResponse.status).toBe(404);
   });
 });
