@@ -8,7 +8,7 @@ const {
   postEvents,
   deleteEvent,
   editEvent,
-} = require('./controllers/controllers.js');
+} = require('./controllers/eventsController.js');
 
 router.get('/events/', getEvents);
 router.get('/events/park/:place_id', getEventsbyPark);

@@ -1,10 +1,10 @@
 /* eslint-disable no-console */
 /* eslint-disable import/no-extraneous-dependencies */
-import express, { Application, Request, Response, NextFunction } from 'express';
+import express, { Application } from 'express';
 import bodyParser from 'body-parser';
 import cors from 'cors';
 import dotenv from 'dotenv';
-const router = require('./router.ts');
+const router = require('./router');
 import connectToDatabase from './models/index';
 
 // Load environment variables from .env file
