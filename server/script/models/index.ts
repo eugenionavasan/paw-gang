@@ -1,12 +1,18 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
-const connectToDatabase = async () => {
+const connectToDatabase = async (): Promise<void> => {
   try {
-    await mongoose.connect('mongodb://localhost:27017/pawgang');
+    const mongoUri = process.env.MONGODB_URI as string;
+
+    if (!mongoUri) {
+      throw new Error('MONGODB_URI environment variable is not defined');
+    }
+
+    await mongoose.connect(mongoUri);
     console.log('MongoDB connected');
   } catch (error) {
-    console.error('error', error);
+    console.error('Error connecting to MongoDB:', error);
   }
 };
 
-module.exports = connectToDatabase;
+export default connectToDatabase;
