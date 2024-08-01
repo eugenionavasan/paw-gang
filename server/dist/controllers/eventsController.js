@@ -63,8 +63,9 @@ exports.getEventsbyUser = getEventsbyUser;
 const postEvents = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { place_id, park_name, address, date, user, dog_avatar } = req.body;
-        if ((0, utils_1.isValidEvent)(req.body))
+        if (!place_id || !park_name || !address || !date || !user || !dog_avatar) {
             return (0, utils_1.missingBodyHandler)(res, 'EventController/postEvents', 'Event');
+        }
         const newEvent = yield Event.create({
             place_id,
             park_name,

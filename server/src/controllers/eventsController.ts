@@ -79,8 +79,9 @@ export const postEvents = async (
   try {
     const { place_id, park_name, address, date, user, dog_avatar }: IEvent =
       req.body;
-    if (isValidEvent(req.body))
-      return missingBodyHandler(res, 'EventController/postEvents', 'Event');
+      if (!place_id || !park_name || !address || !date || !user || !dog_avatar) {
+        return missingBodyHandler(res, 'EventController/postEvents', 'Event');
+      }
     const newEvent: Event = await Event.create({
       place_id,
       park_name,
