@@ -14,7 +14,7 @@ app.use(bodyParser.json()); // parsing the data from the client
 app.use(router); // using the router
 
 const PORT = 3000;
-const LOCAL_IP_ADRESS = '192.168.1.103';
+const LOCAL_IP_ADRESS = '192.168.0.73';
 
 // connecting to the db and running the server
 

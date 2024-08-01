@@ -21,7 +21,7 @@ import moment from 'moment-timezone';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import axios from 'axios';
 
-const SERVER_URL = 'http://192.168.1.103:3000';
+const SERVER_URL = 'http://192.168.0.73:3000';
 
 function ParkSchedule({ route }) {
   const { place_id, name, vicinity } = route.params;
@@ -37,10 +37,14 @@ function ParkSchedule({ route }) {
   useEffect(() => {
     const fetchEvents = async () => {
       try {
-        const response = await axios.get(`${SERVER_URL}/events/park/${place_id}`);
+        const response = await axios.get(
+          `${SERVER_URL}/events/park/${place_id}`,
+        );
         const data = response.data;
         const formattedEvents = data.reduce((acc, event) => {
-          const dateKey = moment(event.date).tz('Europe/Madrid').format('YYYY-MM-DD');
+          const dateKey = moment(event.date)
+            .tz('Europe/Madrid')
+            .format('YYYY-MM-DD');
           if (!acc[dateKey]) {
             acc[dateKey] = [];
           }
@@ -72,11 +76,13 @@ function ParkSchedule({ route }) {
   };
 
   const handleSaveEvent = async () => {
-    const eventDate = moment.tz(
-      `${selectedDate.format('YYYY-MM-DD')} ${newEventDate}`,
-      'YYYY-MM-DD HH:mm',
-      'Europe/Madrid'
-    ).toISOString();
+    const eventDate = moment
+      .tz(
+        `${selectedDate.format('YYYY-MM-DD')} ${newEventDate}`,
+        'YYYY-MM-DD HH:mm',
+        'Europe/Madrid',
+      )
+      .toISOString();
 
     const eventToAdd = {
       place_id,
@@ -114,10 +120,12 @@ function ParkSchedule({ route }) {
   const renderItem = ({ item }) => {
     const dayEvents = events[selectedDate.format('YYYY-MM-DD')] || [];
     const slotEvents = dayEvents.filter((event) =>
-      moment(event.date).tz('Europe/Madrid').isSame(
-        selectedDate.clone().hour(moment(item, 'HH:mm').hour()),
-        'hour',
-      ),
+      moment(event.date)
+        .tz('Europe/Madrid')
+        .isSame(
+          selectedDate.clone().hour(moment(item, 'HH:mm').hour()),
+          'hour',
+        ),
     );
 
     return (
@@ -162,7 +170,11 @@ function ParkSchedule({ route }) {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Button title="Prev Day" onPress={handlePrevDay} disabled={isPrevDayDisabled} />
+        <Button
+          title="Prev Day"
+          onPress={handlePrevDay}
+          disabled={isPrevDayDisabled}
+        />
         <Text style={styles.date}>{selectedDate.format('dddd, D MMM')}</Text>
         <Button title="Next Day" onPress={handleNextDay} />
       </View>

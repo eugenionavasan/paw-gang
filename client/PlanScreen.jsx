@@ -4,7 +4,15 @@
 /* eslint-disable no-underscore-dangle */
 /* eslint-disable no-unused-vars */
 /* eslint-disable prettier/prettier */
-import { View, Text, StyleSheet, FlatList, TouchableOpacity, Alert, ImageBackground  } from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  FlatList,
+  TouchableOpacity,
+  Alert,
+  ImageBackground,
+} from 'react-native';
 import React, { useState } from 'react';
 import axios from 'axios';
 import moment from 'moment-timezone';
@@ -12,7 +20,7 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import { useFocusEffect } from '@react-navigation/native';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
 
-const SERVER_URL = 'http://192.168.1.103:3000';
+const SERVER_URL = 'http://192.168.0.73:3000';
 
 function PlanScreen() {
   const [events, setEvents] = useState([]);
@@ -25,12 +33,18 @@ function PlanScreen() {
     try {
       const response = await axios.get(`${SERVER_URL}/events/user/eugenio`);
       const currentTime = moment().tz('Europe/Madrid');
-      const upcomingEvents = response.data.filter(event =>
-        moment(event.date).tz('Europe/Madrid').isSameOrAfter(currentTime, 'minute')
+      const upcomingEvents = response.data.filter((event) =>
+        moment(event.date)
+          .tz('Europe/Madrid')
+          .isSameOrAfter(currentTime, 'minute'),
       );
 
-      upcomingEvents.sort((a, b) => moment(a.date).tz('Europe/Madrid') - moment(b.date).tz('Europe/Madrid'));
-      
+      upcomingEvents.sort(
+        (a, b) =>
+          moment(a.date).tz('Europe/Madrid') -
+          moment(b.date).tz('Europe/Madrid'),
+      );
+
       setEvents(upcomingEvents);
     } catch (error) {
       console.error('Error fetching events:', error);
@@ -42,7 +56,7 @@ function PlanScreen() {
   useFocusEffect(
     React.useCallback(() => {
       fetchEvents();
-    }, [])
+    }, []),
   );
 
   const handleDelete = async (_id) => {
@@ -64,11 +78,14 @@ function PlanScreen() {
     const newTime = moment(time).tz('Europe/Madrid').format('HH:mm');
     setNewEventTime(newTime);
 
-    const updatedEventDate = moment(selectedEvent.date).tz('Europe/Madrid').set({
-      hour: moment(time).hour(),
-      minute: 0,
-      second: 0
-    }).toISOString();
+    const updatedEventDate = moment(selectedEvent.date)
+      .tz('Europe/Madrid')
+      .set({
+        hour: moment(time).hour(),
+        minute: 0,
+        second: 0,
+      })
+      .toISOString();
 
     try {
       await axios.put(`${SERVER_URL}/events/${selectedEvent._id}`, {
@@ -90,12 +107,19 @@ function PlanScreen() {
       <Text style={styles.eventText}>Park Name: {item.park_name}</Text>
       <Text style={styles.eventText}>Address: {item.address}</Text>
       <Text style={styles.eventText}>
-        Date: {moment(item.date).tz('Europe/Madrid').format('MMMM Do YYYY, HH:mm')}
+        Date:{' '}
+        {moment(item.date).tz('Europe/Madrid').format('MMMM Do YYYY, HH:mm')}
       </Text>
-      <TouchableOpacity style={styles.editButton} onPress={() => handleEdit(item)}>
+      <TouchableOpacity
+        style={styles.editButton}
+        onPress={() => handleEdit(item)}
+      >
         <Icon name="hammer-outline" size={20} color="#fff" />
       </TouchableOpacity>
-      <TouchableOpacity style={styles.deleteButton} onPress={() => handleDelete(item._id)}>
+      <TouchableOpacity
+        style={styles.deleteButton}
+        onPress={() => handleDelete(item._id)}
+      >
         <Icon name="trash" size={20} color="#fff" />
       </TouchableOpacity>
     </View>
@@ -115,7 +139,9 @@ function PlanScreen() {
         data={events}
         renderItem={renderItem}
         keyExtractor={(item) => item._id}
-        ListEmptyComponent={<Text style={styles.text}>No upcoming events found</Text>}
+        ListEmptyComponent={
+          <Text style={styles.text}>No upcoming events found</Text>
+        }
       />
       <DateTimePickerModal
         isVisible={isTimePickerVisible}
