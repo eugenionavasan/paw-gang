@@ -1,22 +1,14 @@
 import { ObjectId } from 'mongoose';
 
 export interface IUser {
-  _id: ObjectId;
+  _id?: ObjectId;
   username: string;
   email: string;
   password: string;
   dogName: string;
   events: ObjectId[] | []; // ! or null?
-  createdAt: Date;
-  updatedAt: Date;
-}
-
-// ! more elegant way?
-export interface UserRequestType {
-  username: string;
-  email: string;
-  password: string;
-  dogName: string;
+  createdAt?: Date;
+  updatedAt?: Date;
 }
 
 // Define an interface representing a doocument in mongoDB (Typescript)
@@ -27,4 +19,7 @@ export interface IEvent {
   date: Date;
   user: string;
   dog_avatar: string;
+  _id?: string;
+  createdAt?: Date;
+  updatedAt?: Date;
 }

@@ -1,7 +1,6 @@
 import mongoose from 'mongoose';
 import { IUser } from '../types';
-import { Event } from './events'; // ! refactor to import with events.ts
-const { Schema, model } = mongoose;
+import { Schema, model } from 'mongoose';
 
 export interface UserModel extends mongoose.Model<IUser> {}
 

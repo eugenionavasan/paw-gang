@@ -1,4 +1,4 @@
-import mongoose, { Schema } from 'mongoose';
+import mongoose, { Schema, model } from 'mongoose';
 import { IEvent } from '../types';
 
 export interface EventModel extends mongoose.Model<IEvent> {}
@@ -17,4 +17,4 @@ export const eventSchema: Schema<IEvent, EventModel> = new Schema({
   dog_avatar: { type: String, required: true },
 });
 
-export const Event = mongoose.model<IEvent, EventModel>('Event', eventSchema);
+export const Event: EventModel = model<IEvent, EventModel>('Event', eventSchema);

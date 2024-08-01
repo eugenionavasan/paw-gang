@@ -3,9 +3,11 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "server": "node build/server.js",
-    "build": "tsc"
+    "test": "jest --detectOpenHandles",
+    "server": "node dist/server.js",
+    "build": "tsc",
+    "dev": "concurrently \"tsc -w\" \"node dist/server.js\"",
+    "devN": "concurrently \"tsc -w\" \"nodemon dist/server.js\""
   },
   "keywords": [],
   "author": "",
@@ -25,9 +27,16 @@
     "mongoose": "^8.5.1"
   },
   "devDependencies": {
+    "@jest/globals": "^29.7.0",
     "@types/express": "^4.17.21",
+    "@types/jest": "^29.5.12",
     "@types/node": "^22.0.2",
+    "@types/supertest": "^6.0.2",
+    "concurrently": "^8.2.2",
+    "jest": "^29.7.0",
     "nodemon": "^3.1.4",
+    "supertest": "^7.0.0",
+    "ts-jest": "^29.2.4",
     "typescript": "^5.5.4"
   }
 }
