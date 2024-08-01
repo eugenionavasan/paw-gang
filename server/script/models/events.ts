@@ -1,7 +1,7 @@
-import mongoose, { Document, Schema } from 'mongoose';
+import mongoose, { Schema } from 'mongoose';
 
 // Define an interface representing a doocument in mongoDB (Typescript)
-interface IEvent extends Document {
+interface IEvent {
   place_id: string;
   park_name: string;
   address: string;

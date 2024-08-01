@@ -16,7 +16,7 @@ interface Event {
 
 const getEvents = async (req: Request, res: Response): Promise<void> => {
   try {
-    const events = await models.find();
+    const events: Event[] = await models.find();
     res.status(200).json(events);
   } catch (error) {
     res.status(500).send();
@@ -33,7 +33,7 @@ const getEventsbyPark = async (req: Request, res: Response): Promise<void> => {
       return;
     }
 
-    const events = await models.find({ place_id });
+    const events: Event = await models.find({ place_id });
     res.status(200).json(events);
   } catch (error) {
     res.status(500).json({ message: 'Internal Server Error' });
@@ -50,7 +50,7 @@ const getEventsbyUser = async (req: Request, res: Response): Promise<void> => {
       return;
     }
 
-    const events = await models.find({ user });
+    const events: Event[] = await models.find({ user });
     res.status(200).json(events);
   } catch (error) {
     res.status(500).json({ message: 'Internal Server Error' });
@@ -69,7 +69,7 @@ const postEvents = async (req: Request, res: Response): Promise<void> => {
       return;
     }
 
-    const newEvent = await models.create({
+    const newEvent: Event = await models.create({
       place_id,
       park_name,
       address,
@@ -96,7 +96,7 @@ const deleteEvent = async (req: Request, res: Response): Promise<void> => {
       return;
     }
 
-    const deletedEvent = await models.findByIdAndDelete(_id);
+    const deletedEvent: Event = await models.findByIdAndDelete(_id);
 
     if (!deletedEvent) {
       res.status(404).json({ message: 'Event not found' });
@@ -109,6 +109,7 @@ const deleteEvent = async (req: Request, res: Response): Promise<void> => {
   } catch (error) {
     console.error('Error deleting event:', error);
 
+    // Talk with Gerry
     if (error instanceof Error) {
       res
         .status(500)
@@ -136,7 +137,7 @@ const editEvent = async (req: Request, res: Response): Promise<void> => {
       return;
     }
 
-    const updatedEvent = await models.findByIdAndUpdate(
+    const updatedEvent: Event = await models.findByIdAndUpdate(
       _id,
       { date },
       { new: true, runValidators: true },
