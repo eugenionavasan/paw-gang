@@ -4,7 +4,7 @@ import express, { Application } from 'express';
 import bodyParser from 'body-parser';
 import cors from 'cors';
 import dotenv from 'dotenv';
-const router = require('./router');
+import { router } from './routers/index';
 import connectToDatabase from './models/index';
 
 // Load environment variables from .env file

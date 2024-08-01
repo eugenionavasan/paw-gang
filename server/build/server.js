@@ -18,21 +18,21 @@ const express_1 = __importDefault(require("express"));
 const body_parser_1 = __importDefault(require("body-parser"));
 const cors_1 = __importDefault(require("cors"));
 const dotenv_1 = __importDefault(require("dotenv"));
-const router = require('./router');
-const index_1 = __importDefault(require("./models/index"));
+const index_1 = require("./routers/index");
+const index_2 = __importDefault(require("./models/index"));
 // Load environment variables from .env file
 dotenv_1.default.config();
 const app = (0, express_1.default)();
 // middlewares
 app.use((0, cors_1.default)()); // Cross-Origin Resource Sharing to allow requests from the client
 app.use(body_parser_1.default.json()); // Parsing the data from the client
-app.use(router); // Using the router
+app.use(index_1.router); // Using the router
 const PORT = process.env.PORT || 3000;
 const LOCAL_IP_ADDRESS = process.env.LOCAL_IP_ADDRESS || '127.0.0.1';
 // connecting to the db and running the server
 const startServer = () => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        yield (0, index_1.default)();
+        yield (0, index_2.default)();
         app.listen(Number(PORT), LOCAL_IP_ADDRESS, () => {
             console.log(`Server is running on http://${LOCAL_IP_ADDRESS}:${PORT}`);
         });

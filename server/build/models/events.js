@@ -23,9 +23,10 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.Event = exports.eventSchema = void 0;
 const mongoose_1 = __importStar(require("mongoose"));
 // defining the Schema for the Events
-const eventSchema = new mongoose_1.Schema({
+exports.eventSchema = new mongoose_1.Schema({
     place_id: { type: String, required: true },
     park_name: { type: String, required: true },
     address: { type: String, required: true },
@@ -37,5 +38,4 @@ const eventSchema = new mongoose_1.Schema({
     user: { type: String, required: true },
     dog_avatar: { type: String, required: true },
 });
-const Event = mongoose_1.default.model('Event', eventSchema);
-module.exports = Event;
+exports.Event = mongoose_1.default.model('Event', exports.eventSchema);

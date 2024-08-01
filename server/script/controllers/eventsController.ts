@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-const models = require('../models/events.js');
+const { Event } = require('../models/events');
 
 // Interface for the Event model (adjust according to your schema)
 interface Event {
@@ -14,18 +14,21 @@ interface Event {
 
 // GET EVENTS (I don't need this one but i am having it for thunderclient testing purposes)
 
-const getEvents = async (req: Request, res: Response): Promise<void> => {
+export const getEvents = async (req: Request, res: Response): Promise<void> => {
   try {
-    const events: Event[] = await models.find();
+    const events = await Event.find();
     res.status(200).json(events);
   } catch (error) {
-    res.status(500).send();
+    res.status(500).send('Invalid');
   }
 };
 
 // GET EVENTS by place_id
 
-const getEventsbyPark = async (req: Request, res: Response): Promise<void> => {
+export const getEventsbyPark = async (
+  req: Request,
+  res: Response,
+): Promise<void> => {
   try {
     const { place_id } = req.params;
     if (!place_id) {
@@ -33,7 +36,7 @@ const getEventsbyPark = async (req: Request, res: Response): Promise<void> => {
       return;
     }
 
-    const events: Event = await models.find({ place_id });
+    const events: Event = await Event.find({ place_id });
     res.status(200).json(events);
   } catch (error) {
     res.status(500).json({ message: 'Internal Server Error' });
@@ -42,7 +45,10 @@ const getEventsbyPark = async (req: Request, res: Response): Promise<void> => {
 
 // GET EVENTS by user
 
-const getEventsbyUser = async (req: Request, res: Response): Promise<void> => {
+export const getEventsbyUser = async (
+  req: Request,
+  res: Response,
+): Promise<void> => {
   try {
     const { user } = req.params;
     if (!user) {
@@ -50,7 +56,7 @@ const getEventsbyUser = async (req: Request, res: Response): Promise<void> => {
       return;
     }
 
-    const events: Event[] = await models.find({ user });
+    const events: Event[] = await Event.find({ user });
     res.status(200).json(events);
   } catch (error) {
     res.status(500).json({ message: 'Internal Server Error' });
@@ -59,7 +65,10 @@ const getEventsbyUser = async (req: Request, res: Response): Promise<void> => {
 
 // POST EVENT
 
-const postEvents = async (req: Request, res: Response): Promise<void> => {
+export const postEvents = async (
+  req: Request,
+  res: Response,
+): Promise<void> => {
   try {
     const { place_id, park_name, address, date, user, dog_avatar } =
       req.body as Event;
@@ -69,7 +78,7 @@ const postEvents = async (req: Request, res: Response): Promise<void> => {
       return;
     }
 
-    const newEvent: Event = await models.create({
+    const newEvent: Event = await Event.create({
       place_id,
       park_name,
       address,
@@ -87,7 +96,10 @@ const postEvents = async (req: Request, res: Response): Promise<void> => {
 
 //DELETE EVENT
 
-const deleteEvent = async (req: Request, res: Response): Promise<void> => {
+export const deleteEvent = async (
+  req: Request,
+  res: Response,
+): Promise<void> => {
   try {
     const { _id } = req.params;
 
@@ -96,7 +108,7 @@ const deleteEvent = async (req: Request, res: Response): Promise<void> => {
       return;
     }
 
-    const deletedEvent: Event = await models.findByIdAndDelete(_id);
+    const deletedEvent: Event = await Event.findByIdAndDelete(_id);
 
     if (!deletedEvent) {
       res.status(404).json({ message: 'Event not found' });
@@ -122,7 +134,7 @@ const deleteEvent = async (req: Request, res: Response): Promise<void> => {
 
 //EDIT EVENT only the date
 
-const editEvent = async (req: Request, res: Response): Promise<void> => {
+export const editEvent = async (req: Request, res: Response): Promise<void> => {
   try {
     const { _id } = req.params;
     const { date } = req.body;
@@ -137,7 +149,7 @@ const editEvent = async (req: Request, res: Response): Promise<void> => {
       return;
     }
 
-    const updatedEvent: Event = await models.findByIdAndUpdate(
+    const updatedEvent: Event = await Event.findByIdAndUpdate(
       _id,
       { date },
       { new: true, runValidators: true },
@@ -156,12 +168,3 @@ const editEvent = async (req: Request, res: Response): Promise<void> => {
     res.status(500).json({ message: 'Internal Server Error' });
   }
 };
-
-module.exports = {
-  getEventsbyPark,
-  getEventsbyUser,
-  getEvents,
-  postEvents,
-  deleteEvent,
-  editEvent,
-}; // exporting the functions to be used in the router

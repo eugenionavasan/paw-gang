@@ -1,17 +1,10 @@
 import mongoose, { Schema } from 'mongoose';
+import { IEvent } from '../types';
 
-// Define an interface representing a doocument in mongoDB (Typescript)
-interface IEvent {
-  place_id: string;
-  park_name: string;
-  address: string;
-  date: Date;
-  user: string;
-  dog_avatar: string;
-}
+export interface EventModel extends mongoose.Model<IEvent> {}
 
 // defining the Schema for the Events
-const eventSchema: Schema<IEvent> = new Schema({
+export const eventSchema: Schema<IEvent, EventModel> = new Schema({
   place_id: { type: String, required: true },
   park_name: { type: String, required: true },
   address: { type: String, required: true },
@@ -24,6 +17,4 @@ const eventSchema: Schema<IEvent> = new Schema({
   dog_avatar: { type: String, required: true },
 });
 
-const Event = mongoose.model<IEvent>('Event', eventSchema);
-
-module.exports = Event;
+export const Event = mongoose.model<IEvent, EventModel>('Event', eventSchema);

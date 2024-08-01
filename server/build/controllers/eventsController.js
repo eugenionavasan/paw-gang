@@ -9,17 +9,19 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const models = require('../models/events.js');
+exports.editEvent = exports.deleteEvent = exports.postEvents = exports.getEventsbyUser = exports.getEventsbyPark = exports.getEvents = void 0;
+const { Event } = require('../models/events');
 // GET EVENTS (I don't need this one but i am having it for thunderclient testing purposes)
 const getEvents = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const events = yield models.find();
+        const events = yield Event.find();
         res.status(200).json(events);
     }
     catch (error) {
-        res.status(500).send();
+        res.status(500).send('Invalid');
     }
 });
+exports.getEvents = getEvents;
 // GET EVENTS by place_id
 const getEventsbyPark = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
@@ -28,13 +30,14 @@ const getEventsbyPark = (req, res) => __awaiter(void 0, void 0, void 0, function
             res.status(400).json({ message: 'place_id is required' });
             return;
         }
-        const events = yield models.find({ place_id });
+        const events = yield Event.find({ place_id });
         res.status(200).json(events);
     }
     catch (error) {
         res.status(500).json({ message: 'Internal Server Error' });
     }
 });
+exports.getEventsbyPark = getEventsbyPark;
 // GET EVENTS by user
 const getEventsbyUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
@@ -43,13 +46,14 @@ const getEventsbyUser = (req, res) => __awaiter(void 0, void 0, void 0, function
             res.status(400).json({ message: 'user is required' });
             return;
         }
-        const events = yield models.find({ user });
+        const events = yield Event.find({ user });
         res.status(200).json(events);
     }
     catch (error) {
         res.status(500).json({ message: 'Internal Server Error' });
     }
 });
+exports.getEventsbyUser = getEventsbyUser;
 // POST EVENT
 const postEvents = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
@@ -58,7 +62,7 @@ const postEvents = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
             res.status(400).json({ error: 'Missing required parameters.' });
             return;
         }
-        const newEvent = yield models.create({
+        const newEvent = yield Event.create({
             place_id,
             park_name,
             address,
@@ -73,6 +77,7 @@ const postEvents = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
         res.status(500).send();
     }
 });
+exports.postEvents = postEvents;
 //DELETE EVENT
 const deleteEvent = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
@@ -81,7 +86,7 @@ const deleteEvent = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
             res.status(400).json({ message: '_id is required' });
             return;
         }
-        const deletedEvent = yield models.findByIdAndDelete(_id);
+        const deletedEvent = yield Event.findByIdAndDelete(_id);
         if (!deletedEvent) {
             res.status(404).json({ message: 'Event not found' });
             return;
@@ -92,6 +97,7 @@ const deleteEvent = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
     }
     catch (error) {
         console.error('Error deleting event:', error);
+        // Talk with Gerry
         if (error instanceof Error) {
             res
                 .status(500)
@@ -102,6 +108,7 @@ const deleteEvent = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
         }
     }
 });
+exports.deleteEvent = deleteEvent;
 //EDIT EVENT only the date
 const editEvent = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
@@ -115,7 +122,7 @@ const editEvent = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
             res.status(400).json({ message: 'date is required for updating' });
             return;
         }
-        const updatedEvent = yield models.findByIdAndUpdate(_id, { date }, { new: true, runValidators: true });
+        const updatedEvent = yield Event.findByIdAndUpdate(_id, { date }, { new: true, runValidators: true });
         if (!updatedEvent) {
             res.status(404).json({ message: 'Event not found' });
             return;
@@ -129,11 +136,4 @@ const editEvent = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         res.status(500).json({ message: 'Internal Server Error' });
     }
 });
-module.exports = {
-    getEventsbyPark,
-    getEventsbyUser,
-    getEvents,
-    postEvents,
-    deleteEvent,
-    editEvent,
-}; // exporting the functions to be used in the router
+exports.editEvent = editEvent;
