@@ -20,12 +20,15 @@ const PORT = process.env.PORT || 3000;
 const LOCAL_IP_ADDRESS = process.env.LOCAL_IP_ADDRESS || '127.0.0.1';
 
 // connecting to the db and running the server
-connectToDatabase()
-  .then(() => {
+const startServer = async (): Promise<void> => {
+  try {
+    await connectToDatabase();
     app.listen(Number(PORT), LOCAL_IP_ADDRESS, () => {
       console.log(`Server is running on http://${LOCAL_IP_ADDRESS}:${PORT}`);
     });
-  })
-  .catch((error) => {
+  } catch (error) {
     console.error('Failed to connect to the database:', error);
-  });
+  }
+};
+
+startServer();
