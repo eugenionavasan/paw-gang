@@ -1,6 +1,6 @@
 import {ObjectId, Document} from "mongoose";
 
-export interface UserType {
+export interface IUser {
   _id: ObjectId;
   username: string;
   email: string;
@@ -17,4 +17,14 @@ export interface UserRequestType {
   email: string;
   password: string;
   dogName: string;
+}
+
+// Define an interface representing a doocument in mongoDB (Typescript)
+export interface IEvent {
+  place_id: string;
+  park_name: string;
+  address: string;
+  date: Date;
+  user: string;
+  dog_avatar: string;
 }

@@ -1,11 +1,11 @@
 import mongoose from 'mongoose';
-import {UserType} from '../types';
-const {events} = require('./events'); // ! refactor to import with events.ts
+import {IUser} from '../types';
+import {Event} from './events'; // ! refactor to import with events.ts
 const {Schema, model} = mongoose;
 
-export interface UserModel extends mongoose.Model<UserType> { };
+export interface UserModel extends mongoose.Model<IUser> { };
 
-const userSchema = new Schema<UserType, UserModel>({
+const userSchema = new Schema<IUser, UserModel>({
   username: {
     type: String,
     required: true,
@@ -23,9 +23,9 @@ const userSchema = new Schema<UserType, UserModel>({
     required: true,
   },
   events: {
-    type: [events],
+    type: [Event],
     ref: 'Events',
   }
 });
 
-export const User: UserModel = model<UserType, UserModel>('Users', userSchema)
+export const User: UserModel = model<IUser, UserModel>('Users', userSchema)

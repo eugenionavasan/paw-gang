@@ -10,9 +10,9 @@ const {
   editEvent,
 } = require('./controllers/eventsController.js');
 
-router.get('/events/', getEvents);
-router.get('/events/park/:place_id', getEventsbyPark);
-router.get('/events/user/:user', getEventsbyUser);
-router.post('/events', postEvents);
-router.delete('/events/:_id', deleteEvent);
-router.put('/events/:_id', editEvent);
+eventRouter.get('/events/', getEvents);
+eventRouter.get('/events/park/:place_id', getEventsbyPark);
+eventRouter.get('/events/user/:user', getEventsbyUser);
+eventRouter.post('/events', postEvents);
+eventRouter.delete('/events/:_id', deleteEvent);
+eventRouter.put('/events/:_id', editEvent);

@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
-import { User, UserModel } from '../models/users';
-import { UserType } from '../types';
+import { User } from '../models/users';
+import { IUser } from '../types';
 import { errorHandler, badRequestHandler, isValidUser } from '../utils/utils';
 import { Document } from 'mongoose';
 
@@ -13,9 +13,9 @@ interface UserControllerType {
 
 const UserController: UserControllerType = {
   getOne: async (err: Error, req: Request, res: Response): Promise<void> => {
-    // ! type explicit
+    // ! type explicit // try catch
     const { _id } = req.params;
-    const user: UserType | null = await User.findById(_id);
+    const user: IUser | null = await User.findById(_id);
     if (!user) {
       badRequestHandler(
         err,
@@ -27,7 +27,6 @@ const UserController: UserControllerType = {
         _id,
       );
     } else {
-      // ! not sure if we want to send back the user
       res.status(200).send(user);
     }
     // ! does err argument work like this?
@@ -38,9 +37,9 @@ const UserController: UserControllerType = {
 
   postOne: async (err: Error, req: Request, res: Response): Promise<void> => {
     if (isValidUser(req.body)) {
-      const {email, password, username, dogName}: UserType = req.body;
+      const {email, password, username, dogName}: IUser = req.body;
       // !!! types
-      const user: UserType = await User.create()
+      const user: IUser = await User.create({email, password, username, dogName})
       res.status(200).send(user);
     } else {
       console.error('Missing user information');
