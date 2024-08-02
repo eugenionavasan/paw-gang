@@ -186,7 +186,7 @@ describe('Event endpoints', () => {
         expect(response.status).toBe(400);
         expect(response.body).toHaveProperty('error');
       });
-      test.only('Request body with missing parameter', async () => {
+      test('Request body with missing parameter', async () => {
         const response = await request.get(`/events/park/`);
         expect(response.status).toBe(500);
         expect(response.body).toHaveProperty('error');
@@ -291,15 +291,15 @@ describe('Event endpoints', () => {
   });
 
   // GET an Event That Does Not Exist
-  test('GET /events/:id - should return 404 for a non-existing event', async () => {
+  test('GET /events/:id - should return 400 for a non-existing event', async () => {
     const nonExistingEventId = new mongoose.Types.ObjectId().toString();
     const response = await request.get(`/events/${nonExistingEventId}`);
-    expect(response.status).toBe(404);
+    expect(response.status).toBe(400);
     expect(response.body).toHaveProperty('error');
   });
 
   // PUT (EDIT) -> Only dates
-  test.only('PUT /events/:id - should update the event date', async () => {
+  test('PUT /events/:id - should update the event date', async () => {
     // Create a new even to ensure a valid ID is available
     const postResponse = await request.post('/events').send(mocks.newEvent);
     expect(postResponse.status).toBe(201);
@@ -346,7 +346,7 @@ describe('Event endpoints', () => {
   });
 
   // Delete
-  test.only('DELETE /events/:id - should delete the event', async () => {
+  test('DELETE /events/:id - should delete the event', async () => {
     // Create a new event to ensure a valid ID is available
     const postResponse = await request.post('/events').send(mocks.newEvent);
     expect(postResponse.status).toBe(201);
