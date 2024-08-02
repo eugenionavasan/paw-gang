@@ -14,7 +14,6 @@ import {
   ImageBackground,
 } from 'react-native';
 import React, { useState } from 'react';
-import axios from 'axios';
 import moment from 'moment-timezone';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { useFocusEffect } from '@react-navigation/native';

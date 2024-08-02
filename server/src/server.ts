@@ -2,14 +2,16 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import bodyParser from 'body-parser';
 import cors from 'cors';
-import dotenv from 'dotenv';
+import {SERVER_PORT, LOCAL_IP_ADDRESS} from './config';
 import express, { Application } from 'express';
 import { errorHandler } from './middleware/errorHandler';
 import connectToDatabase from './models/index';
 import { router } from './routers/index';
+import {config} from 'dotenv';
 
-// Load environment variables from .env file
-dotenv.config();
+// Load environment variables from config file
+config();
+
 export const app: Application = express();
 
 // middlewares
@@ -18,17 +20,14 @@ app.use(bodyParser.json()); // Parsing the data from the client
 app.use(router); // Using the router
 app.use(errorHandler); // Error middleware
 
-const PORT = process.env.PORT || 3000;
-const LOCAL_IP_ADDRESS = process.env.LOCAL_IP_ADDRESS || '127.0.0.1';
-
 // connecting to the db and running the server
 // ! add server.close()
 const startServer = async (): Promise<void> => {
   try {
     await connectToDatabase();
     if (process.env.NODE_ENV !== 'test') {
-      app.listen(Number(PORT), LOCAL_IP_ADDRESS, () => {
-        console.log(`Server is running on http://${LOCAL_IP_ADDRESS}:${PORT}`);
+      app.listen(Number(SERVER_PORT), LOCAL_IP_ADDRESS, () => {
+        console.log(`Server is running on http://${LOCAL_IP_ADDRESS}:${SERVER_PORT}`);
       });
     } else {
       console.log('Running in test mode; server not started.');

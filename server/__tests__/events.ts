@@ -2,17 +2,19 @@ import { describe, beforeAll, afterAll, beforeEach, afterEach, expect, test } fr
 import dotenv from 'dotenv';
 import mongoose from 'mongoose';
 import express from 'express';
-import {router} from '../routers/index';
-import { errorHandler } from '../middleware/errorHandler';
-import { Event } from '../models/events';
+import {router} from '../src/routers/index';
+import { errorHandler } from '../src/middleware/errorHandler';
+import { Event } from '../src/models/events';
 import supertest from 'supertest';
 import { mocks } from '../mocks/mock';
-import { IEvent, IInvalidEvent, IResEvent } from '../types';
+import { IEvent, IInvalidEvent, IResEvent } from '../src/types';
+import { TEST_MONOGDB_URI } from '../src/config';
+
 
 dotenv.config();
 
 const dbName = 'events';
-const dbUri = `${process.env.TEST_MONGODB_URI || 'mongodb://127.0.0.1:27017/paw-gang-test'}-${dbName}`;
+const dbUri = `${TEST_MONOGDB_URI}-${dbName}`;
 
 beforeAll(async () => {
   mongoose.connect(dbUri);

@@ -10,16 +10,17 @@ import {
 import dotenv from 'dotenv';
 import mongoose from 'mongoose';
 import supertest from 'supertest';
-import { User } from '../models/users';
+import { User } from '../src/models/users';
 import { mocks } from '../mocks/mock';
 import express from 'express';
-import { router } from '../routers/index';
-import { errorHandler } from '../middleware/errorHandler';
+import { router } from '../src/routers/index';
+import { errorHandler } from '../src/middleware/errorHandler';
+import {TEST_MONOGDB_URI} from '../src/config'
 
 dotenv.config();
 
-const dbName = 'events';
-const dbUri = `${process.env.TEST_MONGODB_URI || 'mongodb://127.0.0.1:27017/paw-gang-test'}-${dbName}`;
+const dbName = 'users';
+const dbUri = `${TEST_MONOGDB_URI}-${dbName}`;
 
 beforeAll(async () => {
   mongoose.connect(dbUri);
@@ -68,7 +69,7 @@ describe('user endpoints', () => {
   // GET -> Id
   test('GET /users/:id - should retrieve a user by its ID', async () => {
     const post = await request.post('/users').send(mocks.newUser);
-    const {_id} = post.body;
+    const { _id } = post.body;
     const response = await request.get(`/users/${_id}`);
     expect(response.status).toBe(200);
     expect(response.body).toHaveProperty('_id', _id);
