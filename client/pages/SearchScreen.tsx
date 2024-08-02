@@ -1,6 +1,6 @@
 /* eslint-disable react-native/no-color-literals */
 /* eslint-disable camelcase */
-import { useState } from 'react';
+import {useState} from 'react';
 import {
   StyleSheet,
   Text,
@@ -14,11 +14,11 @@ import {
 import axios from 'axios';
 import Constants from 'expo-constants';
 import * as Location from 'expo-location';
-import { useNavigation } from '@react-navigation/native';
+import {useNavigation} from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/Ionicons';
-import CustomButton from './customButton';
+import CustomButton from '../components/customButton';
 
-function SearchScreen() {
+function SearchScreen () {
   const [locationInput, setLocationInput] = useState('');
   const [dogParks, setDogParks] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -42,7 +42,7 @@ function SearchScreen() {
 
       const geocodeResults = geocodeResponse.data.results;
       if (geocodeResults?.length > 0) {
-        const { lat, lng } = geocodeResults[0].geometry.location;
+        const {lat, lng} = geocodeResults[0].geometry.location;
 
         const placesResponse = await axios.get(
           `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${lat},${lng}&radius=5000&type=park&keyword=dog%20park&key=${apiKey}`,
@@ -73,7 +73,7 @@ function SearchScreen() {
     setError(null);
 
     try {
-      const { status } = await Location.requestForegroundPermissionsAsync();
+      const {status} = await Location.requestForegroundPermissionsAsync();
       if (status !== 'granted') {
         setError('Permission to access location was denied');
         setIsLoading(false);
@@ -81,7 +81,7 @@ function SearchScreen() {
       }
 
       const location = await Location.getCurrentPositionAsync({});
-      const { latitude, longitude } = location.coords;
+      const {latitude, longitude} = location.coords;
 
       const placesResponse = await axios.get(
         `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${latitude},${longitude}&radius=5000&type=park&keyword=dog%20park&key=${apiKey}`,
@@ -96,7 +96,7 @@ function SearchScreen() {
   };
 
   const handlePlanVisit = (place_id, name, vicinity) => {
-    navigation.navigate('ParkSchedule', { place_id, name, vicinity });
+    navigation.navigate('ParkSchedule', {place_id, name, vicinity});
   };
 
   return (
@@ -126,13 +126,13 @@ function SearchScreen() {
       <FlatList
         data={dogParks}
         keyExtractor={(item) => item.place_id}
-        renderItem={({ item }) => (
+        renderItem={({item}) => (
           <View style={styles.parkItem}>
             <Text style={styles.parkName}>{item.name}</Text>
             {item.photos && item.photos.length > 0 && (
               <Image
                 style={styles.parkImage}
-                source={{ uri: getPhotoUrl(item.photos[0].photo_reference) }}
+                source={{uri: getPhotoUrl(item.photos[0].photo_reference)}}
               />
             )}
             <Text>{item.vicinity}</Text>
