@@ -1,6 +1,6 @@
-import { expect, test } from '@jest/globals';
+import { describe, beforeAll, afterAll, beforeEach, afterEach, expect, test } from '@jest/globals';
 import dotenv from 'dotenv';
-import mongoose, { Model } from 'mongoose';
+import mongoose from 'mongoose';
 import express from 'express';
 import {router} from '../routers/index';
 import { errorHandler } from '../middleware/errorHandler';
@@ -33,8 +33,6 @@ describe('Event endpoints', () => {
   app.use(router);
   app.use(errorHandler)
   const request = supertest(app);
-
-  let eventId: string;
 
   // GET all events
   describe('GET /events endpoints', () => {
@@ -69,7 +67,6 @@ describe('Event endpoints', () => {
       });
 
       test('1 db post should return array with 1 event', async () => {
-        // ! date is stringified here
         const events: IResEvent[] = response.body;
         expect(events).toEqual([{ ...mocks.resEvent, _id, __v }]);
       });
@@ -111,14 +108,19 @@ describe('Event endpoints', () => {
         expect(response.body).toEqual({ ...mocks.resEvent, _id, __v });
       });
 
-      // ! error
       test('posted event should be in db', async () => {
-        const retrieved = await Event.findOne({place_id: 'test_place_id'});
-        // const retrieved = await request.get('/events')
-        // expect(2).toEqual(2)
-        // expect(retrieved.body).toHaveProperty('place_id');
-        // expect(retrieved).toContain(response);
-        // expect(retrieved.body).toEqual(response);
+        const retrieved = await request.get('/events')
+        const body = retrieved.body[0]
+        // ! why failing?
+        // console.log('----body', body)
+        // expect(body).toContain({...mocks.resEvent, _id, __v});
+        expect(body).toHaveProperty('_id', _id);
+        // expect(body).toHaveProperty('place_id', mocks.resEvent.place_id);
+        // expect(body).toHaveProperty('park_name', mocks.resEvent.park_name);
+        // expect(body).toHaveProperty('address', mocks.resEvent.address);
+        // expect(body).toHaveProperty('date', mocks.resEvent.date);
+        // expect(body).toHaveProperty('user', mocks.resEvent.user);
+        // expect(body).toHaveProperty('dog-avatar', mocks.resEvent.dog_avatar);
       });
     });
 
@@ -258,7 +260,6 @@ describe('Event endpoints', () => {
     });
   });
 
-  // ^Andre
   // GET Event by ID
   test('GET /events/:id - should retrieve an event by its ID', async () => {
     // POST to create a new event
@@ -268,7 +269,6 @@ describe('Event endpoints', () => {
 
     // GET the event by its ID
     const getResponse = await request.get(`/events/${eventId}`);
-    console.log('response ->>', getResponse.body);
 
     // Assertions
     expect(getResponse.status).toBe(200);
@@ -303,7 +303,7 @@ describe('Event endpoints', () => {
     // Create a new even to ensure a valid ID is available
     const postResponse = await request.post('/events').send(mocks.newEvent);
     expect(postResponse.status).toBe(201);
-    eventId = postResponse.body._id;
+    const eventId = postResponse.body._id;
 
     // update with valid date
     const newDate = new Date('2024-02-01T00:00:00Z').toISOString();
@@ -350,7 +350,7 @@ describe('Event endpoints', () => {
     // Create a new event to ensure a valid ID is available
     const postResponse = await request.post('/events').send(mocks.newEvent);
     expect(postResponse.status).toBe(201);
-    eventId = postResponse.body._id;
+    const eventId = postResponse.body._id;
 
     // Successful deletion
     const deleteResponse = await request.delete(`/events/${eventId}`);

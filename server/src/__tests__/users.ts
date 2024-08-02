@@ -1,30 +1,44 @@
-import { expect, test } from '@jest/globals';
+import {
+  describe,
+  beforeAll,
+  afterAll,
+  beforeEach,
+  afterEach,
+  expect,
+  test,
+} from '@jest/globals';
 import dotenv from 'dotenv';
-import type { Server } from 'http';
 import mongoose from 'mongoose';
 import supertest from 'supertest';
+import { User } from '../models/users';
 import { mocks } from '../mocks/mock';
-import { app } from '../server';
+import express from 'express';
+import { router } from '../routers/index';
+import { errorHandler } from '../middleware/errorHandler';
 
 dotenv.config();
 
-const TEST_PORT: number | string = process.env.TEST_PORT_USERS || 3006;
-const request = supertest(app);
-let server: Server;
+const dbName = 'events';
+const dbUri = `${process.env.TEST_MONGODB_URI || 'mongodb://127.0.0.1:27017/paw-gang-test'}-${dbName}`;
 
-beforeAll((done) => {
-  server = app.listen(TEST_PORT);
-  done();
+beforeAll(async () => {
+  mongoose.connect(dbUri);
 });
 
-afterAll((done) => {
-  server.close();
+afterEach(async () => {
+  await User.deleteMany();
+});
+
+afterAll(async () => {
   mongoose.connection.close();
-  done();
 });
 
 describe('user endpoints', () => {
-  let userId: string;
+  const app = express();
+  app.use(express.json());
+  app.use(router);
+  app.use(errorHandler);
+  const request = supertest(app);
 
   // POST user
   test('POST /users - should create a new user', async () => {
@@ -35,8 +49,6 @@ describe('user endpoints', () => {
     expect(response.body.password).toBe(mocks.newUser.password);
     expect(response.body.username).toBe(mocks.newUser.username);
     expect(response.body.dogName).toBe(mocks.newUser.dogName);
-
-    userId = response.body._id;
   });
 
   // POST -> Test creating a user with missing fields (error message)
@@ -55,9 +67,11 @@ describe('user endpoints', () => {
 
   // GET -> Id
   test('GET /users/:id - should retrieve a user by its ID', async () => {
-    const response = await request.get(`/users/${userId}`);
+    const post = await request.post('/users').send(mocks.newUser);
+    const {_id} = post.body;
+    const response = await request.get(`/users/${_id}`);
     expect(response.status).toBe(200);
-    expect(response.body).toHaveProperty('_id', userId);
+    expect(response.body).toHaveProperty('_id', _id);
     expect(response.body).toHaveProperty('email', mocks.newUser.email);
     expect(response.body).toHaveProperty('username', mocks.newUser.username);
     expect(response.body).toHaveProperty('dogName', mocks.newUser.dogName);
