@@ -1,7 +1,8 @@
 /* eslint-disable react-native/no-color-literals */
-import { TouchableOpacity, Text, StyleSheet } from 'react-native';
+import { TouchableOpacity, Text, StyleSheet, GestureResponderEvent } from 'react-native';
+import { CustomButtonProps } from '../types';
 
-function CustomButton({ onPress, title }) {
+const CustomButton: React.FC<CustomButtonProps> = ({ onPress, title }) => {
   return (
     <TouchableOpacity style={styles.button} onPress={onPress}>
       <Text style={styles.buttonText}>{title}</Text>

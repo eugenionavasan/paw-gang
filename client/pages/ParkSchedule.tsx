@@ -5,23 +5,23 @@
 /* eslint-disable prefer-destructuring */
 /* eslint-disable prettier/prettier */
 /* eslint-disable camelcase */
-import { useState, useEffect } from 'react';
-import {
-  View,
-  Text,
-  FlatList,
-  StyleSheet,
-  Button,
-  Modal,
-  TouchableOpacity,
-  Alert,
-  Image,
-} from 'react-native';
-import moment from 'moment-timezone';
-import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import axios from 'axios';
+import moment from 'moment-timezone';
+import { useEffect, useState } from 'react';
+import {
+  Alert,
+  Button,
+  FlatList,
+  Image,
+  Modal,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
+import DateTimePickerModal from 'react-native-modal-datetime-picker';
 
-const SERVER_URL = 'http://192.168.0.73:3000';
+const SERVER_URL = 'http://192.168.0.73:3008';
 
 function ParkSchedule({ route }) {
   const { place_id, name, vicinity } = route.params;

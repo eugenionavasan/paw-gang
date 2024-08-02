@@ -5,9 +5,16 @@
 import React from 'react';
 import {View, Text, StyleSheet, Image, TouchableOpacity} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { RootStackParamList } from '../types'; // Adjust the path if necessary
 
-function ProfileScreen () {
-  const navigation = useNavigation();
+type ProfileScreenNavigationProp = NativeStackNavigationProp<
+  RootStackParamList,
+  'Profile'
+>;
+
+const ProfileScreen: React.FC = () => {
+  const navigation = useNavigation<ProfileScreenNavigationProp>();
 
   const handleLogout = () => {
     navigation.replace('Login');

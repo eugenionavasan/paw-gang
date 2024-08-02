@@ -16,79 +16,77 @@ import {
   TouchableOpacity,
   TextInput,
 } from 'react-native';
+import { LoginForm, LoginScreenNavigationProp } from '../types';
+import { handleSignIn } from '../services/services';
 
-export default function Login({ navigation }) {
-  const [form, setForm] = useState({
+const Login: React.FC<LoginScreenNavigationProp> = ({ navigation }) => {
+  const [form, setForm] = useState<LoginForm>({
     email: '',
     password: '',
   });
 
-  const handleSignIn = () => {
-    navigation.replace('Main');
-  };
-
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: '#cfcec9' }}>
       <View style={styles.container}>
-          <View style={styles.header}>
-            <Image
-              alt="App Logo"
-              resizeMode="contain"
-              style={styles.headerImg}
-              source={require('../assets/logo.jpg')}
+        <View style={styles.header}>
+          <Image
+            alt="App Logo"
+            resizeMode="contain"
+            style={styles.headerImg}
+            source={require('../assets/logo.jpg')}
+          />
+
+          <Text style={styles.title}>
+            Sign in to <Text style={{ color: '#008CBA' }}>Paw Gang</Text>
+          </Text>
+
+          <Text style={styles.subtitle}>
+            Get your dog's tail wagging with a playdate!
+          </Text>
+        </View>
+
+        <View style={styles.form}>
+          <View style={styles.input}>
+            <Text style={styles.inputLabel}>Email address</Text>
+
+            <TextInput
+              autoCapitalize="none"
+              autoCorrect={false}
+              clearButtonMode="while-editing"
+              keyboardType="email-address"
+              onChangeText={(email) => setForm({ ...form, email })}
+              placeholder="hachiko@example.com"
+              placeholderTextColor="grey"
+              style={styles.inputControl}
+              value={form.email}
             />
-
-            <Text style={styles.title}>
-              Sign in to <Text style={{ color: '#008CBA' }}>Paw Gang</Text>
-            </Text>
-
-            <Text style={styles.subtitle}>
-              Get your dog's tail wagging with a playdate!
-            </Text>
           </View>
 
-          <View style={styles.form}>
-            <View style={styles.input}>
-              <Text style={styles.inputLabel}>Email address</Text>
+          <View style={styles.input}>
+            <Text style={styles.inputLabel}>Password</Text>
 
-              <TextInput
-                autoCapitalize="none"
-                autoCorrect={false}
-                clearButtonMode="while-editing"
-                keyboardType="email-address"
-                onChangeText={(email) => setForm({ ...form, email })}
-                placeholder="hachiko@example.com"
-                placeholderTextColor="grey"
-                style={styles.inputControl}
-                value={form.email}
-              />
-            </View>
-
-            <View style={styles.input}>
-              <Text style={styles.inputLabel}>Password</Text>
-
-              <TextInput
-                autoCorrect={false}
-                clearButtonMode="while-editing"
-                onChangeText={(password) => setForm({ ...form, password })}
-                placeholder="********"
-                placeholderTextColor="grey"
-                style={styles.inputControl}
-                secureTextEntry={true}
-                value={form.password}
-              />
-            </View>
-
-            <View style={styles.formAction}>
-              <TouchableOpacity onPress={handleSignIn}>
-                <View style={styles.btn}>
-                  <Text style={styles.btnText}>Sign in</Text>
-                </View>
-              </TouchableOpacity>
-            </View>
-
-            <Text style={styles.formLink}>Forgot password?</Text>
+            <TextInput
+              autoCorrect={false}
+              clearButtonMode="while-editing"
+              onChangeText={(password) => setForm({ ...form, password })}
+              placeholder="********"
+              placeholderTextColor="grey"
+              style={styles.inputControl}
+              secureTextEntry={true}
+              value={form.password}
+            />
           </View>
+
+          <View style={styles.formAction}>
+            <TouchableOpacity onPress={() => handleSignIn(navigation)}>
+              <View style={styles.btn}>
+                <Text style={styles.btnText}>Sign in</Text>
+              </View>
+            </TouchableOpacity>
+          </View>
+
+          <Text style={styles.formLink}>Forgot password?</Text>
+        </View>
 
         <TouchableOpacity style={{ marginTop: 'auto' }}>
           <Text style={styles.formFooter}>
@@ -99,7 +97,7 @@ export default function Login({ navigation }) {
       </View>
     </SafeAreaView>
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {
@@ -197,3 +195,5 @@ const styles = StyleSheet.create({
     color: '#fff',
   },
 });
+
+export default Login;
