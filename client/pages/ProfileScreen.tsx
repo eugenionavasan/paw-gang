@@ -3,10 +3,10 @@
 /* eslint-disable prettier/prettier */
 /* eslint-disable react-native/no-color-literals */
 import React from 'react';
-import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import {View, Text, StyleSheet, Image, TouchableOpacity} from 'react-native';
+import {useNavigation} from '@react-navigation/native';
 
-function ProfileScreen() {
+function ProfileScreen () {
   const navigation = useNavigation();
 
   const handleLogout = () => {
@@ -16,7 +16,7 @@ function ProfileScreen() {
   return (
     <View style={styles.container}>
       <Image
-        source={require('./assets/avatar-Luffy.png')}
+        source={require('../assets/avatar-Luffy.png')}
         style={styles.image}
       />
       <Text style={styles.text}>User: testuser</Text>

@@ -35,7 +35,7 @@ export default function Login({ navigation }) {
               alt="App Logo"
               resizeMode="contain"
               style={styles.headerImg}
-              source={require('./assets/logo.jpg')}
+              source={require('../assets/logo.jpg')}
             />
 
             <Text style={styles.title}>
