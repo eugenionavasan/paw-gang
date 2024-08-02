@@ -1,4 +1,7 @@
+import { ReactNode } from 'react';
 import { GestureResponderEvent } from 'react-native';
+import { Moment } from 'moment';
+import { RouteProp } from '@react-navigation/native';
 
 export interface CustomButtonProps {
   onPress: (event: GestureResponderEvent) => void;
@@ -20,3 +23,18 @@ export type LoginScreenNavigationProp = {
     replace: (route: string) => void;
   };
 };
+
+export interface ErrorBoundaryProps {
+  children: ReactNode;
+}
+
+export interface ErrorBoundaryState {
+  hasError: boolean;
+}
+
+export interface Event {
+  _id: string;
+  date: string;
+  user: string;
+  dog_avatar: string;
+}
