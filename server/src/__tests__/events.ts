@@ -48,13 +48,20 @@ describe('event endpoints', () => {
 
   // ^Vincent
   //POST events
-  test('POST /events - should create a new event', async () => {
+  test.only('POST /events - should create a new event', async () => {
     const __v = 0;
 
     const response = await request.post('/events').send(mocks.newEvent);
     expect(response.status).toBe(201);
     expect(response.body).toHaveProperty('_id');
     eventId = response.body._id;
+    console.log(response.body)
+    console.log('response ----')
+    console.log(response.body.date)
+    console.log(typeof response.body.date)
+    console.log('mocks ----')
+    console.log(mocks.newEvent.date)
+    console.log(typeof mocks.newEvent.date);
     expect(response.body).toEqual({...mocks.newEvent, _id: eventId, __v});
   });
 

@@ -1,11 +1,12 @@
 import { NextFunction, Request, Response } from 'express';
 import { IEvent } from '../types';
 import {
+  isValidEvent,
   missingBodyHandler,
   missingParamHandler,
   noResultHandler,
 } from '../utils/utils';
-const { Event } = require('../models/events'); //! Why doesn't work with import?
+import { Event } from '../models/events'; //! Why doesn't work with import?
 
 // GET EVENTS (I don't need this one but i am having it for thunderclient testing purposes)
 export const getEvents = async (
@@ -35,8 +36,8 @@ export const getEventsbyPark = async (
         'EventController/getEventsbyPark',
         'Park',
         'place_id',
-      );
-    const event: IEvent = await Event.find({ place_id });
+      )
+    const event: IEvent | null = await Event.findById(place_id);
     if (!event)
       return noResultHandler(res, 'EventController/getEventsbyPark', 'Park', {
         place_id,
@@ -89,12 +90,10 @@ export const getEventById = async (
         '_id'
       );
     }
-
     const event = await Event.findById(_id);
     if (!event) {
       return noResultHandler(res, 'EventController/getEventById', 'Event', { _id });
     }
-
     res.status(200).json(event);
   } catch (error) {
     next(error);
@@ -110,14 +109,14 @@ export const postEvents = async (
   try {
     const { place_id, park_name, address, date, user, dog_avatar }: IEvent =
       req.body;
-    if (!place_id || !park_name || !address || !date || !user || !dog_avatar) {
+    if (!isValidEvent(req.body)) {
       return missingBodyHandler(res, 'EventController/postEvents', 'Event');
     }
-    const newEvent: Event = await Event.create({
+    const newEvent: IEvent = await Event.create({
       place_id,
       park_name,
       address,
-      date,
+      date: new Date(date),
       user,
       dog_avatar,
     });
@@ -146,7 +145,7 @@ export const editEvent = async (
       );
     if (!date)
       return missingBodyHandler(res, 'EventController/editEvent', 'Event');
-    const updatedEvent: Event = await Event.findByIdAndUpdate(
+    const updatedEvent: IEvent | null = await Event.findByIdAndUpdate(
       _id,
       { date },
       { new: true, runValidators: true },
@@ -172,7 +171,6 @@ export const deleteEvent = async (
 ): Promise<void> => {
   try {
     const { _id } = req.params;
-
     // Check if _id is provided
     if (!_id) {
       console.log('No event ID provided');
@@ -183,10 +181,8 @@ export const deleteEvent = async (
         '_id'
       );
     }
-
     // Perform delete operation
-    const deletedEvent = await Event.findByIdAndDelete(_id);
-
+    const deletedEvent: IEvent | null = await Event.findByIdAndDelete(_id);
     // Check if the event was found and deleted
     if (!deletedEvent) {
       console.log('Event not found for ID:', _id);
@@ -197,14 +193,12 @@ export const deleteEvent = async (
         { _id }
       );
     }
-
     // Respond with success message
-    res.status(200).json({ 
-      message: 'Event deleted successfully', 
-      deletedEvent 
+    res.status(200).json({
+      message: 'Event deleted successfully',
+      deletedEvent
     });
   } catch (error) {
-    console.error('Error in deleteEvent:', error);
     next(error);
   }
 };
