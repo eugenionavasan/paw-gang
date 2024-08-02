@@ -1,12 +1,12 @@
 /* eslint-disable no-console */
 /* eslint-disable import/no-extraneous-dependencies */
-import express, { Application, NextFunction, Request, Response } from 'express';
 import bodyParser from 'body-parser';
 import cors from 'cors';
 import dotenv from 'dotenv';
-import { router } from './routers/index';
+import express, { Application } from 'express';
+import { errorHandler } from './middleware/errorHandler';
 import connectToDatabase from './models/index';
-import {errorHandler} from './middleware/errorHandler';
+import { router } from './routers/index';
 
 // Load environment variables from .env file
 dotenv.config();
@@ -25,9 +25,13 @@ const LOCAL_IP_ADDRESS = process.env.LOCAL_IP_ADDRESS || '127.0.0.1';
 const startServer = async (): Promise<void> => {
   try {
     await connectToDatabase();
-    app.listen(Number(PORT), LOCAL_IP_ADDRESS, () => {
-      console.log(`Server is running on http://${LOCAL_IP_ADDRESS}:${PORT}`);
-    });
+    if (process.env.NODE_ENV !== 'test') {
+      app.listen(Number(PORT), LOCAL_IP_ADDRESS, () => {
+        console.log(`Server is running on http://${LOCAL_IP_ADDRESS}:${PORT}`);
+      });
+    } else {
+      console.log('Running in test mode; server not started.');
+    }
   } catch (error) {
     console.error('Failed to connect to the database:', error);
   }
