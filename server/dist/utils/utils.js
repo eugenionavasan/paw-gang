@@ -31,6 +31,7 @@ function isValidUser(body) {
     return false;
 }
 function isValidEvent(body) {
+    console.log('----inside isValid---', body);
     if (body.place_id &&
         body.park_name &&
         body.address &&

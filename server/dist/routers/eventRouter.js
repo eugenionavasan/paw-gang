@@ -14,3 +14,9 @@ exports.eventRouter.get('/:_id', eventsController_1.getEventById);
 exports.eventRouter.post('/', eventsController_1.postEvents);
 exports.eventRouter.delete('/:_id', eventsController_1.deleteEvent);
 exports.eventRouter.put('/:_id', eventsController_1.editEvent);
+exports.eventRouter.all('*', (req, res) => {
+    console.error('Error: Path does not exist');
+    res.status(404).json({
+        error: 'Path does not exist',
+    });
+});

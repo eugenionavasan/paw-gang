@@ -11,11 +11,11 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.deleteEvent = exports.editEvent = exports.postEvents = exports.getEventById = exports.getEventsbyUser = exports.getEventsbyPark = exports.getEvents = void 0;
 const utils_1 = require("../utils/utils");
-const { Event } = require('../models/events'); //! Why doesn't work with import?
+const events_1 = require("../models/events"); //! Why doesn't work with import?
 // GET EVENTS (I don't need this one but i am having it for thunderclient testing purposes)
 const getEvents = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const events = yield Event.find();
+        const events = yield events_1.Event.find();
         res.status(200).json(events);
     }
     catch (error) {
@@ -29,12 +29,13 @@ const getEventsbyPark = (req, res, next) => __awaiter(void 0, void 0, void 0, fu
         const { place_id } = req.params;
         if (!place_id)
             return (0, utils_1.missingParamHandler)(res, 'EventController/getEventsbyPark', 'Park', 'place_id');
-        const event = yield Event.find({ place_id });
-        if (!event)
+        // !
+        const events = yield events_1.Event.find({ place_id });
+        if (Object.keys(events).length === 0)
             return (0, utils_1.noResultHandler)(res, 'EventController/getEventsbyPark', 'Park', {
                 place_id,
             });
-        res.status(200).json(event);
+        res.status(200).json(events);
     }
     catch (error) {
         next(error);
@@ -47,8 +48,8 @@ const getEventsbyUser = (req, res, next) => __awaiter(void 0, void 0, void 0, fu
         const { user } = req.params;
         if (!user)
             return (0, utils_1.missingParamHandler)(res, 'EventController/getEventsbyUser', 'User', 'user');
-        const events = yield Event.find({ user });
-        if (!events)
+        const events = yield events_1.Event.find({ user });
+        if (Object.keys(events).length === 0)
             return (0, utils_1.noResultHandler)(res, 'EventController/getEventsbyUser', 'User', {
                 user,
             });
@@ -66,7 +67,7 @@ const getEventById = (req, res, next) => __awaiter(void 0, void 0, void 0, funct
         if (!_id) {
             return (0, utils_1.missingParamHandler)(res, 'EventController/getEventById', 'Event', '_id');
         }
-        const event = yield Event.findById(_id);
+        const event = yield events_1.Event.findById(_id);
         if (!event) {
             return (0, utils_1.noResultHandler)(res, 'EventController/getEventById', 'Event', { _id });
         }
@@ -81,14 +82,14 @@ exports.getEventById = getEventById;
 const postEvents = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { place_id, park_name, address, date, user, dog_avatar } = req.body;
-        if (!place_id || !park_name || !address || !date || !user || !dog_avatar) {
+        if (!(0, utils_1.isValidEvent)(req.body)) {
             return (0, utils_1.missingBodyHandler)(res, 'EventController/postEvents', 'Event');
         }
-        const newEvent = yield Event.create({
+        const newEvent = yield events_1.Event.create({
             place_id,
             park_name,
             address,
-            date,
+            date: new Date(date),
             user,
             dog_avatar,
         });
@@ -108,7 +109,7 @@ const editEvent = (req, res, next) => __awaiter(void 0, void 0, void 0, function
             return (0, utils_1.missingParamHandler)(res, 'EventController/editEvent', 'Event', '_id');
         if (!date)
             return (0, utils_1.missingBodyHandler)(res, 'EventController/editEvent', 'Event');
-        const updatedEvent = yield Event.findByIdAndUpdate(_id, { date }, { new: true, runValidators: true });
+        const updatedEvent = yield events_1.Event.findByIdAndUpdate(_id, { date }, { new: true, runValidators: true });
         if (!updatedEvent)
             return (0, utils_1.noResultHandler)(res, 'EventController/editEvents', 'Event', {
                 _id,
@@ -129,14 +130,12 @@ const deleteEvent = (req, res, next) => __awaiter(void 0, void 0, void 0, functi
         const { _id } = req.params;
         // Check if _id is provided
         if (!_id) {
-            console.log('No event ID provided');
             return (0, utils_1.missingParamHandler)(res, 'EventController/deleteEvent', 'Event', '_id');
         }
         // Perform delete operation
-        const deletedEvent = yield Event.findByIdAndDelete(_id);
+        const deletedEvent = yield events_1.Event.findByIdAndDelete(_id);
         // Check if the event was found and deleted
         if (!deletedEvent) {
-            console.log('Event not found for ID:', _id);
             return (0, utils_1.noResultHandler)(res, 'EventController/deleteEvent', 'Event', { _id });
         }
         // Respond with success message
@@ -146,7 +145,6 @@ const deleteEvent = (req, res, next) => __awaiter(void 0, void 0, void 0, functi
         });
     }
     catch (error) {
-        console.error('Error in deleteEvent:', error);
         next(error);
     }
 });

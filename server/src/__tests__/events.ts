@@ -1,92 +1,261 @@
-// do we have to build
-
-// function sum (a: number, b: number): number {
-//   return a + b;
-// }
-
-// test('adds 1 + 2 to equal 3', () => {
-//   expect(sum(1, 2)).toBe(3);
-// });
-
 import { expect, test } from '@jest/globals';
 import dotenv from 'dotenv';
-import type { Server } from 'http';
-import mongoose from 'mongoose';
+import mongoose, { Model } from 'mongoose';
+import express from 'express';
+import {router} from '../routers/index';
+import { errorHandler } from '../middleware/errorHandler';
+import { Event } from '../models/events';
 import supertest from 'supertest';
 import { mocks } from '../mocks/mock';
-import { app } from '../server';
+import { IEvent, IInvalidEvent, IResEvent } from '../types';
 
 dotenv.config();
 
-const TEST_PORT: number | string = process.env.TEST_PORT_EVENTS || 3003;
-const request = supertest(app);
-let server: Server;
+const dbName = 'events';
+const dbUri = `${process.env.TEST_MONGODB_URI || 'mongodb://127.0.0.1:27017/paw-gang-test'}-${dbName}`;
 
-beforeAll((done) => {
-  server = app.listen(TEST_PORT);
-  done();
+beforeAll(async () => {
+  mongoose.connect(dbUri);
 });
 
-afterAll((done) => {
-  server.close();
+afterEach(async () => {
+  await Event.deleteMany();
+});
+
+afterAll(async () => {
   mongoose.connection.close();
-  done();
 });
 
-// ! structuring tests more granularly
-// ! mock data should be in separate files
-// !
-describe('event endpoints', () => {
+
+describe('Event endpoints', () => {
+  const app = express();
+  app.use(express.json());
+  app.use(router);
+  app.use(errorHandler)
+  const request = supertest(app);
+
   let eventId: string;
 
   // GET all events
-  test('Get / - should get all events', async () => {
-    const response = await request.get('/events');
-    expect(response.status).toBe(200);
+  describe('GET /events endpoints', () => {
+    describe('Get without previous posts', () => {
+      test('should return status code 200', async () => {
+        const response = await request.get('/events');
+        expect(response.status).toBe(200);
+      });
+
+      test('should return empty array for empty database', async () => {
+        const response = await request.get('/events');
+        const events: IEvent[] = response.body;
+        expect(events).toEqual([]);
+      });
+    })
+
+    describe('Get with previous posts', () => {
+      // ! response types?
+      let response: any;
+      let _id: string;
+      let __v: number;
+
+      beforeEach(async () => {
+        response = await request.post('/events').send(mocks.newEvent);
+        _id = response.body._id;
+        __v = response.body.__v;
+        response = await request.get('/events');
+      });
+
+      test('should return status code 200', async () => {
+        expect(response.status).toBe(200);
+      });
+
+      test('1 db post should return array with 1 event', async () => {
+        // ! date is stringified here
+        const events: IResEvent[] = response.body;
+        expect(events).toEqual([{ ...mocks.resEvent, _id, __v }]);
+      });
+
+      test('2 db posts should return array with 2 events', async () => {
+        // 2nd post
+        const postResponse2 = await request.post('/events').send(mocks.newEvent);
+        const id2 = postResponse2.body._id;
+        const v2 = postResponse2.body.__v;
+        // get
+        const response = await request.get('/events');
+        const events: IResEvent[] = response.body;
+        expect(events).toEqual([
+          { ...mocks.resEvent, _id, __v},
+          { ...mocks.resEvent, _id: id2, __v: v2 },
+        ]);
+      });
+    });
   });
 
-  // ^Vincent
   //POST events
-  test('POST /events - should create a new event', async () => {
-    const __v = 0;
+  describe('POST /events', () => {
+    describe('Valid request', () => {
+      let response: any;
+      let _id: string;
+      let __v: number;
 
-    const response = await request.post('/events').send(mocks.newEvent);
-    expect(response.status).toBe(201);
-    expect(response.body).toHaveProperty('_id');
-    eventId = response.body._id;
-    console.log(response.body);
-    console.log('response ----');
-    console.log(response.body.date);
-    console.log(typeof response.body.date);
-    console.log('mocks ----');
-    console.log(mocks.newEvent.date);
-    console.log(typeof mocks.newEvent.date);
-    expect(response.body).toEqual({ ...mocks.newEvent, _id: eventId, __v });
+      beforeEach(async () => {
+        response = await request.post('/events').send(mocks.newEvent);
+        _id = response.body._id;
+        __v = response.body.__v;
+      });
+
+      test('should return status code 201', async () => {
+        expect(response.status).toBe(201);
+      });
+
+      test('should return posted event', async () => {
+        expect(response.body).toEqual({ ...mocks.resEvent, _id, __v });
+      });
+
+      // ! error
+      test('posted event should be in db', async () => {
+        const retrieved = await Event.findOne({place_id: 'test_place_id'});
+        // const retrieved = await request.get('/events')
+        // expect(2).toEqual(2)
+        // expect(retrieved.body).toHaveProperty('place_id');
+        expect(retrieved).toContain(response);
+        // expect(retrieved.body).toEqual(response);
+      });
+    });
+
+    describe('Invalid request body', () => {
+      test('Request body with missing data should return status code 400 & error message', async () => {
+        const event: IInvalidEvent = { ...mocks.newEvent };
+        delete event.place_id;
+        const response = await request.post('/events').send(event);
+        expect(response.status).toBe(400);
+        expect(response.body).toHaveProperty('error');
+      });
+
+      test('Request body with empty data should return status code 400 & error message', async () => {
+        const event: IInvalidEvent = { ...mocks.newEvent };
+        event.place_id = '';
+        const response = await request.post('/events').send(event);
+        expect(response.status).toBe(400);
+        expect(response.body).toHaveProperty('error');
+      });
+    });
   });
 
   // GET Events by place_id
-  test('GET /events/park/:place_id - should retrieve events by place_id', async () => {
-    const response = await request.get(
-      `/events/park/${mocks.newEvent.place_id}`,
-    );
-    expect(response.status).toBe(200);
-    expect(response.body).toBeInstanceOf(Array);
-    expect(response.body.length).toBeGreaterThan(0);
-    expect(response.body[0]).toHaveProperty(
-      'place_id',
-      mocks.newEvent.place_id,
-    );
-    expect(response.body[0]).toHaveProperty('park_name', 'New Park');
+  describe('GET /events/park/:place_id', () => {
+    describe('Valid request', () => {
+      let response: any;
+      let _id: string;
+      let __v: number;
+
+      beforeEach(async () => {
+        const post = await request.post('/events').send(mocks.newEvent);
+        _id = post.body._id;
+        __v = post.body.__v;
+        response = await request.get(`/events/park/${mocks.newEvent.place_id}`);
+      });
+
+      test('should return status code 200', async () => {
+        expect(response.status).toBe(200);
+      });
+
+      test('1 db post for park should return array with 1 event', async () => {
+        expect(response.body).toEqual([{ ...mocks.resEvent, _id, __v }]);
+      });
+
+      test('2 db posts for park should return array with 2 events', async () => {
+        // 2nd post
+        const postResponse2 = await request
+          .post('/events')
+          .send(mocks.newEvent);
+        const id2 = postResponse2.body._id;
+        const v2 = postResponse2.body.__v;
+        // get
+        const response = await request.get(`/events/park/${mocks.newEvent.place_id}`)
+        const events: IResEvent[] = response.body;
+        expect(events).toEqual([
+          { ...mocks.resEvent, _id, __v },
+          { ...mocks.resEvent, _id: id2, __v: v2 },
+        ]);
+      });
+    });
+
+    describe('Invalid request', () => {
+      test('No entry in data base should return status code 400 & error message', async () => {
+        const response = await request.get(`/events/park/my_id`);
+        expect(response.status).toBe(400);
+        expect(response.body).toHaveProperty('error');
+      });
+      test.only('Request body with missing parameter', async () => {
+        const response = await request.get(`/events/park/`);
+        expect(response.status).toBe(500);
+        expect(response.body).toHaveProperty('error');
+        // 2nd variant
+        const response2 = await request.get(`/events/park`);
+        expect(response2.status).toBe(500);
+        expect(response2.body).toHaveProperty('error');
+      });
+    });
   });
 
   // GET Events by user_id
-  test('GET /events/user/:user - should retrieve events by user_id', async () => {
-    const response = await request.get(`/events/user/${mocks.newEvent.user}`);
-    expect(response.status).toBe(200);
-    expect(response.body).toBeInstanceOf(Array);
-    expect(response.body.length).toBeGreaterThan(0);
-    expect(response.body[0]).toHaveProperty('user', mocks.newEvent.user);
-    expect(response.body[0]).toHaveProperty('park_name', 'New Park');
+  describe('GET /events/users/:user', () => {
+    describe('Valid request', () => {
+      let response: any;
+      let _id: string;
+      let __v: number;
+
+      beforeEach(async () => {
+        const post = await request.post('/events').send(mocks.newEvent);
+        _id = post.body._id;
+        __v = post.body.__v;
+        response = await request.get(`/events/user/${mocks.newEvent.user}`);
+      });
+
+      test('should return status code 200', async () => {
+        expect(response.status).toBe(200);
+      });
+
+      test('1 db posts for user should return array with 1 event', async () => {
+        expect(response.body).toEqual([{ ...mocks.resEvent, _id, __v }]);
+      });
+
+      test('2 db posts for user should return array with 2 events', async () => {
+        // 2nd post
+        const postResponse2 = await request
+          .post('/events')
+          .send(mocks.newEvent);
+        const id2 = postResponse2.body._id;
+        const v2 = postResponse2.body.__v;
+        // get
+        const response = await request.get(
+          `/events/user/${mocks.newEvent.user}`,
+        );
+        const events: IResEvent[] = response.body;
+        expect(events).toEqual([
+          { ...mocks.resEvent, _id, __v },
+          { ...mocks.resEvent, _id: id2, __v: v2 },
+        ]);
+      });
+    });
+
+    describe('Invalid request', () => {
+      test('No entry in data base should return status code 400 & error message', async () => {
+        const response = await request.get(`/events/user/me`);
+        expect(response.status).toBe(400);
+        expect(response.body).toHaveProperty('error');
+      });
+
+      test('Request body with missing parameter', async () => {
+        const response = await request.get(`/events/user/`);
+        expect(response.status).toBe(500);
+        expect(response.body).toHaveProperty('error');
+        // 2nd variant
+        const response2 = await request.get(`/events/user`);
+        expect(response2.status).toBe(500);
+        expect(response2.body).toHaveProperty('error');
+      });
+    });
   });
 
   // ^Andre

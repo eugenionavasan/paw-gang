@@ -14,6 +14,8 @@ const userSchema = new mongoose_2.Schema({
     email: {
         type: String,
         required: true,
+        unique: true,
+        match: [/\S+@\S+\.\S+/, 'is invalid'],
     },
     password: {
         type: String,

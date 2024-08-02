@@ -7,7 +7,7 @@ const connectToDatabase = async (): Promise<void> => {
     if (!mongoUri) {
       throw new Error('MONGODB_URI environment variable is not defined');
     }
-
+    // ! useNewUrlParser not avaiable?
     await mongoose.connect(mongoUri);
     console.log('MongoDB connected');
   } catch (error) {

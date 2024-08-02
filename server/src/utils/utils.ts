@@ -54,7 +54,8 @@ export function isValidUser(body: IUser): boolean {
   return false;
 }
 
-export function isValidEvent(body: IEvent): boolean {
+export function isValidEvent (body: IEvent): boolean {
+  console.log('----inside isValid---', body)
   if (
     body.place_id &&
     body.park_name &&

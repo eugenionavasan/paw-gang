@@ -29,7 +29,7 @@ export const getEventsbyPark = async (
   next: NextFunction,
 ): Promise<void> => {
   try {
-    const { place_id } = req.params;
+    const {place_id} = req.params;
     if (!place_id)
       return missingParamHandler(
         res,
@@ -37,12 +37,13 @@ export const getEventsbyPark = async (
         'Park',
         'place_id',
       )
-    const event: IEvent | null = await Event.findById(place_id);
-    if (!event)
+    // !
+    const events: IEvent[] | {} = await Event.find({place_id});
+    if (Object.keys(events).length === 0)
       return noResultHandler(res, 'EventController/getEventsbyPark', 'Park', {
         place_id,
       });
-    res.status(200).json(event);
+    res.status(200).json(events);
   } catch (error) {
     next(error);
   }
@@ -63,8 +64,8 @@ export const getEventsbyUser = async (
         'User',
         'user',
       );
-    const events: Event[] = await Event.find({ user });
-    if (!events)
+    const events: Event[] | {} = await Event.find({ user });
+    if (Object.keys(events).length === 0)
       return noResultHandler(res, 'EventController/getEventsbyUser', 'User', {
         user,
       });
@@ -81,7 +82,7 @@ export const getEventById = async (
   next: NextFunction
 ): Promise<void> => {
   try {
-    const { _id } = req.params;
+    const {_id} = req.params;
     if (!_id) {
       return missingParamHandler(
         res,
@@ -173,7 +174,6 @@ export const deleteEvent = async (
     const { _id } = req.params;
     // Check if _id is provided
     if (!_id) {
-      console.log('No event ID provided');
       return missingParamHandler(
         res,
         'EventController/deleteEvent',
@@ -185,7 +185,6 @@ export const deleteEvent = async (
     const deletedEvent: IEvent | null = await Event.findByIdAndDelete(_id);
     // Check if the event was found and deleted
     if (!deletedEvent) {
-      console.log('Event not found for ID:', _id);
       return noResultHandler(
         res,
         'EventController/deleteEvent',

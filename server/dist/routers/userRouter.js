@@ -9,3 +9,9 @@ const usersController_1 = __importDefault(require("../controllers/usersControlle
 exports.userRouter = express_1.default.Router();
 exports.userRouter.get('/:_id', usersController_1.default.getOne);
 exports.userRouter.post('/', usersController_1.default.postOne);
+exports.userRouter.all('*', (req, res) => {
+    console.error('Error: Path does not exist');
+    res.status(404).json({
+        error: 'Path does not exist',
+    });
+});

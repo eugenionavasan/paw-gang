@@ -19,6 +19,7 @@ const connectToDatabase = () => __awaiter(void 0, void 0, void 0, function* () {
         if (!mongoUri) {
             throw new Error('MONGODB_URI environment variable is not defined');
         }
+        // ! useNewUrlParser not avaiable?
         yield mongoose_1.default.connect(mongoUri);
         console.log('MongoDB connected');
     }

@@ -23,3 +23,27 @@ export interface IEvent {
   createdAt?: Date;
   updatedAt?: Date;
 }
+
+export interface IResEvent {
+  place_id: string;
+  park_name: string;
+  address: string;
+  date: string;
+  user: string;
+  dog_avatar: string;
+  _id?: string;
+  createdAt?: Date;
+  updatedAt?: Date;
+}
+
+export interface IInvalidEvent {
+  place_id?: string;
+  park_name?: string;
+  address?: string;
+  date?: Date;
+  user?: string;
+  dog_avatar?: string;
+  _id?: string;
+  createdAt?: Date;
+  updatedAt?: Date;
+}
