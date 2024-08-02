@@ -1,4 +1,5 @@
 import { IEvent } from '../types';
+import mongoose from 'mongoose';
 
 const newEvent: IEvent = {
   place_id: 'test_place_id',

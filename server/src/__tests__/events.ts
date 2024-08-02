@@ -121,7 +121,7 @@ describe('event endpoints', () => {
     expect(response.body).toHaveProperty('error');
   });
 
-  // 2: GET an Event That Does Not Exist
+  // GET an Event That Does Not Exist
   test('GET /events/:id - should return 404 for a non-existing event', async () => {
     const nonExistingEventId = new mongoose.Types.ObjectId().toString();
     const response = await request.get(`/events/${nonExistingEventId}`);
