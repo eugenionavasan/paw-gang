@@ -6,9 +6,11 @@ exports.missingParamHandler = missingParamHandler;
 exports.isValidUser = isValidUser;
 exports.isValidEvent = isValidEvent;
 function noResultHandler(res, origin, modelName, id) {
-    console.error(`Error in ${origin}: Could not find any ${modelName} with ${Object.keys(id)[0]} ${id.key}`);
+    const idKey = Object.keys(id)[0] || 'id';
+    const idValue = id[idKey] || 'undefined';
+    console.error(`Error in ${origin}: Could not find any ${modelName} with ${idKey} ${idValue}`);
     res.status(400).send({
-        error: `Could not find any ${modelName} with ${Object.keys(id)[0]} ${id.key}`,
+        error: `Could not find any ${modelName} with ${idKey} ${idValue}`,
     });
 }
 function missingBodyHandler(res, origin, modelName) {

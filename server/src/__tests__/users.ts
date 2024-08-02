@@ -7,7 +7,7 @@ import { app } from '../server';
 
 dotenv.config();
 
-const TEST_PORT: number | string = process.env.TEST_PORT || 3006;
+const TEST_PORT: number | string = process.env.TEST_PORT_USERS || 3006;
 const request = supertest(app);
 let server: Server;
 

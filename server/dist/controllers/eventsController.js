@@ -9,9 +9,9 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.editEvent = exports.deleteEvent = exports.postEvents = exports.getEventsbyUser = exports.getEventsbyPark = exports.getEvents = void 0;
-const { Event } = require('../models/events'); //! Why doesn't work with import?
+exports.deleteEvent = exports.editEvent = exports.postEvents = exports.getEventById = exports.getEventsbyUser = exports.getEventsbyPark = exports.getEvents = void 0;
 const utils_1 = require("../utils/utils");
+const { Event } = require('../models/events'); //! Why doesn't work with import?
 // GET EVENTS (I don't need this one but i am having it for thunderclient testing purposes)
 const getEvents = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
@@ -59,6 +59,24 @@ const getEventsbyUser = (req, res, next) => __awaiter(void 0, void 0, void 0, fu
     }
 });
 exports.getEventsbyUser = getEventsbyUser;
+// GET EVENT by ID
+const getEventById = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { _id } = req.params;
+        if (!_id) {
+            return (0, utils_1.missingParamHandler)(res, 'EventController/getEventById', 'Event', '_id');
+        }
+        const event = yield Event.findById(_id);
+        if (!event) {
+            return (0, utils_1.noResultHandler)(res, 'EventController/getEventById', 'Event', { _id });
+        }
+        res.status(200).json(event);
+    }
+    catch (error) {
+        next(error);
+    }
+});
+exports.getEventById = getEventById;
 // POST EVENT
 const postEvents = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
@@ -81,27 +99,6 @@ const postEvents = (req, res, next) => __awaiter(void 0, void 0, void 0, functio
     }
 });
 exports.postEvents = postEvents;
-//DELETE EVENT
-const deleteEvent = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        const { _id } = req.params;
-        if (!_id)
-            return (0, utils_1.missingParamHandler)(res, 'EventController/deleteEvent', 'Event', '_id');
-        const deletedEvent = yield Event.findByIdAndDelete(_id);
-        if (!deletedEvent)
-            return (0, utils_1.noResultHandler)(res, 'EventController/deleteEvent', 'Event', {
-                _id,
-            });
-        // ! could return the updated to the client for handling
-        res
-            .status(200)
-            .json({ message: 'Event deleted successfully', deletedEvent });
-    }
-    catch (error) {
-        next(error);
-    }
-});
-exports.deleteEvent = deleteEvent;
 //EDIT EVENT only the date
 const editEvent = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
@@ -126,3 +123,31 @@ const editEvent = (req, res, next) => __awaiter(void 0, void 0, void 0, function
     }
 });
 exports.editEvent = editEvent;
+//Delete Event
+const deleteEvent = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { _id } = req.params;
+        // Check if _id is provided
+        if (!_id) {
+            console.log('No event ID provided');
+            return (0, utils_1.missingParamHandler)(res, 'EventController/deleteEvent', 'Event', '_id');
+        }
+        // Perform delete operation
+        const deletedEvent = yield Event.findByIdAndDelete(_id);
+        // Check if the event was found and deleted
+        if (!deletedEvent) {
+            console.log('Event not found for ID:', _id);
+            return (0, utils_1.noResultHandler)(res, 'EventController/deleteEvent', 'Event', { _id });
+        }
+        // Respond with success message
+        res.status(200).json({
+            message: 'Event deleted successfully',
+            deletedEvent
+        });
+    }
+    catch (error) {
+        console.error('Error in deleteEvent:', error);
+        next(error);
+    }
+});
+exports.deleteEvent = deleteEvent;
