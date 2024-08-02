@@ -73,8 +73,35 @@ export const getEventsbyUser = async (
   }
 };
 
-// POST EVENT
+// GET EVENT by ID
+export const getEventById = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    const { _id } = req.params;
+    if (!_id) {
+      return missingParamHandler(
+        res,
+        'EventController/getEventById',
+        'Event',
+        '_id'
+      );
+    }
 
+    const event = await Event.findById(_id);
+    if (!event) {
+      return noResultHandler(res, 'EventController/getEventById', 'Event', { _id });
+    }
+
+    res.status(200).json(event);
+  } catch (error) {
+    next(error);
+  }
+};
+
+// POST EVENT
 export const postEvents = async (
   req: Request,
   res: Response,
@@ -100,36 +127,6 @@ export const postEvents = async (
   }
 };
 
-//DELETE EVENT
-
-export const deleteEvent = async (
-  req: Request,
-  res: Response,
-  next: NextFunction,
-): Promise<void> => {
-  try {
-    const { _id } = req.params;
-
-    if (!_id)
-      return missingParamHandler(
-        res,
-        'EventController/deleteEvent',
-        'Event',
-        '_id',
-      );
-    const deletedEvent: Event = await Event.findByIdAndDelete(_id);
-    if (!deletedEvent)
-      return noResultHandler(res, 'EventController/deleteEvent', 'Event', {
-        _id,
-      });
-    // ! could return the updated to the client for handling
-    res
-      .status(200)
-      .json({ message: 'Event deleted successfully', deletedEvent });
-  } catch (error) {
-    next(error);
-  }
-};
 
 //EDIT EVENT only the date
 export const editEvent = async (
@@ -163,6 +160,51 @@ export const editEvent = async (
       .status(200)
       .json({ message: 'Event updated successfully', updatedEvent });
   } catch (error) {
+    next(error);
+  }
+};
+
+//Delete Event
+export const deleteEvent = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): Promise<void> => {
+  try {
+    const { _id } = req.params;
+
+    // Check if _id is provided
+    if (!_id) {
+      console.log('No event ID provided');
+      return missingParamHandler(
+        res,
+        'EventController/deleteEvent',
+        'Event',
+        '_id'
+      );
+    }
+
+    // Perform delete operation
+    const deletedEvent = await Event.findByIdAndDelete(_id);
+
+    // Check if the event was found and deleted
+    if (!deletedEvent) {
+      console.log('Event not found for ID:', _id);
+      return noResultHandler(
+        res,
+        'EventController/deleteEvent',
+        'Event',
+        { _id }
+      );
+    }
+
+    // Respond with success message
+    res.status(200).json({ 
+      message: 'Event deleted successfully', 
+      deletedEvent 
+    });
+  } catch (error) {
+    console.error('Error in deleteEvent:', error);
     next(error);
   }
 };

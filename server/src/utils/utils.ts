@@ -1,8 +1,8 @@
-import { Request, Response } from 'express';
+import { Response } from 'express';
 import { IEvent, IUser } from '../types';
 
 interface IUIdObject {
-  [key: string]: string
+  [key: string]: string;
 }
 
 export function noResultHandler(
@@ -11,11 +11,14 @@ export function noResultHandler(
   modelName: string,
   id: IUIdObject,
 ): void {
+  const idKey = Object.keys(id)[0] || 'id';
+  const idValue = id[idKey] || 'undefined';
+
   console.error(
-    `Error in ${origin}: Could not find any ${modelName} with ${Object.keys(id)[0]} ${id.key}`,
+    `Error in ${origin}: Could not find any ${modelName} with ${idKey} ${idValue}`,
   );
   res.status(400).send({
-    error: `Could not find any ${modelName} with ${Object.keys(id)[0]} ${id.key}`,
+    error: `Could not find any ${modelName} with ${idKey} ${idValue}`,
   });
 }
 

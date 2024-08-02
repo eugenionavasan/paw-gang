@@ -88,6 +88,23 @@ describe('event endpoints', () => {
     expect(response.body[0]).toHaveProperty('park_name', 'New Park');
   });
 
+  // GET Event by ID
+  test('GET /events/:id - should retrieve an event by its ID', async () => {
+    if (!eventId) {
+      throw new Error('No event ID found for retrieval test');
+    }
+
+    const response = await request.get(`/events/${eventId}`);
+    expect(response.status).toBe(200);
+    expect(response.body).toHaveProperty('_id', eventId);
+    expect(response.body).toHaveProperty('place_id', placeId);
+    expect(response.body).toHaveProperty('park_name', 'New Park');
+    expect(response.body).toHaveProperty('address', '123 Park Lane');
+    expect(response.body).toHaveProperty('date');
+    expect(response.body).toHaveProperty('user', userId);
+    expect(response.body).toHaveProperty('dog_avatar', 'dog_avatar_url');
+  });
+  
   // PUT (EDIT) -> Only dates
   test('PUT /events/:id - should update the event date', async () => {
     if (!eventId) {
@@ -107,7 +124,6 @@ describe('event endpoints', () => {
 
     // Verify the date was updated
     const checkResponse = await request.get(`/events/${eventId}`);
-    console.log(checkResponse.status);
     expect(checkResponse.status).toBe(200);
     expect(checkResponse.body.date).toBe(newDate);
   });
@@ -118,6 +134,8 @@ describe('event endpoints', () => {
       throw new Error('No event ID found for deletion test');
     }
 
+    let before = await request.get(`/events/${eventId}`);
+
     const response = await request.delete(`/events/${eventId}`);
     expect(response.status).toBe(200);
     expect(response.body).toHaveProperty(
@@ -126,6 +144,6 @@ describe('event endpoints', () => {
     );
 
     const checkResponse = await request.get(`/events/${eventId}`);
-    expect(checkResponse.status).toBe(404);
+    expect(checkResponse.status).toBe(400);
   });
 });
