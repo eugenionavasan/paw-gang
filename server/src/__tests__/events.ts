@@ -110,9 +110,9 @@ describe('event endpoints', () => {
 
   // PUT (EDIT) -> Only dates
   // ^Andre
-  test('PUT /events/:id - should update the event date', async () => {
+  test.only('PUT /events/:id - should update the event date', async () => {
 
-    const newDate = new Date('2024-02-01T00:00:00Z').toISOString();
+    const newDate = new Date('2024-02-01T00:00:00Z');
     const response = await request
       .put(`/events/${eventId}`)
       .send({ date: newDate });
