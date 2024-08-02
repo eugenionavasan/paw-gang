@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "test": "jest --detectOpenHandles --forceExit",
+    "test": "jest --detectOpenHandles",
     "server": "node dist/server.js",
     "build": "tsc",
     "dev": "concurrently \"tsc -w\" \"node dist/server.js\"",
