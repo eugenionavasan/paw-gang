@@ -3,6 +3,7 @@ import dotenv from 'dotenv';
 import type { Server } from 'http';
 import mongoose from 'mongoose';
 import supertest from 'supertest';
+import { mocks } from '../mocks/mock';
 import { app } from '../server';
 
 dotenv.config();
@@ -27,35 +28,54 @@ describe('user endpoints', () => {
 
   // POST user
   test('POST /users - should create a new user', async () => {
-    const newUser = {
-      email: 'testuser@example.com',
-      password: 'securepassword',
-      username: 'testuser',
-      dogName: 'Buddy',
-    };
-
-    const response = await request.post('/users').send(newUser);
+    const response = await request.post('/users').send(mocks.newUser);
     expect(response.status).toBe(200);
     expect(response.body).toHaveProperty('_id');
-    expect(response.body.email).toBe(newUser.email);
-    expect(response.body.password).toBe(newUser.password);
-    expect(response.body.username).toBe(newUser.username);
-    expect(response.body.dogName).toBe(newUser.dogName);
+    expect(response.body.email).toBe(mocks.newUser.email);
+    expect(response.body.password).toBe(mocks.newUser.password);
+    expect(response.body.username).toBe(mocks.newUser.username);
+    expect(response.body.dogName).toBe(mocks.newUser.dogName);
 
     userId = response.body._id;
   });
 
+  // POST -> Test creating a user with missing fields (error message)
+  test('POST /users - should fail when required fields are missing', async () => {
+    const response = await request.post('/users').send(mocks.incompleteUser);
+    expect(response.status).toBe(400);
+    expect(response.body).toHaveProperty('error');
+  });
+
+  // Post -> Test creating a user with invalid email
+  test('POST /users - should fail when email is invalid', async () => {
+    const response = await request.post('/users').send(mocks.invalidEmailUser);
+    expect(response.status).toBe(500);
+    expect(response.body).toHaveProperty('error');
+  });
+
   // GET -> Id
   test('GET /users/:id - should retrieve a user by its ID', async () => {
-    if (!userId) {
-      throw new Error('No user ID found for retrieval test');
-    }
-
     const response = await request.get(`/users/${userId}`);
     expect(response.status).toBe(200);
     expect(response.body).toHaveProperty('_id', userId);
-    expect(response.body).toHaveProperty('email', 'testuser@example.com');
-    expect(response.body).toHaveProperty('username', 'testuser');
-    expect(response.body).toHaveProperty('dogName', 'Buddy');
+    expect(response.body).toHaveProperty('email', mocks.newUser.email);
+    expect(response.body).toHaveProperty('username', mocks.newUser.username);
+    expect(response.body).toHaveProperty('dogName', mocks.newUser.dogName);
+  });
+
+  // GET -> Test retrieving a user with an invalid ID format (error message)
+  test('GET /users/:id - should return 400 for invalid ID format', async () => {
+    const invalidId = '123';
+    const response = await request.get(`/users/${invalidId}`);
+    expect(response.status).toBe(500);
+    expect(response.body).toHaveProperty('error');
+  });
+
+  // GET -> Test retrieving a non-existent user (error message)
+  test('GET /users/:id - should return 404 for non-existent user', async () => {
+    const nonExistentId = new mongoose.Types.ObjectId().toString();
+    const response = await request.get(`/users/${nonExistentId}`);
+    expect(response.status).toBe(400);
+    expect(response.body).toHaveProperty('error');
   });
 });

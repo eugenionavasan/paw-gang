@@ -12,6 +12,8 @@ const userSchema = new Schema<IUser, UserModel>({
   email: {
     type: String,
     required: true,
+    unique: true,
+    match: [/\S+@\S+\.\S+/, 'is invalid'],
   },
   password: {
     type: String,
