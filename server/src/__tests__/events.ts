@@ -35,22 +35,26 @@ afterAll((done) => {
 
 describe('event endpoints', () => {
   let eventId: string;
+  const placeId = 'test_place_id';
+  const userId = 'test_user_id';
 
-  test('testing endpoint is valid: /events', async () => {
+  // GET all events
+  test('Get / - should get all events', async () => {
     const response = await request.get('/events');
     expect(response.status).toBe(200);
   });
+
+  //POST events
   test('POST /events - should create a new event', async () => {
     const newEvent = {
-      place_id: 'new_place_id',
+      place_id: placeId,
       park_name: 'New Park',
       address: '123 Park Lane',
       date: new Date('2024-01-01T00:00:00Z').toISOString(),
-      user: 'eugenio',
+      user: userId, // Use the same user_id for later retrieval
       dog_avatar: 'dog_avatar_url',
     };
 
-    console.log(newEvent);
     const response = await request.post('/events').send(newEvent);
     expect(response.status).toBe(201);
     expect(response.body).toHaveProperty('_id');
@@ -63,6 +67,52 @@ describe('event endpoints', () => {
 
     eventId = response.body._id;
   });
+
+  // GET Events by place_id
+  test('GET /events/park/:place_id - should retrieve events by place_id', async () => {
+    const response = await request.get(`/events/park/${placeId}`);
+    expect(response.status).toBe(200);
+    expect(response.body).toBeInstanceOf(Array);
+    expect(response.body.length).toBeGreaterThan(0);
+    expect(response.body[0]).toHaveProperty('place_id', placeId);
+    expect(response.body[0]).toHaveProperty('park_name', 'New Park');
+  });
+
+  // GET Events by user_id
+  test('GET /events/user/:user - should retrieve events by user_id', async () => {
+    const response = await request.get(`/events/user/${userId}`);
+    expect(response.status).toBe(200);
+    expect(response.body).toBeInstanceOf(Array);
+    expect(response.body.length).toBeGreaterThan(0);
+    expect(response.body[0]).toHaveProperty('user', userId);
+    expect(response.body[0]).toHaveProperty('park_name', 'New Park');
+  });
+
+  // PUT (EDIT) -> Only dates
+  test('PUT /events/:id - should update the event date', async () => {
+    if (!eventId) {
+      throw new Error('No event ID found for update test');
+    }
+
+    const newDate = new Date('2024-02-01T00:00:00Z').toISOString();
+    const response = await request
+      .put(`/events/${eventId}`)
+      .send({ date: newDate });
+    expect(response.status).toBe(200);
+    expect(response.body).toHaveProperty(
+      'message',
+      'Event updated successfully',
+    );
+    expect(response.body.updatedEvent).toHaveProperty('date', newDate);
+
+    // Verify the date was updated
+    const checkResponse = await request.get(`/events/${eventId}`);
+    console.log(checkResponse.status);
+    expect(checkResponse.status).toBe(200);
+    expect(checkResponse.body.date).toBe(newDate);
+  });
+
+  // Delete
   test('DELETE /events/:id - should delete the event', async () => {
     if (!eventId) {
       throw new Error('No event ID found for deletion test');

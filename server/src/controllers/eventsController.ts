@@ -1,7 +1,11 @@
 import { NextFunction, Request, Response } from 'express';
-const { Event } = require('../models/events'); //! Why doesn't work with import?
 import { IEvent } from '../types';
-import { isValidEvent, missingBodyHandler, missingParamHandler, noResultHandler } from '../utils/utils';
+import {
+  missingBodyHandler,
+  missingParamHandler,
+  noResultHandler,
+} from '../utils/utils';
+const { Event } = require('../models/events'); //! Why doesn't work with import?
 
 // GET EVENTS (I don't need this one but i am having it for thunderclient testing purposes)
 export const getEvents = async (
@@ -79,9 +83,9 @@ export const postEvents = async (
   try {
     const { place_id, park_name, address, date, user, dog_avatar }: IEvent =
       req.body;
-      if (!place_id || !park_name || !address || !date || !user || !dog_avatar) {
-        return missingBodyHandler(res, 'EventController/postEvents', 'Event');
-      }
+    if (!place_id || !park_name || !address || !date || !user || !dog_avatar) {
+      return missingBodyHandler(res, 'EventController/postEvents', 'Event');
+    }
     const newEvent: Event = await Event.create({
       place_id,
       park_name,
