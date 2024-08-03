@@ -1,4 +1,4 @@
-import { IEvent, IResEvent } from '../types';
+import { IEvent, IResEvent } from '../src/types';
 
 const newEvent: IEvent = {
   place_id: 'test_place_id',
