@@ -1,4 +1,4 @@
-import 'ts-node/register'; // Add this to import TypeScript files
+import 'ts-node/register';
 import { ExpoConfig } from 'expo/config';
 import 'dotenv/config';
 
@@ -8,6 +8,9 @@ const config: ExpoConfig = {
   version: '1.0.0',
   extra: {
     googleMapsApiKey: process.env.GOOGLE_MAPS_API_KEY,
+    localIpAddress: process.env.LOCAL_IP_ADDRESS,
+    serverUrl: process.env.SERVER_URL,
+    serverPort: process.env.SERVER_PORT,
   },
   orientation: 'portrait',
   icon: './assets/icon.png',
@@ -19,7 +22,6 @@ const config: ExpoConfig = {
   },
   ios: {
     supportsTablet: true,
-    // simulator: true,
   },
   android: {
     adaptiveIcon: {

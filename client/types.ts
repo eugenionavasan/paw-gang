@@ -1,7 +1,25 @@
-import { ReactNode } from 'react';
 import { GestureResponderEvent } from 'react-native';
-import { Moment } from 'moment';
-import { RouteProp } from '@react-navigation/native';
+
+export interface Event {
+  _id: string;
+  place_id: string;
+  park_name: string;
+  address: string;
+  date: string;
+  user: string;
+  dog_avatar: string;
+  __v: number;
+}
+
+export interface Config {
+  serverUrl: string;
+  googleMapsApiKey: string;
+}
+
+export interface LoginForm {
+  email: string;
+  password: string;
+}
 
 export interface CustomButtonProps {
   onPress: (event: GestureResponderEvent) => void;
@@ -11,30 +29,19 @@ export interface CustomButtonProps {
 export type RootStackParamList = {
   Login: undefined;
   Profile: undefined;
+  ParkSchedule: { place_id: string; name: string};
 };
 
-export interface LoginForm {
-  email: string;
-  password: string;
-}
-
-export type LoginScreenNavigationProp = {
+export interface LoginScreenNavigationProp {
   navigation: {
     replace: (route: string) => void;
   };
-};
+}
 
 export interface ErrorBoundaryProps {
-  children: ReactNode;
+  children: React.ReactNode;
 }
 
 export interface ErrorBoundaryState {
   hasError: boolean;
-}
-
-export interface Event {
-  _id: string;
-  date: string;
-  user: string;
-  dog_avatar: string;
 }

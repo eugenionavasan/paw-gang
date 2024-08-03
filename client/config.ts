@@ -1,8 +1,8 @@
-import dotenv from 'dotenv';
+import Constants from 'expo-constants';
 
-// Load environment variables from .env file
-dotenv.config();
+const { extra } = Constants.expoConfig || {};
 
-export const SERVER_PORT: number | string = process.env.SERVER_PORT || 3000;
-export const LOCAL_IP_ADDRESS = process.env.LOCAL_IP_ADDRESS || '127.0.0.1';
-export const GOOGLE_API_KEY = process.env.GOOGLE_API_KEY;
+export const LOCAL_IP_ADDRESS = extra?.localIpAddress || '192.168.0.73';
+export const GOOGLE_MAPS_API_KEY = extra?.googleMapsApiKey || '';
+export const SERVER_URL = extra?.serverUrl || 'http://192.168.0.73:3002';
+export const SERVER_PORT: number | string = extra?.serverPort || 3002;
