@@ -108,6 +108,9 @@ export const postEvents = async (
   next: NextFunction,
 ): Promise<void> => {
   try {
+
+    console.log('Request body:', req.body); // Log the request body to debug
+    
     const { place_id, park_name, address, date, user, dog_avatar }: IEvent =
       req.body;
     if (!isValidEvent(req.body)) {

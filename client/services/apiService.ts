@@ -32,6 +32,7 @@ export const fetchEvents = async (place_id: string): Promise<Event[]> => {
 
 export const saveEvent = async (eventToAdd: Event): Promise<void> => {
   try {
+    console.log('Sending event to server:', eventToAdd); // Log the event data being sent
     await axios.post(`${SERVER_URL}/events`, eventToAdd);
   } catch (error) {
     console.error('Error saving event:', error);

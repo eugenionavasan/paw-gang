@@ -80,11 +80,13 @@ const ParkSchedule: React.FC<ParkScheduleProps> = ({ route }) => {
       date: eventDate,
       place_id,
       park_name: name,
-      address: '', // You may need to provide or remove this depending on your use case
+      address: 'Your Address Here', // You may need to provide or remove this depending on your use case
       user: 'eugenio',
       dog_avatar: 'https://i.ibb.co/86gL7yK/Whats-App-Image-2024-07-25-at-15-20-30-modified.png',
       __v: 0, // __v is typically used by MongoDB for versioning
     };
+    
+    console.log('Event to add:', eventToAdd); // Log the event data
 
     try {
       await saveEvent(eventToAdd);
