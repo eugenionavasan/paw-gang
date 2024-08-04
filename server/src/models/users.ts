@@ -23,12 +23,18 @@ const userSchema = new Schema<IUser, UserModel>({
     type: String,
     required: true,
   },
+  dogPhoto: {
+    type: String,
+    required: true,
+  },
   events: [
     {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Event',
     },
   ],
+}, {
+  timestamps: true,
 });
 
 export const User: UserModel = model<IUser, UserModel>('Users', userSchema);

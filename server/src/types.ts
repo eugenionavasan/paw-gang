@@ -1,4 +1,5 @@
 import { ObjectId } from 'mongoose';
+import { Request, Response, NextFunction } from 'express';
 
 export interface IUser {
   _id?: ObjectId;
@@ -6,6 +7,7 @@ export interface IUser {
   email: string;
   password: string;
   dogName: string;
+  dogPhoto: string;
   events: ObjectId[] | []; // ! or null?
   createdAt?: Date;
   updatedAt?: Date;
@@ -46,4 +48,10 @@ export interface IInvalidEvent {
   _id?: string;
   createdAt?: Date;
   updatedAt?: Date;
+}
+
+export interface UserControllerType {
+  getOne: (req: Request, res: Response, next: NextFunction) => Promise<void>;
+  postOne: (req: Request, res: Response, next: NextFunction) => Promise<void>;
+  login: (req: Request, res: Response, next: NextFunction) => Promise<void>;
 }
