@@ -21,7 +21,7 @@ interface Event {
   place_id: string;
   park_name: string;
   address: string;
-  date: string; // ISO date string
+  date: string;
   user: string;
   dog_avatar: string;
   __v: number;
