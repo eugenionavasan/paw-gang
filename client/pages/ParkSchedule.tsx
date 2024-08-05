@@ -1,11 +1,20 @@
-import React, { useEffect, useState } from 'react';
-import { Alert, Button, FlatList, Image, Modal, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import DateTimePickerModal from 'react-native-modal-datetime-picker';
-import moment from 'moment-timezone';
 import { RouteProp } from '@react-navigation/native';
-import { RootStackParamList } from '../types';
-import { createApiService, fetchEvents, saveEvent } from '../services/apiService'; 
-import { SERVER_PORT, LOCAL_IP_ADDRESS } from '../config';
+import moment from 'moment-timezone';
+import React, { useEffect, useState } from 'react';
+import {
+  Alert,
+  Button,
+  FlatList,
+  Image,
+  Modal,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
+import DateTimePickerModal from 'react-native-modal-datetime-picker';
+import { fetchEvents, saveEvent } from '../services/apiService';
+import { Event, RootStackParamList } from '../types';
 
 type ParkScheduleRouteProp = RouteProp<RootStackParamList, 'ParkSchedule'>;
 
@@ -13,23 +22,11 @@ interface ParkScheduleProps {
   route: ParkScheduleRouteProp;
 }
 
-const SERVER_URL = `http://${LOCAL_IP_ADDRESS}:${SERVER_PORT}`;
-const apiService = createApiService(SERVER_URL);
-
-interface Event {
-  _id: string;
-  place_id: string;
-  park_name: string;
-  address: string;
-  date: string;
-  user: string;
-  dog_avatar: string;
-  __v: number;
-}
-
 const ParkSchedule: React.FC<ParkScheduleProps> = ({ route }) => {
   const { place_id, name } = route.params;
-  const [selectedDate, setSelectedDate] = useState(moment().tz('Europe/Madrid'));
+  const [selectedDate, setSelectedDate] = useState(
+    moment().tz('Europe/Madrid'),
+  );
   const [events, setEvents] = useState<Record<string, Event[]>>({});
   const [modalVisible, setModalVisible] = useState(false);
   const [newEventDate, setNewEventDate] = useState('');
@@ -40,14 +37,19 @@ const ParkSchedule: React.FC<ParkScheduleProps> = ({ route }) => {
     const fetchEventData = async () => {
       try {
         const data = await fetchEvents(place_id);
-        const formattedEvents = data.reduce((acc, event) => {
-          const dateKey = moment(event.date).tz('Europe/Madrid').format('YYYY-MM-DD');
-          if (!acc[dateKey]) {
-            acc[dateKey] = [];
-          }
-          acc[dateKey].push(event);
-          return acc;
-        }, {} as Record<string, Event[]>);
+        const formattedEvents = data.reduce(
+          (acc, event) => {
+            const dateKey = moment(event.date)
+              .tz('Europe/Madrid')
+              .format('YYYY-MM-DD');
+            if (!acc[dateKey]) {
+              acc[dateKey] = [];
+            }
+            acc[dateKey].push(event);
+            return acc;
+          },
+          {} as Record<string, Event[]>,
+        );
         setEvents(formattedEvents);
       } catch (error) {
         console.error('Error fetching events:', error);
@@ -72,20 +74,25 @@ const ParkSchedule: React.FC<ParkScheduleProps> = ({ route }) => {
 
   const handleSaveEvent = async () => {
     const eventDate = moment
-      .tz(`${selectedDate.format('YYYY-MM-DD')} ${newEventDate}`, 'YYYY-MM-DD HH:mm', 'Europe/Madrid')
+      .tz(
+        `${selectedDate.format('YYYY-MM-DD')} ${newEventDate}`,
+        'YYYY-MM-DD HH:mm',
+        'Europe/Madrid',
+      )
       .toISOString();
 
     const eventToAdd: Event = {
-      _id: '', 
+      _id: '',
       date: eventDate,
       place_id,
       park_name: name,
-      address: 'Your Address Here', 
+      address: 'Your Address Here',
       user: 'eugenio',
-      dog_avatar: 'https://i.ibb.co/86gL7yK/Whats-App-Image-2024-07-25-at-15-20-30-modified.png',
-      __v: 0, 
+      dog_avatar:
+        'https://i.ibb.co/86gL7yK/Whats-App-Image-2024-07-25-at-15-20-30-modified.png',
+      __v: 0,
     };
-    
+
     console.log('Event to add:', eventToAdd); // Log the event data
 
     try {
@@ -112,11 +119,18 @@ const ParkSchedule: React.FC<ParkScheduleProps> = ({ route }) => {
   const renderItem = ({ item }: { item: string }) => {
     const dayEvents = events[selectedDate.format('YYYY-MM-DD')] || [];
     const slotEvents = dayEvents.filter((event) =>
-      moment(event.date).tz('Europe/Madrid').isSame(selectedDate.clone().hour(moment(item, 'HH:mm').hour()), 'hour')
+      moment(event.date)
+        .tz('Europe/Madrid')
+        .isSame(
+          selectedDate.clone().hour(moment(item, 'HH:mm').hour()),
+          'hour',
+        ),
     );
 
     return (
-      <View style={[styles.slot, slotEvents.length > 0 && styles.slotWithEvent]}>
+      <View
+        style={[styles.slot, slotEvents.length > 0 && styles.slotWithEvent]}
+      >
         <Text style={styles.time}>{item}</Text>
         {slotEvents.length > 0 && (
           <FlatList
@@ -132,7 +146,7 @@ const ParkSchedule: React.FC<ParkScheduleProps> = ({ route }) => {
   };
 
   const hours = Array.from({ length: 24 }, (_, i) =>
-    moment({ hour: i }).tz('Europe/Madrid').format('HH:00')
+    moment({ hour: i }).tz('Europe/Madrid').format('HH:00'),
   );
 
   const showTimePicker = () => setTimePickerVisibility(true);
@@ -140,7 +154,10 @@ const ParkSchedule: React.FC<ParkScheduleProps> = ({ route }) => {
   const hideTimePicker = () => setTimePickerVisibility(false);
 
   const handleConfirm = (time: Date) => {
-    const formattedTime = moment(time).tz('Europe/Madrid').minute(0).format('HH:mm');
+    const formattedTime = moment(time)
+      .tz('Europe/Madrid')
+      .minute(0)
+      .format('HH:mm');
     setNewEventDate(formattedTime);
     hideTimePicker();
   };
@@ -148,7 +165,11 @@ const ParkSchedule: React.FC<ParkScheduleProps> = ({ route }) => {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Button title="Prev Day" onPress={handlePrevDay} disabled={isPrevDayDisabled} />
+        <Button
+          title="Prev Day"
+          onPress={handlePrevDay}
+          disabled={isPrevDayDisabled}
+        />
         <Text style={styles.date}>{selectedDate.format('dddd, D MMM')}</Text>
         <Button title="Next Day" onPress={handleNextDay} />
       </View>
@@ -157,14 +178,23 @@ const ParkSchedule: React.FC<ParkScheduleProps> = ({ route }) => {
         renderItem={renderItem}
         keyExtractor={(item) => item}
       />
-      <TouchableOpacity style={styles.addButton} onPress={() => setModalVisible(true)}>
+      <TouchableOpacity
+        style={styles.addButton}
+        onPress={() => setModalVisible(true)}
+      >
         <Text style={styles.addButtonText}>Add visit 🐕</Text>
       </TouchableOpacity>
-      <Modal visible={modalVisible} animationType="slide" onRequestClose={() => setModalVisible(false)}>
+      <Modal
+        visible={modalVisible}
+        animationType="slide"
+        onRequestClose={() => setModalVisible(false)}
+      >
         <View style={styles.modalContent}>
           <Text style={styles.modalTitle}>Plan your visit 🐶</Text>
           <TouchableOpacity onPress={showTimePicker} style={styles.input}>
-            <Text style={newEventDate ? styles.inputText : styles.placeholderText}>
+            <Text
+              style={newEventDate ? styles.inputText : styles.placeholderText}
+            >
               {newEventDate || 'Start Time (HH:00)'}
             </Text>
           </TouchableOpacity>
