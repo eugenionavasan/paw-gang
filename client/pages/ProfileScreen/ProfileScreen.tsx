@@ -24,7 +24,7 @@ const ProfileScreen: React.FC = () => {
   return (
     <View style={styles.container}>
       <Image
-        source={require('../assets/avatar-Luffy.png')}
+        source={require('../../assets/avatar-Luffy.png')}
         style={styles.image}
       />
       <Text style={styles.text}>User: testuser</Text>
