@@ -9,18 +9,10 @@ import {
   TextInput,
   Alert
 } from 'react-native';
-import { RegisterForm, LoginForm, LoginScreenNavigationProp } from '../types';
-import { handleSignUp, handleSignIn } from '../services/services';
+import { RegisterForm } from '../types';
+import { handleSignUp } from '../services/services';
 
-interface Props {
-  navigation: LoginScreenNavigationProp;
-}
-
-const Login: React.FC<Props> = ({ navigation }) => {
-  const [form, setForm] = useState<LoginForm>({
-    email: '',
-    password: '',
-  });
+const Login: React.FC<{ navigation: any }> = ({ navigation }) => {
   const [signupForm, setSignupForm] = useState<RegisterForm>({
     email: '',
     password: '',
@@ -29,20 +21,6 @@ const Login: React.FC<Props> = ({ navigation }) => {
   });
   const [loading, setLoading] = useState(false);
   const [isSignUp, setIsSignUp] = useState(false);
-
-  const onSubmitLogin = async () => {
-    setLoading(true);
-    try {
-      const result = await handleSignIn(form);
-      console.log('Login successful:', result);
-      navigation.replace('Profile');
-    } catch (error) {
-      console.error('Login failed:', error);
-      Alert.alert('Login Failed', 'Invalid email or password. Please try again.');
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const onSubmitSignUp = async () => {
     setLoading(true);
@@ -57,6 +35,10 @@ const Login: React.FC<Props> = ({ navigation }) => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const navigateToAnotherPage = () => {
+    navigation.replace('Main'); 
   };
 
   return (
@@ -154,11 +136,9 @@ const Login: React.FC<Props> = ({ navigation }) => {
                   autoCorrect={false}
                   clearButtonMode="while-editing"
                   keyboardType="email-address"
-                  onChangeText={(email) => setForm({ ...form, email })}
                   placeholder="hachiko@example.com"
                   placeholderTextColor="grey"
                   style={styles.inputControl}
-                  value={form.email}
                 />
               </View>
 
@@ -167,19 +147,17 @@ const Login: React.FC<Props> = ({ navigation }) => {
                 <TextInput
                   autoCorrect={false}
                   clearButtonMode="while-editing"
-                  onChangeText={(password) => setForm({ ...form, password })}
                   placeholder="********"
                   placeholderTextColor="grey"
                   style={styles.inputControl}
                   secureTextEntry={true}
-                  value={form.password}
                 />
               </View>
 
               <View style={styles.formAction}>
-                <TouchableOpacity onPress={onSubmitLogin} disabled={loading}>
+                <TouchableOpacity onPress={navigateToAnotherPage} disabled={loading}>
                   <View style={[styles.btn, loading && { backgroundColor: '#cccccc' }]}>
-                    <Text style={styles.btnText}>{loading ? 'Signing in...' : 'Sign in'}</Text>
+                    <Text style={styles.btnText}>{loading ? 'Navigating...' : 'Sign in'}</Text>
                   </View>
                 </TouchableOpacity>
               </View>
@@ -242,13 +220,6 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     color: 'black',
     textAlign: 'center',
-  },
-  formFooter: {
-    fontSize: 15,
-    fontWeight: '600',
-    color: 'black',
-    textAlign: 'center',
-    letterSpacing: 0.15,
   },
   input: {
     marginBottom: 16,
