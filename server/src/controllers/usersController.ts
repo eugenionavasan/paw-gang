@@ -20,25 +20,29 @@ const UserController: UserControllerType = {
     next: NextFunction,
   ): Promise<void> => {
     try {
-      const { _id } = req.params;
-      const { password } = req.body; // Get password from request body
-      if (!_id)
-        return missingParamHandler(
+      const { email, password } = req.body;
+
+      // Validate input
+      if (!email || !password)
+        return missingBodyHandler(
           res,
           'UserController/getOne',
-          'User',
-          '_id',
+          'email and password',
         );
-      const user: IUser | null = await User.findById(_id);
+
+      // Find user by email
+      const user = await User.findOne({ email });
       if (!user)
-        return noResultHandler(res, 'UserController/getOne', 'User', { _id });
+        return noResultHandler(res, 'UserController/getOne', 'User', { email });
 
       // Check if the provided password matches the user's password
-      if (password !== user.password) {
+      const isMatch = await user.comparePassword(password);
+      if (!isMatch) {
         res.status(400).json({ error: 'Invalid password' });
         return;
       }
 
+      // Return the user if password is correct
       res.status(200).json(user);
     } catch (error) {
       next(error);
@@ -53,14 +57,20 @@ const UserController: UserControllerType = {
     try {
       if (!isValidUser(req.body))
         return missingBodyHandler(res, 'UserController/postOne', 'User');
+        
       const { email, password, username, dogName }: IUser = req.body;
-      const user: IUser = await User.create({
+
+      // Create a new user with the hashed password
+      const user = new User({
         email,
-        password,
+        password,  // The password will be hashed automatically in the pre-save hook
         username,
         dogName,
       });
-      res.status(200).json(user);
+
+      await user.save(); // Save the user to the database
+
+      res.status(201).json(user); // Return the created user
     } catch (error) {
       next(error);
     }

@@ -14,12 +14,21 @@ const utils_1 = require("../utils/utils");
 const UserController = {
     getOne: (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
         try {
-            const { _id } = req.params;
-            if (!_id)
-                return (0, utils_1.missingParamHandler)(res, 'UserController/getOne', 'User', '_uid');
-            const user = yield users_1.User.findById(_id);
+            const { email, password } = req.body;
+            // Validate input
+            if (!email || !password)
+                return (0, utils_1.missingBodyHandler)(res, 'UserController/getOne', 'email and password');
+            // Find user by email
+            const user = yield users_1.User.findOne({ email });
             if (!user)
-                return (0, utils_1.noResultHandler)(res, 'UserController/getOne', 'User', { _id });
+                return (0, utils_1.noResultHandler)(res, 'UserController/getOne', 'User', { email });
+            // Check if the provided password matches the user's password
+            const isMatch = yield user.comparePassword(password);
+            if (!isMatch) {
+                res.status(400).json({ error: 'Invalid password' });
+                return;
+            }
+            // Return the user if password is correct
             res.status(200).json(user);
         }
         catch (error) {
@@ -31,13 +40,15 @@ const UserController = {
             if (!(0, utils_1.isValidUser)(req.body))
                 return (0, utils_1.missingBodyHandler)(res, 'UserController/postOne', 'User');
             const { email, password, username, dogName } = req.body;
-            const user = yield users_1.User.create({
+            // Create a new user with the hashed password
+            const user = new users_1.User({
                 email,
-                password,
+                password, // The password will be hashed automatically in the pre-save hook
                 username,
                 dogName,
             });
-            res.status(200).json(user);
+            yield user.save(); // Save the user to the database
+            res.status(201).json(user); // Return the created user
         }
         catch (error) {
             next(error);
