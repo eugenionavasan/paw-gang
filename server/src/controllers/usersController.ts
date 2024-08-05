@@ -1,46 +1,62 @@
-import { Request, Response, NextFunction } from 'express';
-import bcrypt from 'bcrypt';
-import jwt from 'jsonwebtoken';
-import User from '../models/users';
+import { NextFunction, Request, Response } from 'express';
+import { User } from '../models/users';
+import { IUser } from '../types';
+import {
+  isValidUser,
+  missingBodyHandler,
+  missingParamHandler,
+  noResultHandler,
+} from '../utils/utils';
 
-// Register a new user
-export const postOne = async (req: Request, res: Response, next: NextFunction) => {
-  const { name, email, password, dogName, dogPhoto } = req.body;
+interface UserControllerType {
+  getOne: (req: Request, res: Response, next: NextFunction) => Promise<void>;
+  postOne: (req: Request, res: Response, next: NextFunction) => Promise<void>;
+}
 
-  try {
-    const existingUser = await User.findOne({ email });
-    if (existingUser) {
-      return res.status(400).json({ message: 'Email already exists' });
+const UserController: UserControllerType = {
+  getOne: async (
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ): Promise<void> => {
+    try {
+      const { _id } = req.params;
+      if (!_id)
+        return missingParamHandler(
+          res,
+          'UserController/getOne',
+          'User',
+          '_uid',
+        );
+      const user: IUser | null = await User.findById(_id);
+      if (!user)
+        return noResultHandler(res, 'UserController/getOne', 'User', { _id });
+      res.status(200).json(user);
+    } catch (error) {
+      next(error);
     }
+  },
 
-    const newUser = new User({ name, email, password, dogName, dogPhoto });
-    const savedUser = await newUser.save();
-    res.status(201).json({ message: 'User registered successfully', user: savedUser });
-  } catch (error) {
-    next(error);
-  }
+  postOne: async (
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ): Promise<void> => {
+    try {
+      if (!isValidUser(req.body))
+        return missingBodyHandler(res, 'UserController/postOne', 'User');
+      const { email, password, username, dogName }: IUser = req.body;
+      const user: IUser = await User.create({
+        email,
+        password,
+        username,
+        dogName,
+      });
+      res.status(200).json(user);
+    } catch (error) {
+      next(error);
+    }
+  },
 };
 
-// Login user
-export const loginUser = async (req: Request, res: Response, next: NextFunction) => {
-  const { email, password } = req.body;
-
-  try {
-    const user = await User.findOne({ email });
-    if (!user) {
-      return res.status(400).json({ message: 'Invalid email or password' });
-    }
-
-    const isMatch = await user.comparePassword(password);
-    if (!isMatch) {
-      return res.status(400).json({ message: 'Invalid email or password' });
-    }
-
-    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET || 'default_secret', {
-      expiresIn: '1h',
-    });
-    res.json({ message: 'Login successful', token, user });
-  } catch (error) {
-    next(error);
-  }
-};
+export default UserController;

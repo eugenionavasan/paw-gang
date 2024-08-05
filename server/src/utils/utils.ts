@@ -1,5 +1,5 @@
 import { Response } from 'express';
-import { IEvent } from '../types';
+import { IEvent, IUser } from '../types';
 
 interface IUIdObject {
   [key: string]: string;
@@ -47,6 +47,11 @@ export function missingParamHandler(
   res.status(400).send({
     error: `Request for ${modelName} is missing paramater ${paramName}`,
   });
+}
+
+export function isValidUser(body: IUser): boolean {
+  if (body.email && body.password && body.username && body.dogName) return true;
+  return false;
 }
 
 export function isValidEvent(body: IEvent): boolean {
