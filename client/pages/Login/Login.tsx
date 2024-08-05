@@ -47,16 +47,14 @@ const Login: React.FC<{ navigation: any }> = ({ navigation }) => {
       console.log('Sign up successful:', result);
       setSignUpSuccess(true);
       setIsSignUp(false);
+      // Navigate to the 'Main' screen upon successful sign-up
+      navigation.replace('Main');
     } catch (error) {
       console.error('Sign up failed:', error);
       Alert.alert('Sign Up Failed', 'Please check your details and try again.');
     } finally {
       setLoading(false);
     }
-  };
-
-  const navigateToAnotherPage = () => {
-    navigation.replace('Main');
   };
 
   const switchToSignUp = () => {
@@ -210,7 +208,10 @@ const Login: React.FC<{ navigation: any }> = ({ navigation }) => {
 
               <View style={styles.formAction}>
                 <TouchableOpacity
-                  onPress={navigateToAnotherPage}
+                  onPress={() => {
+                    // Handle sign-in logic here if necessary
+                    navigation.replace('Main'); // Direct navigation for sign-in
+                  }}
                   disabled={loading}
                 >
                   <View

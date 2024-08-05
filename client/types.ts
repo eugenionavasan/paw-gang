@@ -1,9 +1,9 @@
 import { StackNavigationProp } from '@react-navigation/stack';
-import {Dispatch, SetStateAction} from 'react';
-import { GestureResponderEvent, Image } from 'react-native';
+import { Dispatch, SetStateAction } from 'react';
+import { GestureResponderEvent } from 'react-native';
 
-// ! combine frontend & backend types
-// props
+// Define types and interfaces used in the application
+
 export interface CustomButtonProps {
   onPress: (event: GestureResponderEvent) => void;
   title: string;
@@ -13,6 +13,7 @@ export type RootStackParamList = {
   Login: undefined;
   Profile: undefined;
   ParkSchedule: { place_id: string; name: string };
+  Main?: undefined;
 };
 
 export type LoginScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Login'>;
@@ -46,11 +47,6 @@ export interface RegisterForm {
   dogName: string;
 }
 
-export interface CustomButtonProps {
-  onPress: (event: GestureResponderEvent) => void;
-  title: string;
-}
-
 export interface ErrorBoundaryProps {
   children: React.ReactNode;
 }
@@ -59,15 +55,9 @@ export interface ErrorBoundaryState {
   hasError: boolean;
 }
 
-export type LoginScreenNavigationProp = {
-  navigation: {
-    replace: (route: string) => void;
-  };
-};
-
 export interface EventlistProps {
-  events: IEvent[] | []
-  setEvents: Dispatch<SetStateAction<IEvent[]>>
+  events: IEvent[] | [];
+  setEvents: Dispatch<SetStateAction<IEvent[]>>;
 }
 
 export interface EventItemProps {
@@ -76,19 +66,16 @@ export interface EventItemProps {
   handleDelete: (id: string) => Promise<void>;
 }
 
-// ! check responses
+// Google Maps related types
 export interface ParklistProps {
-  dogParks: google.maps.places.PlaceResult[]
+  dogParks: google.maps.places.PlaceResult[];
 }
 
 export interface ParkItemProps {
   item: google.maps.places.PlaceResult;
 }
 
-
-
-
-
+// Event interface used in both frontend and backend
 export interface IEvent {
   place_id: string;
   park_name: string;
@@ -101,7 +88,7 @@ export interface IEvent {
   updatedAt?: Date;
 }
 
-export type ServerMutationRes = (MutationSuccessResponse & MutatedEventResponse) | ServerErrorResponse
+export type ServerMutationRes = (MutationSuccessResponse & MutatedEventResponse) | ServerErrorResponse;
 
 export type ServerQueryRes = IEvent[] | ServerErrorResponse;
 
@@ -114,14 +101,16 @@ interface MutatedEventResponse {
 }
 
 interface ServerErrorResponse {
-  message?: string
-  error: string
+  message?: string;
+  error: string;
 }
 
 export interface IServerService {
   getEvents: (userId: string) => Promise<IEvent[] | void>;
   deleteEvent: (id: string) => Promise<IEvent | void>;
   updateEvent: (id: string, data: IEvent) => Promise<IEvent | void>;
+  fetchEvents: (place_id: string) => Promise<IEvent[]>;
+  saveEvent: (eventToAdd: IEvent) => Promise<void>;
 }
 
 export interface IGoogleService {
