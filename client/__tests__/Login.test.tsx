@@ -1,6 +1,6 @@
 import { fireEvent, render, waitFor } from '@testing-library/react-native';
 import React from 'react';
-import Login from '../pages/Login'; // Adjust the import path based on your structure
+import Login from '../pages/Login/Login'; // Adjust the import path based on your structure
 import { handleSignUp } from '../services/services';
 
 // Mock the handleSignUp function
@@ -13,14 +13,19 @@ describe('Login Component', () => {
     const navigation = { replace: jest.fn() };
 
     // Render the component
-    const { getByText, getByPlaceholderText } = render(<Login navigation={navigation as any} />);
+    const { getByText, getByPlaceholderText } = render(
+      <Login navigation={navigation as any} />,
+    );
 
     // Switch to sign-up mode
     fireEvent.press(getByText('Sign up'));
 
     // Fill in the form with some fields empty
-    fireEvent.changeText(getByPlaceholderText("hachiko@example.com"), 'test@example.com');
-    fireEvent.changeText(getByPlaceholderText("********"), 'password123');
+    fireEvent.changeText(
+      getByPlaceholderText('hachiko@example.com'),
+      'test@example.com',
+    );
+    fireEvent.changeText(getByPlaceholderText('********'), 'password123');
     // Leave Username empty
     fireEvent.changeText(getByPlaceholderText("Your Dog's Name"), 'Rex');
 
@@ -34,15 +39,20 @@ describe('Login Component', () => {
     const navigation = { replace: jest.fn() };
 
     // Render the component
-    const { getByText, getByPlaceholderText } = render(<Login navigation={navigation as any} />);
+    const { getByText, getByPlaceholderText } = render(
+      <Login navigation={navigation as any} />,
+    );
 
     // Switch to sign-up mode
     fireEvent.press(getByText('Sign up'));
 
     // Fill in the form with an invalid email format
-    fireEvent.changeText(getByPlaceholderText("hachiko@example.com"), 'invalid-email');
-    fireEvent.changeText(getByPlaceholderText("********"), 'password123');
-    fireEvent.changeText(getByPlaceholderText("Your Username"), 'testuser');
+    fireEvent.changeText(
+      getByPlaceholderText('hachiko@example.com'),
+      'invalid-email',
+    );
+    fireEvent.changeText(getByPlaceholderText('********'), 'password123');
+    fireEvent.changeText(getByPlaceholderText('Your Username'), 'testuser');
     fireEvent.changeText(getByPlaceholderText("Your Dog's Name"), 'Rex');
 
     // Submit the form
@@ -50,7 +60,6 @@ describe('Login Component', () => {
 
     // Ensure handleSignUp was not called
     await waitFor(() => expect(handleSignUp).not.toHaveBeenCalled());
-
   });
   it('renders correctly and allows sign-up', async () => {
     // Mock implementation of handleSignUp
@@ -59,7 +68,9 @@ describe('Login Component', () => {
     const navigation = { replace: jest.fn() };
 
     // Render the component
-    const { getByText, getByPlaceholderText, queryByText } = render(<Login navigation={navigation as any} />);
+    const { getByText, getByPlaceholderText, queryByText } = render(
+      <Login navigation={navigation as any} />,
+    );
 
     // Verify initial state
     expect(getByText('Sign in to Paw Gang')).toBeTruthy();
@@ -69,21 +80,26 @@ describe('Login Component', () => {
     fireEvent.press(getByText('Sign up'));
 
     // Fill in the sign-up form
-    fireEvent.changeText(getByPlaceholderText("hachiko@example.com"), 'test@example.com');
-    fireEvent.changeText(getByPlaceholderText("********"), 'password123');
-    fireEvent.changeText(getByPlaceholderText("Your Username"), 'testuser');
+    fireEvent.changeText(
+      getByPlaceholderText('hachiko@example.com'),
+      'test@example.com',
+    );
+    fireEvent.changeText(getByPlaceholderText('********'), 'password123');
+    fireEvent.changeText(getByPlaceholderText('Your Username'), 'testuser');
     fireEvent.changeText(getByPlaceholderText("Your Dog's Name"), 'Rex');
 
     // Submit the form
     fireEvent.press(getByText('Sign up'));
 
     // Wait for the sign-up to complete
-    await waitFor(() => expect(handleSignUp).toHaveBeenCalledWith({
-      email: 'test@example.com',
-      password: 'password123',
-      username: 'testuser',
-      dogName: 'Rex',
-    }));
+    await waitFor(() =>
+      expect(handleSignUp).toHaveBeenCalledWith({
+        email: 'test@example.com',
+        password: 'password123',
+        username: 'testuser',
+        dogName: 'Rex',
+      }),
+    );
 
     // Check for successful sign-up alert
     expect(getByText('Sign Up Successful')).toBeTruthy();
@@ -111,4 +127,4 @@ describe('Login Component', () => {
     // Check that navigation to 'Main' was called
     expect(navigation.replace).toHaveBeenCalledWith('Main');
   });
-  });
+});

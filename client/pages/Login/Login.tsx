@@ -3,14 +3,14 @@ import {
   Alert,
   Image,
   SafeAreaView,
-  StyleSheet,
   Text,
   TextInput,
   TouchableOpacity,
   View,
 } from 'react-native';
-import { handleSignUp } from '../services/services';
-import { RegisterForm } from '../types';
+import { handleSignUp } from '../../services/services';
+import { RegisterForm } from '../../types';
+import { styles } from './LoginStyles'; 
 
 const Login: React.FC<{ navigation: any }> = ({ navigation }) => {
   const [signupForm, setSignupForm] = useState<RegisterForm>({
@@ -22,7 +22,9 @@ const Login: React.FC<{ navigation: any }> = ({ navigation }) => {
   const [loading, setLoading] = useState(false);
   const [isSignUp, setIsSignUp] = useState(false);
   const [signUpSuccess, setSignUpSuccess] = useState(false);
+
   const isValidEmail = (email: string) => /\S+@\S+\.\S+/.test(email);
+
   const onSubmitSignUp = async () => {
     if (
       !signupForm.email ||
@@ -75,7 +77,7 @@ const Login: React.FC<{ navigation: any }> = ({ navigation }) => {
             alt="App Logo"
             resizeMode="contain"
             style={styles.headerImg}
-            source={require('../assets/logo.jpg')}
+            source={require('../../assets/logo.jpg')}
           />
           <Text style={styles.title}>
             {isSignUp ? 'Sign up to' : 'Sign in to'}{' '}
@@ -241,102 +243,5 @@ const Login: React.FC<{ navigation: any }> = ({ navigation }) => {
     </SafeAreaView>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    backgroundColor: '#cfcec9',
-    paddingVertical: 24,
-    paddingHorizontal: 0,
-    flexGrow: 1,
-    flexShrink: 1,
-    flexBasis: 0,
-  },
-  title: {
-    fontSize: 31,
-    fontWeight: '700',
-    color: 'black',
-    marginBottom: 6,
-  },
-  subtitle: {
-    fontSize: 15,
-    fontWeight: '500',
-    color: 'black',
-  },
-  header: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginVertical: 36,
-  },
-  headerImg: {
-    backgroundColor: '#cfcec9',
-    width: 400,
-    height: 200,
-    alignSelf: 'center',
-    marginBottom: 36,
-  },
-  form: {
-    marginBottom: 24,
-    paddingHorizontal: 24,
-    flexGrow: 1,
-    flexShrink: 1,
-    flexBasis: 0,
-  },
-  formAction: {
-    marginTop: 4,
-    marginBottom: 16,
-  },
-  formLink: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: 'black',
-    textAlign: 'center',
-  },
-  input: {
-    marginBottom: 16,
-  },
-  inputLabel: {
-    fontSize: 17,
-    fontWeight: '600',
-    color: 'black',
-    marginBottom: 8,
-  },
-  inputControl: {
-    height: 50,
-    backgroundColor: '#cfcec9',
-    paddingHorizontal: 16,
-    borderRadius: 12,
-    fontSize: 15,
-    fontWeight: '500',
-    color: 'black',
-    borderWidth: 1,
-    borderColor: 'black',
-    borderStyle: 'solid',
-  },
-  btn: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderRadius: 30,
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    borderWidth: 1,
-    backgroundColor: '#008CBA',
-    borderColor: '#008CBA',
-  },
-  btnText: {
-    fontSize: 18,
-    lineHeight: 26,
-    fontWeight: '600',
-    color: '#fff',
-  },
-  successMessage: {
-    // New style for success message
-    fontSize: 20,
-    fontWeight: '700',
-    color: 'green',
-    textAlign: 'center',
-    marginVertical: 20,
-  },
-});
 
 export default Login;

@@ -2,11 +2,12 @@
 /* eslint-disable global-require */
 /* eslint-disable prettier/prettier */
 /* eslint-disable react-native/no-color-literals */
-import React from 'react';
-import {View, Text, StyleSheet, Image, TouchableOpacity} from 'react-native';
-import {useNavigation} from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { RootStackParamList } from '../types'; // Adjust the path if necessary
+import React from 'react';
+import { Image, Text, TouchableOpacity, View } from 'react-native';
+import { RootStackParamList } from '../../types'; // Adjust the path if necessary
+import { styles } from './ProfileScreenStyles'; // Import styles from the new file
 
 type ProfileScreenNavigationProp = NativeStackNavigationProp<
   RootStackParamList,
@@ -38,56 +39,6 @@ const ProfileScreen: React.FC = () => {
       </TouchableOpacity>
     </View>
   );
-}
-
-const styles = StyleSheet.create({
-  container: {
-    alignItems: 'center',
-    backgroundColor: '#333',
-    flex: 1,
-    justifyContent: 'center',
-    paddingTop: 0,
-  },
-  image: {
-    borderColor: 'white',
-    borderRadius: 100,
-    borderWidth: 2,
-    height: 200,
-    width: 200,
-    marginBottom: 20,
-  },
-  text: {
-    color: '#fff',
-    fontWeight: 'bold',
-    fontSize: 20,
-    marginBottom: 10,
-  },
-  button: {
-    backgroundColor: '#008CBA',
-    borderRadius: 5,
-    marginVertical: 10,
-    paddingHorizontal: 20,
-    paddingVertical: 10,
-  },
-  buttonText: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: 'bold',
-  },
-  logoutButton: {
-    backgroundColor: 'red',
-    borderRadius: 5,
-    marginVertical: 10,
-    paddingHorizontal: 20,
-    paddingVertical: 10,
-    width: 125,
-    alignItems: 'center',
-  },
-  logoutButtonText: {
-    color: 'white',
-    fontSize: 16,
-    fontWeight: 'bold',
-  },
-});
+};
 
 export default ProfileScreen;

@@ -4,22 +4,22 @@
 /* eslint-disable react-native/no-color-literals */
 /* eslint-disable react/no-unstable-nested-components */
 /* eslint-disable global-require */
-import {View, Image, StyleSheet} from 'react-native';
-import {NavigationContainer} from '@react-navigation/native';
-import {createStackNavigator} from '@react-navigation/stack';
-import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
-import Icon from 'react-native-vector-icons/Ionicons';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
 import Constants from 'expo-constants';
-import SearchScreen from './pages/SearchScreen/SearchScreen';
+import { Image, StyleSheet, View } from 'react-native';
+import Icon from 'react-native-vector-icons/Ionicons';
+import Login from './pages/Login/Login';
+import ParkSchedule from './pages/ParkSchedule/ParkSchedule';
 import PlanScreen from './pages/PlanScreen/PlanScreen';
-import ParkSchedule from './pages/ParkSchedule';
-import Login from './pages/Login';
-import ProfileScreen from './pages/ProfileScreen';
+import ProfileScreen from './pages/ProfileScreen/ProfileScreen';
+import SearchScreen from './pages/SearchScreen/SearchScreen';
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
 
-function LogoHeader () {
+function LogoHeader() {
   return (
     <View style={styles.logoDiv}>
       <Image source={require('./assets/logo.jpg')} style={styles.logo} />
@@ -27,26 +27,30 @@ function LogoHeader () {
   );
 }
 
-function SearchStack () {
+function SearchStack() {
   return (
     <Stack.Navigator>
       <Stack.Screen
         name="Search"
         component={SearchScreen}
-        options={{headerShown: false}}
+        options={{ headerShown: false }}
       />
-      <Stack.Screen name="ParkSchedule" component={ParkSchedule} options={{headerShown: false}} />
+      <Stack.Screen
+        name="ParkSchedule"
+        component={ParkSchedule}
+        options={{ headerShown: false }}
+      />
     </Stack.Navigator>
   );
 }
 
-function MainTabs () {
+function MainTabs() {
   return (
     <>
       <LogoHeader />
       <Tab.Navigator
-        screenOptions={({route}) => ({
-          tabBarIcon: ({focused, color, size}) => {
+        screenOptions={({ route }) => ({
+          tabBarIcon: ({ focused, color, size }) => {
             let iconName;
 
             if (route.name === 'SearchTab') {
@@ -73,27 +77,27 @@ function MainTabs () {
         <Tab.Screen
           name="SearchTab"
           component={SearchStack}
-          options={{title: 'Search'}}
+          options={{ title: 'Search' }}
         />
         <Tab.Screen
           name="MyPlansTab"
           component={PlanScreen}
-          options={{title: 'My Plans'}}
+          options={{ title: 'My Plans' }}
         />
         <Tab.Screen
           name="ProfileTab"
           component={ProfileScreen}
-          options={{title: 'Profile'}}
+          options={{ title: 'Profile' }}
         />
       </Tab.Navigator>
     </>
   );
 }
 
-export default function App () {
+export default function App() {
   return (
     <NavigationContainer>
-      <Stack.Navigator screenOptions={{headerShown: false}}>
+      <Stack.Navigator screenOptions={{ headerShown: false }}>
         <Stack.Screen name="Login" component={Login} />
         <Stack.Screen name="Main" component={MainTabs} />
       </Stack.Navigator>
