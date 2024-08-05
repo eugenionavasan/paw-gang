@@ -1,17 +1,30 @@
-import { ObjectId } from 'mongoose';
 import { Request, Response, NextFunction } from 'express';
 
+// export interface IUser {
+//   _id?: ObjectId;
+//   username: string;
+//   email: string;
+//   password: string;
+//   dogName: string;
+//   dogPhoto: string;
+//   events: ObjectId[] | []; // ! or null?
+//   createdAt?: Date;
+//   updatedAt?: Date;
+// }
+
 export interface IUser {
-  _id?: ObjectId;
-  username: string;
+  name: string;
   email: string;
   password: string;
   dogName: string;
   dogPhoto: string;
-  events: ObjectId[] | []; // ! or null?
-  createdAt?: Date;
-  updatedAt?: Date;
 }
+
+export interface IUserDocument extends IUser, Document {
+  comparePassword(password: string): Promise<boolean>;
+  isModified(path: string): boolean;
+}
+
 
 // Define an interface representing a doocument in mongoDB (Typescript)
 export interface IEvent {
@@ -48,10 +61,4 @@ export interface IInvalidEvent {
   _id?: string;
   createdAt?: Date;
   updatedAt?: Date;
-}
-
-export interface UserControllerType {
-  getOne: (req: Request, res: Response, next: NextFunction) => Promise<void>;
-  postOne: (req: Request, res: Response, next: NextFunction) => Promise<void>;
-  login: (req: Request, res: Response, next: NextFunction) => Promise<void>;
 }

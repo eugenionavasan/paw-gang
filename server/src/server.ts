@@ -20,6 +20,7 @@ app.use(bodyParser.json()); // Parsing the data from the client
 app.use(router); // Using the router
 app.use(errorHandler); // Error middleware
 
+
 // connecting to the db and running the server
 // ! add server.close()
 const startServer = async (): Promise<void> => {

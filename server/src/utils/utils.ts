@@ -1,5 +1,5 @@
 import { Response } from 'express';
-import { IEvent, IUser } from '../types';
+import { IEvent } from '../types';
 
 interface IUIdObject {
   [key: string]: string;
@@ -49,12 +49,7 @@ export function missingParamHandler(
   });
 }
 
-export function isValidUser(body: IUser): boolean {
-  if (body.email && body.password && body.username && body.dogName) return true;
-  return false;
-}
-
-export function isValidEvent (body: IEvent): boolean {
+export function isValidEvent(body: IEvent): boolean {
   if (
     body.place_id &&
     body.park_name &&
