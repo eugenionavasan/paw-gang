@@ -188,6 +188,7 @@ const ParkSchedule: React.FC<ParkScheduleProps> = ({ route }) => {
         visible={modalVisible}
         animationType="slide"
         onRequestClose={() => setModalVisible(false)}
+        testID="modal" 
       >
         <View style={styles.modalContent}>
           <Text style={styles.modalTitle}>Plan your visit 🐶</Text>

@@ -39,7 +39,8 @@ function SearchScreen () {
       const geocodeResponse = await axios.get(
         `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(location)}&key=${apiKey}`,
       );
-
+      console.log('geocodeResponse' + geocodeResponse)
+      console.log('geocodeResponse data' + geocodeResponse.data)
       const geocodeResults = geocodeResponse.data.results;
       if (geocodeResults?.length > 0) {
         const {lat, lng} = geocodeResults[0].geometry.location;
@@ -47,7 +48,8 @@ function SearchScreen () {
         const placesResponse = await axios.get(
           `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${lat},${lng}&radius=5000&type=park&keyword=dog%20park&key=${apiKey}`,
         );
-
+        console.log('places response' + placesResponse)
+        console.log('placesresponse data' + placesResponse.data)
         setDogParks(placesResponse.data.results || []);
       } else {
         setDogParks([]);

@@ -1,16 +1,16 @@
 import React, { useState } from 'react';
 import {
-  StyleSheet,
-  SafeAreaView,
-  View,
+  Alert,
   Image,
+  SafeAreaView,
+  StyleSheet,
   Text,
-  TouchableOpacity,
   TextInput,
-  Alert
+  TouchableOpacity,
+  View,
 } from 'react-native';
-import { RegisterForm } from '../types';
 import { handleSignUp } from '../services/services';
+import { RegisterForm } from '../types';
 
 const Login: React.FC<{ navigation: any }> = ({ navigation }) => {
   const [signupForm, setSignupForm] = useState<RegisterForm>({
@@ -21,14 +21,30 @@ const Login: React.FC<{ navigation: any }> = ({ navigation }) => {
   });
   const [loading, setLoading] = useState(false);
   const [isSignUp, setIsSignUp] = useState(false);
-
+  const [signUpSuccess, setSignUpSuccess] = useState(false);
+  const isValidEmail = (email: string) => /\S+@\S+\.\S+/.test(email);
   const onSubmitSignUp = async () => {
+    if (
+      !signupForm.email ||
+      !signupForm.password ||
+      !signupForm.username ||
+      !signupForm.dogName
+    ) {
+      Alert.alert('All fields are required');
+      return;
+    }
+
+    if (!isValidEmail(signupForm.email)) {
+      Alert.alert('Invalid email address');
+      return;
+    }
+
     setLoading(true);
     try {
       const result = await handleSignUp(signupForm);
       console.log('Sign up successful:', result);
+      setSignUpSuccess(true);
       setIsSignUp(false);
-      Alert.alert('Sign Up Successful', 'You can now log in.');
     } catch (error) {
       console.error('Sign up failed:', error);
       Alert.alert('Sign Up Failed', 'Please check your details and try again.');
@@ -38,7 +54,17 @@ const Login: React.FC<{ navigation: any }> = ({ navigation }) => {
   };
 
   const navigateToAnotherPage = () => {
-    navigation.replace('Main'); 
+    navigation.replace('Main');
+  };
+
+  const switchToSignUp = () => {
+    setIsSignUp(true);
+    setSignUpSuccess(false);
+  };
+
+  const switchToSignIn = () => {
+    setIsSignUp(false);
+    setSignUpSuccess(false);
   };
 
   return (
@@ -52,7 +78,8 @@ const Login: React.FC<{ navigation: any }> = ({ navigation }) => {
             source={require('../assets/logo.jpg')}
           />
           <Text style={styles.title}>
-            {isSignUp ? 'Sign up to' : 'Sign in to'} <Text style={{ color: '#008CBA' }}>Paw Gang</Text>
+            {isSignUp ? 'Sign up to' : 'Sign in to'}{' '}
+            <Text style={{ color: '#008CBA' }}>Paw Gang</Text>
           </Text>
           <Text style={styles.subtitle}>
             Get your dog's tail wagging with a playdate!
@@ -60,7 +87,9 @@ const Login: React.FC<{ navigation: any }> = ({ navigation }) => {
         </View>
 
         <View style={styles.form}>
-          {isSignUp ? (
+          {signUpSuccess ? (
+            <Text style={styles.successMessage}>Sign Up Successful</Text>
+          ) : isSignUp ? (
             <>
               <View style={styles.input}>
                 <Text style={styles.inputLabel}>Email address</Text>
@@ -69,7 +98,9 @@ const Login: React.FC<{ navigation: any }> = ({ navigation }) => {
                   autoCorrect={false}
                   clearButtonMode="while-editing"
                   keyboardType="email-address"
-                  onChangeText={(email) => setSignupForm({ ...signupForm, email })}
+                  onChangeText={(email) =>
+                    setSignupForm({ ...signupForm, email })
+                  }
                   placeholder="hachiko@example.com"
                   placeholderTextColor="grey"
                   style={styles.inputControl}
@@ -82,7 +113,9 @@ const Login: React.FC<{ navigation: any }> = ({ navigation }) => {
                 <TextInput
                   autoCorrect={false}
                   clearButtonMode="while-editing"
-                  onChangeText={(password) => setSignupForm({ ...signupForm, password })}
+                  onChangeText={(password) =>
+                    setSignupForm({ ...signupForm, password })
+                  }
                   placeholder="********"
                   placeholderTextColor="grey"
                   style={styles.inputControl}
@@ -96,7 +129,9 @@ const Login: React.FC<{ navigation: any }> = ({ navigation }) => {
                 <TextInput
                   autoCorrect={false}
                   clearButtonMode="while-editing"
-                  onChangeText={(username) => setSignupForm({ ...signupForm, username })}
+                  onChangeText={(username) =>
+                    setSignupForm({ ...signupForm, username })
+                  }
                   placeholder="Your Username"
                   placeholderTextColor="grey"
                   style={styles.inputControl}
@@ -109,7 +144,9 @@ const Login: React.FC<{ navigation: any }> = ({ navigation }) => {
                 <TextInput
                   autoCorrect={false}
                   clearButtonMode="while-editing"
-                  onChangeText={(dogName) => setSignupForm({ ...signupForm, dogName })}
+                  onChangeText={(dogName) =>
+                    setSignupForm({ ...signupForm, dogName })
+                  }
                   placeholder="Your Dog's Name"
                   placeholderTextColor="grey"
                   style={styles.inputControl}
@@ -119,13 +156,28 @@ const Login: React.FC<{ navigation: any }> = ({ navigation }) => {
 
               <View style={styles.formAction}>
                 <TouchableOpacity onPress={onSubmitSignUp} disabled={loading}>
-                  <View style={[styles.btn, loading && { backgroundColor: '#cccccc' }]}>
-                    <Text style={styles.btnText}>{loading ? 'Signing up...' : 'Sign up'}</Text>
+                  <View
+                    style={[
+                      styles.btn,
+                      loading && { backgroundColor: '#cccccc' },
+                    ]}
+                  >
+                    <Text style={styles.btnText}>
+                      {loading ? 'Signing up...' : 'Sign up'}
+                    </Text>
                   </View>
                 </TouchableOpacity>
               </View>
 
-              <Text style={styles.formLink}>Already have an account? <Text style={{ textDecorationLine: 'underline' }} onPress={() => setIsSignUp(false)}>Sign in</Text></Text>
+              <Text style={styles.formLink}>
+                Already have an account?{' '}
+                <Text
+                  style={{ textDecorationLine: 'underline' }}
+                  onPress={switchToSignIn}
+                >
+                  Sign in
+                </Text>
+              </Text>
             </>
           ) : (
             <>
@@ -155,15 +207,33 @@ const Login: React.FC<{ navigation: any }> = ({ navigation }) => {
               </View>
 
               <View style={styles.formAction}>
-                <TouchableOpacity onPress={navigateToAnotherPage} disabled={loading}>
-                  <View style={[styles.btn, loading && { backgroundColor: '#cccccc' }]}>
-                    <Text style={styles.btnText}>{loading ? 'Navigating...' : 'Sign in'}</Text>
+                <TouchableOpacity
+                  onPress={navigateToAnotherPage}
+                  disabled={loading}
+                >
+                  <View
+                    style={[
+                      styles.btn,
+                      loading && { backgroundColor: '#cccccc' },
+                    ]}
+                  >
+                    <Text style={styles.btnText}>
+                      {loading ? 'Navigating...' : 'Sign in'}
+                    </Text>
                   </View>
                 </TouchableOpacity>
               </View>
 
               <Text style={styles.formLink}>Forgot password?</Text>
-              <Text style={styles.formLink}>Don't have an account? <Text style={{ textDecorationLine: 'underline' }} onPress={() => setIsSignUp(true)}>Sign up</Text></Text>
+              <Text style={styles.formLink}>
+                Don't have an account?{' '}
+                <Text
+                  style={{ textDecorationLine: 'underline' }}
+                  onPress={switchToSignUp}
+                >
+                  Sign up
+                </Text>
+              </Text>
             </>
           )}
         </View>
@@ -258,6 +328,14 @@ const styles = StyleSheet.create({
     lineHeight: 26,
     fontWeight: '600',
     color: '#fff',
+  },
+  successMessage: {
+    // New style for success message
+    fontSize: 20,
+    fontWeight: '700',
+    color: 'green',
+    textAlign: 'center',
+    marginVertical: 20,
   },
 });
 

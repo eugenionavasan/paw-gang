@@ -1,6 +1,6 @@
+import { fireEvent, render, waitFor } from '@testing-library/react-native';
 import React from 'react';
-import { render, fireEvent, waitFor } from '@testing-library/react-native';
-import  Login  from '../pages/Login'; // Adjust the import path based on your structure
+import Login from '../pages/Login'; // Adjust the import path based on your structure
 import { handleSignUp } from '../services/services';
 
 // Mock the handleSignUp function
@@ -9,6 +9,49 @@ jest.mock('../services/services', () => ({
 }));
 
 describe('Login Component', () => {
+  it('shows an error when some sign-up fields are empty', async () => {
+    const navigation = { replace: jest.fn() };
+
+    // Render the component
+    const { getByText, getByPlaceholderText } = render(<Login navigation={navigation as any} />);
+
+    // Switch to sign-up mode
+    fireEvent.press(getByText('Sign up'));
+
+    // Fill in the form with some fields empty
+    fireEvent.changeText(getByPlaceholderText("hachiko@example.com"), 'test@example.com');
+    fireEvent.changeText(getByPlaceholderText("********"), 'password123');
+    // Leave Username empty
+    fireEvent.changeText(getByPlaceholderText("Your Dog's Name"), 'Rex');
+
+    // Submit the form
+    fireEvent.press(getByText('Sign up'));
+
+    // Ensure handleSignUp was not called
+    await waitFor(() => expect(handleSignUp).not.toHaveBeenCalled());
+  });
+  it('shows an error when the email format is invalid', async () => {
+    const navigation = { replace: jest.fn() };
+
+    // Render the component
+    const { getByText, getByPlaceholderText } = render(<Login navigation={navigation as any} />);
+
+    // Switch to sign-up mode
+    fireEvent.press(getByText('Sign up'));
+
+    // Fill in the form with an invalid email format
+    fireEvent.changeText(getByPlaceholderText("hachiko@example.com"), 'invalid-email');
+    fireEvent.changeText(getByPlaceholderText("********"), 'password123');
+    fireEvent.changeText(getByPlaceholderText("Your Username"), 'testuser');
+    fireEvent.changeText(getByPlaceholderText("Your Dog's Name"), 'Rex');
+
+    // Submit the form
+    fireEvent.press(getByText('Sign up'));
+
+    // Ensure handleSignUp was not called
+    await waitFor(() => expect(handleSignUp).not.toHaveBeenCalled());
+
+  });
   it('renders correctly and allows sign-up', async () => {
     // Mock implementation of handleSignUp
     (handleSignUp as jest.Mock).mockResolvedValue({ success: true });
@@ -26,10 +69,10 @@ describe('Login Component', () => {
     fireEvent.press(getByText('Sign up'));
 
     // Fill in the sign-up form
-    fireEvent.changeText(getByPlaceholderText("Enter your email"), 'test@example.com');
-    fireEvent.changeText(getByPlaceholderText("Enter your password"), 'password123');
-    fireEvent.changeText(getByPlaceholderText("Enter your username"), 'testuser');
-    fireEvent.changeText(getByPlaceholderText("Enter your dog's name"), 'Rex');
+    fireEvent.changeText(getByPlaceholderText("hachiko@example.com"), 'test@example.com');
+    fireEvent.changeText(getByPlaceholderText("********"), 'password123');
+    fireEvent.changeText(getByPlaceholderText("Your Username"), 'testuser');
+    fireEvent.changeText(getByPlaceholderText("Your Dog's Name"), 'Rex');
 
     // Submit the form
     fireEvent.press(getByText('Sign up'));
@@ -68,6 +111,4 @@ describe('Login Component', () => {
     // Check that navigation to 'Main' was called
     expect(navigation.replace).toHaveBeenCalledWith('Main');
   });
-
-  // Additional tests for edge cases and error handling can be added here
-});
+  });

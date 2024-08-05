@@ -1,7 +1,7 @@
-import { SERVER_URL, SERVER_PORT } from '../config';
+import { LOCAL_IP_ADDRESS, SERVER_PORT } from '../config';
 import { LoginForm } from '../types';
 
-const SIGNUP_URL = `${SERVER_URL}:${SERVER_PORT}/users`;
+const SIGNUP_URL = `${LOCAL_IP_ADDRESS}:${SERVER_PORT}/users`;
 
 export const handleSignUp = async (form: LoginForm): Promise<any> => {
   try {
