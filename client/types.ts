@@ -116,8 +116,8 @@ export interface IServerService {
 export interface IGoogleService {
   getPhoto: (path: string) => string;
   getDogParks: (
-    lat: number | (() => number),
-    lng: number | (() => number),
+    lat: number | (() => number), // Updated to allow function
+    lng: number | (() => number)  // Updated to allow function
   ) => Promise<google.maps.places.PlaceResult[] | void>;
   getGeocode: (
     location: string,
