@@ -1,11 +1,3 @@
-/* eslint-disable global-require */
-/* eslint-disable react-native/sort-styles */
-/* eslint-disable react/no-unescaped-entities */
-/* eslint-disable react/jsx-boolean-value */
-/* eslint-disable prettier/prettier */
-/* eslint-disable react-native/no-inline-styles */
-/* eslint-disable react-native/no-color-literals */
-/* eslint-disable import/no-extraneous-dependencies */
 import React, { useState } from 'react';
 import {
   StyleSheet,
@@ -15,6 +7,7 @@ import {
   Text,
   TouchableOpacity,
   TextInput,
+  Alert
 } from 'react-native';
 import { LoginForm, LoginScreenNavigationProp } from '../types';
 import { handleSignIn } from '../services/services';
@@ -24,6 +17,22 @@ const Login: React.FC<LoginScreenNavigationProp> = ({ navigation }) => {
     email: '',
     password: '',
   });
+  const [loading, setLoading] = useState(false);
+
+  const onSubmit = async () => {
+    setLoading(true);
+    try {
+      const result = await handleSignIn(form);
+      console.log('Login successful:', result);
+      // Navigate to the main screen
+      navigation.replace('Main');
+    } catch (error) {
+      console.error('Login failed:', error);
+      Alert.alert('Login Failed', 'Invalid email or password. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: '#cfcec9' }}>
@@ -35,11 +44,9 @@ const Login: React.FC<LoginScreenNavigationProp> = ({ navigation }) => {
             style={styles.headerImg}
             source={require('../assets/logo.jpg')}
           />
-
           <Text style={styles.title}>
             Sign in to <Text style={{ color: '#008CBA' }}>Paw Gang</Text>
           </Text>
-
           <Text style={styles.subtitle}>
             Get your dog's tail wagging with a playdate!
           </Text>
@@ -48,7 +55,6 @@ const Login: React.FC<LoginScreenNavigationProp> = ({ navigation }) => {
         <View style={styles.form}>
           <View style={styles.input}>
             <Text style={styles.inputLabel}>Email address</Text>
-
             <TextInput
               autoCapitalize="none"
               autoCorrect={false}
@@ -64,7 +70,6 @@ const Login: React.FC<LoginScreenNavigationProp> = ({ navigation }) => {
 
           <View style={styles.input}>
             <Text style={styles.inputLabel}>Password</Text>
-
             <TextInput
               autoCorrect={false}
               clearButtonMode="while-editing"
@@ -78,9 +83,9 @@ const Login: React.FC<LoginScreenNavigationProp> = ({ navigation }) => {
           </View>
 
           <View style={styles.formAction}>
-            <TouchableOpacity onPress={() => handleSignIn(navigation)}>
-              <View style={styles.btn}>
-                <Text style={styles.btnText}>Sign in</Text>
+            <TouchableOpacity onPress={onSubmit} disabled={loading}>
+              <View style={[styles.btn, loading && { backgroundColor: '#cccccc' }]}>
+                <Text style={styles.btnText}>{loading ? 'Signing in...' : 'Sign in'}</Text>
               </View>
             </TouchableOpacity>
           </View>
@@ -103,7 +108,6 @@ const styles = StyleSheet.create({
   container: {
     backgroundColor: '#cfcec9',
     paddingVertical: 24,
-    // eslint-disable-next-line react-native/sort-styles
     paddingHorizontal: 0,
     flexGrow: 1,
     flexShrink: 1,

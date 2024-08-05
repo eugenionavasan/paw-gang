@@ -21,6 +21,13 @@ export interface LoginForm {
   password: string;
 }
 
+export interface RegisterForm {
+  email: string;
+  password: string;
+  username: string;
+  dogName: string;
+}
+
 export interface CustomButtonProps {
   onPress: (event: GestureResponderEvent) => void;
   title: string;

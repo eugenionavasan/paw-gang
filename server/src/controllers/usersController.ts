@@ -21,16 +21,24 @@ const UserController: UserControllerType = {
   ): Promise<void> => {
     try {
       const { _id } = req.params;
+      const { password } = req.body; // Get password from request body
       if (!_id)
         return missingParamHandler(
           res,
           'UserController/getOne',
           'User',
-          '_uid',
+          '_id',
         );
       const user: IUser | null = await User.findById(_id);
       if (!user)
         return noResultHandler(res, 'UserController/getOne', 'User', { _id });
+
+      // Check if the provided password matches the user's password
+      if (password !== user.password) {
+        res.status(400).json({ error: 'Invalid password' });
+        return;
+      }
+
       res.status(200).json(user);
     } catch (error) {
       next(error);

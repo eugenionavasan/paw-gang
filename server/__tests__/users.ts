@@ -1,21 +1,21 @@
+// tests/users.test.ts
 import {
-  describe,
-  beforeAll,
   afterAll,
-  beforeEach,
   afterEach,
+  beforeAll,
+  describe,
   expect,
   test,
 } from '@jest/globals';
 import dotenv from 'dotenv';
+import express from 'express';
 import mongoose from 'mongoose';
 import supertest from 'supertest';
-import { User } from '../src/models/users';
 import { mocks } from '../mocks/mock';
-import express from 'express';
-import { router } from '../src/routers/index';
+import { TEST_MONOGDB_URI } from '../src/config';
 import { errorHandler } from '../src/middleware/errorHandler';
-import {TEST_MONOGDB_URI} from '../src/config'
+import { User } from '../src/models/users';
+import { router } from '../src/routers/index';
 
 dotenv.config();
 
@@ -23,7 +23,7 @@ const dbName = 'users';
 const dbUri = `${TEST_MONOGDB_URI}-${dbName}`;
 
 beforeAll(async () => {
-  mongoose.connect(dbUri);
+  await mongoose.connect(dbUri);
 });
 
 afterEach(async () => {
@@ -31,7 +31,7 @@ afterEach(async () => {
 });
 
 afterAll(async () => {
-  mongoose.connection.close();
+  await mongoose.connection.close();
 });
 
 describe('user endpoints', () => {
@@ -66,16 +66,17 @@ describe('user endpoints', () => {
     expect(response.body).toHaveProperty('error');
   });
 
-  // GET -> Id
-  test('GET /users/:id - should retrieve a user by its ID', async () => {
-    const post = await request.post('/users').send(mocks.newUser);
-    const { _id } = post.body;
-    const response = await request.get(`/users/${_id}`);
-    expect(response.status).toBe(200);
-    expect(response.body).toHaveProperty('_id', _id);
-    expect(response.body).toHaveProperty('email', mocks.newUser.email);
-    expect(response.body).toHaveProperty('username', mocks.newUser.username);
-    expect(response.body).toHaveProperty('dogName', mocks.newUser.dogName);
+  // GET -> Test retrieving and logging in a user by ID
+  test('GET /users/:id - should retrieve a user if password is correct', async () => {
+    const postResponse = await request.post('/users').send(mocks.newUser);
+    const { _id, email, username } = postResponse.body;
+    const loginResponse = await request
+      .get(`/users/${_id}`)
+      .send({ password: mocks.newUser.password });
+    expect(loginResponse.status).toBe(200);
+    expect(loginResponse.body).toHaveProperty('_id', _id);
+    expect(loginResponse.body).toHaveProperty('username', username);
+    expect(loginResponse.body).toHaveProperty('email', email);
   });
 
   // GET -> Test retrieving a user with an invalid ID format (error message)
