@@ -1,12 +1,11 @@
-// services.ts
 import { SERVER_URL, SERVER_PORT } from '../config';
 import { LoginForm } from '../types';
 
-const LOGIN_URL = `${SERVER_URL}:${SERVER_PORT}/`;
+const SIGNUP_URL = `${SERVER_URL}:${SERVER_PORT}/users`;
 
-export const handleSignIn = async (form: LoginForm): Promise<any> => {
+export const handleSignUp = async (form: LoginForm): Promise<any> => {
   try {
-    const response = await fetch(LOGIN_URL, {
+    const response = await fetch(SIGNUP_URL, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -21,7 +20,7 @@ export const handleSignIn = async (form: LoginForm): Promise<any> => {
     const data = await response.json();
     return data;
   } catch (error) {
-    console.error('Error during sign-in:', error);
+    console.error('Error during sign-up:', error);
     throw error;
   }
 };
