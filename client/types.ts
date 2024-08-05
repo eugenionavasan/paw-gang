@@ -1,5 +1,13 @@
 import { StackNavigationProp } from '@react-navigation/stack';
-import { GestureResponderEvent } from 'react-native';
+import {Dispatch, SetStateAction} from 'react';
+import { GestureResponderEvent, Image } from 'react-native';
+
+// ! combine frontend & backend types
+// props
+export interface CustomButtonProps {
+  onPress: (event: GestureResponderEvent) => void;
+  title: string;
+}
 
 export type RootStackParamList = {
   Login: undefined;
@@ -49,4 +57,80 @@ export interface ErrorBoundaryProps {
 
 export interface ErrorBoundaryState {
   hasError: boolean;
+}
+
+export type LoginScreenNavigationProp = {
+  navigation: {
+    replace: (route: string) => void;
+  };
+};
+
+export interface EventlistProps {
+  events: IEvent[] | []
+  setEvents: Dispatch<SetStateAction<IEvent[]>>
+}
+
+export interface EventItemProps {
+  item: IEvent;
+  handleEdit: (event: IEvent) => void;
+  handleDelete: (id: string) => Promise<void>;
+}
+
+// ! check responses
+export interface ParklistProps {
+  dogParks: google.maps.places.PlaceResult[]
+}
+
+export interface ParkItemProps {
+  item: google.maps.places.PlaceResult;
+}
+
+
+
+
+
+export interface IEvent {
+  place_id: string;
+  park_name: string;
+  address: string;
+  date: string;
+  user: string;
+  dog_avatar: string;
+  _id?: string;
+  createdAt?: Date;
+  updatedAt?: Date;
+}
+
+export type ServerMutationRes = (MutationSuccessResponse & MutatedEventResponse) | ServerErrorResponse
+
+export type ServerQueryRes = IEvent[] | ServerErrorResponse;
+
+interface MutationSuccessResponse {
+  message: string;
+}
+
+interface MutatedEventResponse {
+  [key: string]: IEvent;
+}
+
+interface ServerErrorResponse {
+  message?: string
+  error: string
+}
+
+export interface IServerService {
+  getEvents: (userId: string) => Promise<IEvent[] | void>;
+  deleteEvent: (id: string) => Promise<IEvent | void>;
+  updateEvent: (id: string, data: IEvent) => Promise<IEvent | void>;
+}
+
+export interface IGoogleService {
+  getPhoto: (path: string) => string;
+  getDogParks: (
+    lat: number | (() => number),
+    lng: number | (() => number),
+  ) => Promise<google.maps.places.PlaceResult[] | void>;
+  getGeocode: (
+    location: string,
+  ) => Promise<google.maps.GeocoderResult[] | null | void>;
 }

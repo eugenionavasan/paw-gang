@@ -24,3 +24,47 @@ export const handleSignUp = async (form: LoginForm): Promise<any> => {
     throw error;
   }
 };
+import { IEvent, LoginScreenNavigationProp } from '../types';
+import moment, { Moment } from 'moment-timezone';
+import { ServerService } from './ServerApiServices';
+
+
+// ! Andre?
+export const handleSignIn = (
+  navigation: LoginScreenNavigationProp['navigation'],
+) => {
+  navigation.replace('Main');
+};
+
+export const filterSortUpcomingEvents = (events: IEvent[]): IEvent[] => {
+  const currentTime: Moment = moment().tz('Europe/Madrid');
+  const upcomingEvents: IEvent[] = events.filter((event: IEvent) =>
+    moment(event.date).tz('Europe/Madrid').isSameOrAfter(currentTime, 'minute'),
+  );
+  // ! check Date outputs with moment pre-parsing
+  return upcomingEvents.sort(
+    (a: IEvent, b: IEvent) =>
+      Date.parse(a.date.toString()) - Date.parse(b.date.toString()),
+  );
+};
+
+export const updateEventTime = async (
+  event: IEvent,
+  time: Date,
+): Promise<IEvent | void> => {
+  // ! potentially source out if repeatable
+  const updatedEventDate = moment(event.date)
+    .tz('Europe/Madrid')
+    .set({
+      hour: moment(time).hour(),
+      minute: 0,
+      second: 0,
+    })
+    .toISOString();
+  if (event._id) {
+    return await ServerService.updateEvent(event._id, {
+      ...event,
+      date: updatedEventDate,
+    });
+  }
+};
