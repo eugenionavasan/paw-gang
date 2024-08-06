@@ -12,7 +12,7 @@ import {
   View,
 } from 'react-native';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
-import { fetchEvents, saveEvent } from '../../services/apiService';
+import { fetchEvents, saveEvent } from '../../services/ServerApiServices';
 import { Event, RootStackParamList } from '../../types';
 import { styles } from './ParkScheduleStyles'; // Import styles from the new file
 
