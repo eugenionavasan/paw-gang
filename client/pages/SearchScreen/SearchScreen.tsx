@@ -83,9 +83,10 @@ function SearchScreen () {
           placeholderTextColor="#9DA2AB"
           value={locationInput}
           onChangeText={(text) => setLocationInput(text)}
+          testID='search-location'
         />
         <TouchableOpacity style={styles.button} onPress={handleLocationSubmit}>
-          <Icon name="search" size={24} color="#fff" />
+          <Icon name="search" size={24} color="#fff" testID='search-btn' />
         </TouchableOpacity>
         <TouchableOpacity style={styles.button} onPress={handleLocateMe}>
           <Icon name="locate" size={24} color="#fff" />
@@ -97,7 +98,7 @@ function SearchScreen () {
         </View>
       )}
       {error && <Text style={styles.errorText}>Error: {error}</Text>}
-      <ParkList dogParks={dogParks} />
+      <ParkList dogParks={dogParks}/>
     </View>
   );
 }

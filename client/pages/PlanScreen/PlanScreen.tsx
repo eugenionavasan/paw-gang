@@ -22,6 +22,7 @@ function PlanScreen (): JSX.Element {
     }, []),
   );
 
+
   // functions
   const fetchEvents = async () => {
     try {

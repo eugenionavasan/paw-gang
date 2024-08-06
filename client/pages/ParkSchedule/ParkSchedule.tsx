@@ -12,6 +12,7 @@ import {
   View,
 } from 'react-native';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
+import DateTimePicker from '@react-native-community/datetimepicker';
 import { fetchEvents, saveEvent } from '../../services/ServerApiServices';
 import { Event, RootStackParamList } from '../../types';
 import { styles } from './ParkScheduleStyles'; // Import styles from the new file
@@ -73,6 +74,7 @@ const ParkSchedule: React.FC<ParkScheduleProps> = ({ route }) => {
   };
 
   const handleSaveEvent = async () => {
+    console.log(newEventDate)
     const eventDate = moment
       .tz(
         `${selectedDate.format('YYYY-MM-DD')} ${newEventDate}`,
