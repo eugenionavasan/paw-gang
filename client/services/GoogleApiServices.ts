@@ -15,7 +15,7 @@ export const GoogleService: IGoogleService = {
 };
 
 // Function to get a photo URL for a place using Google Maps API
-function getPhoto (reference: string): string {
+function getPhoto(reference: string): string {
   const imgMaxPxWidth = 800;
   return `https://places.googleapis.com/v1/${reference}/media?key=${apiKey}&maxWidthPx=${imgMaxPxWidth}`;
 }
@@ -45,7 +45,7 @@ async function getDogParks(
   const latitude = typeof lat === 'function' ? lat() : lat;
   const longitude = typeof lng === 'function' ? lng() : lng;
 
-  const location = { latitude, longitude};
+  const location = { latitude, longitude };
   const radius = 500;
 
   const requestBody = {

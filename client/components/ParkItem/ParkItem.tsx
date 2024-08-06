@@ -18,7 +18,7 @@ function ParkItem (props: ParkItemProps): JSX.Element {
   const navigation: NavigationProp<ParamListBase> = useNavigation()
 
   const handlePlanVisit = (park: IGmapsPlace) => {
-    navigation.navigate('ParkSchedule', {place_id: park.id, name: park.displayName, vicinity: item.shortFormattedAddress});
+    navigation.navigate('ParkSchedule', {place_id: park.id, name: park.displayName.text, vicinity: item.shortFormattedAddress});
   };
 
   return (
