@@ -1,6 +1,6 @@
 import { fireEvent, render, waitFor } from '@testing-library/react-native';
 import React from 'react';
-import Login from '../pages/Login/Login'; // Adjust the import path based on your structure
+import Login from '../pages/Login/Login';
 import { handleSignUp } from '../services/services';
 
 // Mock the handleSignUp function
