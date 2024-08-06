@@ -5,7 +5,7 @@ import { IGmapsPlace, IGoogleService } from '../types';
 
 // Ensure GOOGLE_MAPS_API_KEY is correctly set in your configuration
 // ! Delete:
-const apiKey = GOOGLE_MAPS_API_KEY || 'AIzaSyCYSujDjOlp4h9ohyHfdzQheaAJijOq1us';
+const apiKey = GOOGLE_MAPS_API_KEY;
 
 // Export GoogleService object with methods to interact with Google APIs
 export const GoogleService: IGoogleService = {
@@ -15,7 +15,7 @@ export const GoogleService: IGoogleService = {
 };
 
 // Function to get a photo URL for a place using Google Maps API
-function getPhoto (reference: string): string {
+function getPhoto(reference: string): string {
   const imgMaxPxWidth = 800;
   return `https://places.googleapis.com/v1/${reference}/media?key=${apiKey}&maxWidthPx=${imgMaxPxWidth}`;
 }
@@ -45,7 +45,7 @@ async function getDogParks(
   const latitude = typeof lat === 'function' ? lat() : lat;
   const longitude = typeof lng === 'function' ? lng() : lng;
 
-  const location = { latitude, longitude};
+  const location = { latitude, longitude };
   const radius = 500;
 
   const requestBody = {
