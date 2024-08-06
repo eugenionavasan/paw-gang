@@ -11,10 +11,11 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import ParkList from '../../components/ParkList/ParkList';
 import {GoogleService} from '../../services/GoogleApiServices';
 import styles from './SearchScreenStyles';
+import {IGmapsPlace} from '../../types';
 
 function SearchScreen () {
   const [locationInput, setLocationInput] = useState('');
-  const [dogParks, setDogParks] = useState<google.maps.places.PlaceResult[] | []>([]);
+  const [dogParks, setDogParks] = useState<IGmapsPlace[] | []>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 

@@ -68,11 +68,11 @@ export interface EventItemProps {
 
 // Google Maps related types
 export interface ParklistProps {
-  dogParks: google.maps.places.PlaceResult[];
+  dogParks: IGmapsPlace[];
 }
 
 export interface ParkItemProps {
-  item: google.maps.places.PlaceResult;
+  item: IGmapsPlace;
 }
 
 // Event interface used in both frontend and backend
@@ -86,6 +86,33 @@ export interface IEvent {
   _id?: string;
   createdAt?: Date;
   updatedAt?: Date;
+}
+
+// @types/googlemaps are outdated so have to create own
+export interface IGmapsPlace {
+  shortFormattedAddress: string;
+  displayName: IGmapsName;
+  id: string;
+  photos: IGmapsPhoto[];
+  rating: number;
+}
+
+interface IGmapsPhoto {
+  heightPx: number;
+  widthPx: number;
+  name: string;
+  authorAttributions: IGmapsPhotoAuthor[]
+}
+
+interface IGmapsName {
+  languageCode: string;
+  text: string;
+};
+
+interface IGmapsPhotoAuthor {
+  displayName: string;
+  photoUri: string;
+  uri: string;
 }
 
 export type ServerMutationRes = (MutationSuccessResponse & MutatedEventResponse) | ServerErrorResponse;
@@ -118,7 +145,7 @@ export interface IGoogleService {
   getDogParks: (
     lat: number | (() => number), // Updated to allow function
     lng: number | (() => number)  // Updated to allow function
-  ) => Promise<google.maps.places.PlaceResult[] | void>;
+  ) => Promise<IGmapsPlace[] | void>;
   getGeocode: (
     location: string,
   ) => Promise<google.maps.GeocoderResult[] | null | void>;

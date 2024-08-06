@@ -25,6 +25,7 @@ app.use(errorHandler); // Error middleware
 // ! add server.close()
 const startServer = async (): Promise<void> => {
   try {
+    
     await connectToDatabase();
     if (process.env.NODE_ENV !== 'test') {
       app.listen(Number(SERVER_PORT), LOCAL_IP_ADDRESS, () => {
