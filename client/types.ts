@@ -114,7 +114,7 @@ export interface IServerService {
 }
 
 export interface IGoogleService {
-  getPhoto: (path: string) => string;
+  getPhoto: (reference: string) => string;
   getDogParks: (
     lat: number | (() => number), // Updated to allow function
     lng: number | (() => number)  // Updated to allow function

@@ -5,12 +5,12 @@ import {
 import {ParklistProps} from '../../types';
 import ParkItem from '../ParkItem/ParkItem';
 
-function ParkList (props: ParklistProps): JSX.Element {
+function ParkList (props): JSX.Element {
   const {dogParks} = props
   return (
     <FlatList
       data={dogParks}
-      keyExtractor={(item) => item.place_id as string}
+      keyExtractor={(item) => item.id}
       renderItem={({item}) => <ParkItem item={item} />}
     />
   )

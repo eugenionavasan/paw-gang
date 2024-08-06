@@ -26,10 +26,13 @@ function SearchScreen () {
     }
     setIsLoading(true);
     const geocodeResults = await GoogleService.getGeocode(location)
+    console.log('0', geocodeResults)
     if (geocodeResults && geocodeResults.length > 0) {
       const {lat, lng} = geocodeResults[0].geometry.location;
+      console.log('1')
+      console.log(lat, lng)
       const locations = await GoogleService.getDogParks(lat, lng)
-
+      console.log(locations)
       setDogParks(locations || []);
     } else {
       setDogParks([]);
@@ -58,6 +61,7 @@ function SearchScreen () {
       const location = await Location.getCurrentPositionAsync({});
       const {latitude, longitude} = location.coords;
       const locations = await GoogleService.getDogParks(latitude, longitude)
+      console.log(locations)
       setDogParks(locations || []);
     } catch (error) {
       setDogParks([]);

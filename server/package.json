@@ -6,7 +6,7 @@
     "test": "jest --verbose",
     "server": "node dist/server.js",
     "build": "tsc",
-    "dev": "concurrently \"tsc -w\" \"node dist/server.js\"",
+    "dev": "concurrently \"tsc -w\" \"node --env.file=.env dist/server.js\"",
     "devN": "concurrently \"tsc -w\" \"nodemon dist/server.js\""
   },
   "keywords": [],

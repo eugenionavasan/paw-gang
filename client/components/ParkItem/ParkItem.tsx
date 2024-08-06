@@ -6,31 +6,31 @@ import {
 } from 'react-native';
 import CustomButton from '../customButton';
 import styles from './ParkItemStyles'
-import {IPark, ParkItemProps} from "../../types";
+import {ParkItemProps} from "../../types";
 import {GoogleService} from '../../services/GoogleApiServices';
 import {NavigationProp, ParamListBase, useNavigation} from '@react-navigation/native';
 
 
 
-function ParkItem (props: ParkItemProps): JSX.Element {
+function ParkItem (props): JSX.Element {
   const {item} = props;
 
   const navigation: NavigationProp<ParamListBase> = useNavigation()
 
-  const handlePlanVisit = (park: IPark) => {
-    navigation.navigate('ParkSchedule', {place_id: park.place_id, name: park.name, vicinity: park.vicinity});
+  const handlePlanVisit = (park) => {
+    navigation.navigate('ParkSchedule', {place_id: park.id, name: park.name, vicinity: `${item.addressComponents[1].longText}, ${item.addressComponents[2].longText}`});
   };
 
   return (
     <View style={styles.parkItem}>
-      <Text style={styles.parkName}>{item.name}</Text>
+      <Text style={styles.parkName}>{item.addressComponents[0].longText}</Text>
       {item.photos && item.photos.length > 0 && (
         <Image
           style={styles.parkImage}
-          source={{uri: GoogleService.getPhoto(item.photos[0].photo_reference)}}
+          source={{uri: GoogleService.getPhoto(item.photos[0].name)}}
         />
       )}
-      <Text>{item.vicinity}</Text>
+      <Text>{`${item.addressComponents[1].longText}, ${item.addressComponents[2].longText}`}</Text>
       <Text>Rating: {item.rating}</Text>
       <CustomButton
         title="Plan visit 🐾"

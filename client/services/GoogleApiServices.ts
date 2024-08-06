@@ -5,7 +5,8 @@ import { IGoogleService } from '../types';
 
 // ! revisit:
 // Ensure GOOGLE_MAPS_API_KEY is correctly set in your configuration
-const apiKey = GOOGLE_MAPS_API_KEY;
+// const apiKey = GOOGLE_MAPS_API_KEY;
+const apiKey = 'AIzaSyCYSujDjOlp4h9ohyHfdzQheaAJijOq1us';
 
 // Export GoogleService object with methods to interact with Google APIs
 export const GoogleService: IGoogleService = {
@@ -15,18 +16,20 @@ export const GoogleService: IGoogleService = {
 };
 
 // Function to get a photo URL for a place using Google Maps API
-function getPhoto(path: string): string {
-  return `https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=${path}&key=${apiKey}`;
+function getPhoto (reference: string): string {
+  return `https://places.googleapis.com/v1/${reference}/media?key=${apiKey}&maxWidthPx=400`;
 }
-
+``;
 // Function to get geocode data for a location using Google Maps API
 async function getGeocode(
   location: string,
 ): Promise<google.maps.GeocoderResult[] | null | void> {
   try {
+    console.log('location', location)
     const geocodeResponse = await axios.get(
       `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(location)}&key=${apiKey}`,
     );
+    console.log('geocode', geocodeResponse)
     // Return geocode results
     return geocodeResponse.data.results as google.maps.GeocoderResult[] | null;
   } catch (error) {
@@ -41,8 +44,8 @@ async function getDogParks(
   lng: number | (() => number), // Handle function or number for longitude
 ): Promise<google.maps.places.PlaceResult[] | void> {
     // Determine the latitude and longitude values
-    // const latitude = typeof lat === 'function' ? lat() : lat;
-    // const longitude = typeof lng === 'function' ? lng() : lng;
+    const latitude = typeof lat === 'function' ? lat() : lat;
+    const longitude = typeof lng === 'function' ? lng() : lng;
 
     // Make API call to get nearby dog parks
     // const response = await axios.get(
@@ -71,11 +74,11 @@ async function getDogParks(
     //     'X-Goog-FieldMask': 'places.displayName',
     //   },
     // });
-    const location = { latitude: 37.7937, longitude: -122.3965 }; // Latitude and Longitude of search center
+    const location = { latitude: lat, longitude: lng }; // Latitude and Longitude of search center
     const radius = 500; // Search radius in meters
-    
+
     const requestBody = {
-      includedTypes: ["restaurant"],
+      includedTypes: ["park"],
       maxResultCount: 10, // Using maxResults instead of maxResultCount for consistency with Axios
       locationRestriction: {
         circle: {
@@ -84,31 +87,24 @@ async function getDogParks(
         }
       }
     };
-    
-  console.log(apiKey);
+
+  console.log('api', apiKey);
 
     const headers = {
       'Content-Type': 'application/json',
       'X-Goog-Api-Key': apiKey,
-      'X-Goog-FieldMask': 'places.displayName', // Using snake_case for field mask
+      'X-Goog-FieldMask': '*', // Using snake_case for field mask
     };
-    
-    fetch('https://places.googleapis.com/v1/places:searchNearby', {
+
+    const response = await fetch('https://places.googleapis.com/v1/places:searchNearby', {
       method: 'POST',
       headers: headers,
       body: JSON.stringify(requestBody)
     })
-      .then(response => {
-        if (!response.ok) {
-          throw new Error('Network response was not ok');
-        }
-        return response.json();
-      })
-      .then(data => {
-        console.log(data.places);
-      })
-      .catch(error => {
-        console.error('Error:', error);   
-    
-      });
+    const result = await response.json()
+  console.log('0', result)
+  console.log('1', result.places)
+  return result.places
+
+
 }
