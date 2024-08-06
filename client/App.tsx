@@ -7,25 +7,16 @@
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
-import Constants from 'expo-constants';
-import { Image, StyleSheet, View } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import Login from './pages/Login/Login';
 import ParkSchedule from './pages/ParkSchedule/ParkSchedule';
 import PlanScreen from './pages/PlanScreen/PlanScreen';
 import ProfileScreen from './pages/ProfileScreen/ProfileScreen';
 import SearchScreen from './pages/SearchScreen/SearchScreen';
+import LogoHeader from './components/LogoHeader/LogoHeader';
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
-
-function LogoHeader() {
-  return (
-    <View style={styles.logoDiv}>
-      <Image source={require('./assets/logo.jpg')} style={styles.logo} />
-    </View>
-  );
-}
 
 function SearchStack() {
   return (
@@ -104,22 +95,3 @@ export default function App() {
     </NavigationContainer>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    backgroundColor: '#333',
-    flex: 1,
-  },
-  logo: {
-    height: 75,
-    resizeMode: 'contain',
-    width: 150,
-  },
-  logoDiv: {
-    alignItems: 'center',
-    backgroundColor: '#cfcec9',
-    padding: 10,
-    paddingTop: Constants.statusBarHeight,
-    width: '100%',
-  },
-});
