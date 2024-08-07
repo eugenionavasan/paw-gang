@@ -8,10 +8,10 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import {handleSignUp, isValidSignUp} from '../../services/services';
+import {handleSignUp, isValidSignUp} from '../../services/UtilServices';
 import {RegisterForm} from '../../Types/DataTypes';
 import {styles} from './LoginStyles';
-import {isValidEmail} from '../../services/services';
+import {isValidEmail} from '../../services/UtilServices';
 
 const Login: React.FC<{navigation: any}> = ({navigation}) => {
   const [formData, setFormData] = useState<RegisterForm>({
@@ -20,11 +20,11 @@ const Login: React.FC<{navigation: any}> = ({navigation}) => {
     username: '',
     dogName: '',
   });
-  const [loading, setLoading] = useState(false);
-  const [isSignUp, setIsSignUp] = useState(false);
-  const [signUpSuccess, setSignUpSuccess] = useState(false);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [isSignUp, setIsSignUp] = useState<boolean>(false);
+  const [signUpSuccess, setSignUpSuccess] = useState<boolean>(false);
 
-  const onSubmitSignUp = async () => {
+  const onSubmitSignUp = async (): Promise<void> => {
     try {
       if (isValidSignUp(formData) && !isValidEmail(formData.email)) {
         setLoading(true);
@@ -43,12 +43,12 @@ const Login: React.FC<{navigation: any}> = ({navigation}) => {
     }
   };
 
-  const switchToSignUp = () => {
+  const switchToSignUp = (): void => {
     setIsSignUp(true);
     setSignUpSuccess(false);
   };
 
-  const switchToSignIn = () => {
+  const switchToSignIn = (): void => {
     setIsSignUp(false);
     setSignUpSuccess(false);
   };

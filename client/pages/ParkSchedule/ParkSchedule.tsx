@@ -1,10 +1,9 @@
-import moment, {Moment} from 'moment-timezone';
+import {Moment} from 'moment-timezone';
 import React, {useEffect, useState} from 'react';
 import {
   Alert,
   Button,
   FlatList,
-  Image,
   Modal,
   Text,
   TouchableOpacity,
@@ -15,17 +14,13 @@ import {fetchEvents, saveEvent} from '../../services/ServerApiServices';
 import {IEvent} from '../../Types/DataTypes';
 import {styles} from './ParkScheduleStyles'; // Import styles from the new file
 import ScheduleItem from '../../components/ScheduleItem/ScheduleItem';
-import {dateAndTimeToString, dateToString, dayHoursAsString, eventListByDate, getEventsByDate, isDayBeforeToday, timeToString} from '../../services/services';
+import {dateAndTimeToString, dateToString, dayHoursAsString, eventListByDate, getEventsByDate, isDayBeforeToday, timeToString, today} from '../../services/UtilServices';
 import {ParkScheduleProps} from '../../Types/PropTypes';
-
-
-
-const todayDate = moment().tz('Europe/Madrid');
 
 const ParkSchedule: React.FC<ParkScheduleProps> = ({route}): JSX.Element => {
   const {park} = route.params; // send place
 
-  const [selectedDate, setSelectedDate] = useState<Moment>(todayDate);
+  const [selectedDate, setSelectedDate] = useState<Moment>(today());
   const [events, setEvents] = useState<Record<string, IEvent[] | []>>({
     [dateToString(selectedDate)]: []
   });
@@ -34,12 +29,12 @@ const ParkSchedule: React.FC<ParkScheduleProps> = ({route}): JSX.Element => {
   const [isTimePickerVisible, setTimePickerVisibility] = useState<boolean>(false);
   const [isPrevDayDisabled, setIsPrevDayDisabled] = useState<boolean>(true);
 
-  useEffect(() => {
+  useEffect((): void => {
     fetchEventData();
   }, [park]);
 
-  useEffect(() => {
-    setIsPrevDayDisabled(isDayBeforeToday(selectedDate, todayDate.startOf('day')));
+  useEffect((): void => {
+    setIsPrevDayDisabled(isDayBeforeToday(selectedDate, today().startOf('day')));
   }, [selectedDate]);
 
   async function fetchEventData (): Promise<void> {

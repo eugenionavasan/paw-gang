@@ -1,9 +1,11 @@
+import {createStackNavigator} from '@react-navigation/stack';
 import ParkSchedule from '../../pages/ParkSchedule/ParkSchedule';
 import SearchScreen from '../../pages/SearchScreen/SearchScreen';
-import { Stack } from '../../services/services';
+import {RootStackParamList} from '../../Types/NavigationTypes';
 
+const Stack = createStackNavigator<RootStackParamList>();
 
-function SearchStack () {
+function SearchStack (): JSX.Element {
   return (
     <Stack.Navigator>
       <Stack.Screen

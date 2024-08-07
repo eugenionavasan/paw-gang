@@ -2,7 +2,7 @@ import styles from "./LogoHeaderStyles";
 import {Image, View} from 'react-native';
 
 
-function LogoHeader () {
+function LogoHeader(): JSX.Element {
   return (
     <View style={styles.logoDiv}>
       <Image source={require('../../assets/logo.jpg')} style={styles.logo} />

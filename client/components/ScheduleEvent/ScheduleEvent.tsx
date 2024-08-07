@@ -5,7 +5,7 @@ import {
 import {IEvent} from '../../Types/DataTypes';
 import styles from './ScheduleEventStyles'
 
-const ScheduleEvent = (prop: {item: IEvent}) => {
+const ScheduleEvent = (prop: {item: IEvent}): JSX.Element => {
   const {item} = prop
   return (
     <View style={styles.event}>

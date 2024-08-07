@@ -14,20 +14,18 @@ import styles from './SearchScreenStyles';
 import {IGmapsPlace} from '../../Types/DataTypes';
 
 const SearchScreen: FC = (): JSX.Element => {
-  const [locationInput, setLocationInput] = useState('');
+  const [locationInput, setLocationInput] = useState<string>('');
   const [dogParks, setDogParks] = useState<IGmapsPlace[] | []>([]);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
 
-  const fetchDogParks = async (location: string) => {
-    // ! outsource
+  const fetchDogParks = async (location: string): Promise<void> => {
     if (location.trim() === '') {
       setDogParks([]);
       return;
     }
     setIsLoading(true);
-    // ! outsource
     const geocodeResults = await GoogleService.getGeocode(location)
     if (geocodeResults && geocodeResults.length > 0) {
       const {lat, lng} = geocodeResults[0].geometry.location;
@@ -42,25 +40,22 @@ const SearchScreen: FC = (): JSX.Element => {
   };
 
 
-  const handleLocationSubmit = () => {
+  const handleLocationSubmit = (): void => {
     fetchDogParks(locationInput);
   };
 
-  const handleLocateMe = async () => {
+  const handleLocateMe = async (): Promise<void> => {
     setIsLoading(true);
     try {
-      // ! implement service
       const {status} = await Location.requestForegroundPermissionsAsync();
       if (status !== 'granted') {
         setError('Permission to access location was denied');
         setIsLoading(false);
         return;
       }
-      // ! implement service
       const location = await Location.getCurrentPositionAsync({});
       const {latitude, longitude} = location.coords;
       const locations = await GoogleService.getDogParks(latitude, longitude)
-      console.log(locations)
       setDogParks(locations || []);
     } catch (error) {
       setDogParks([]);
@@ -70,7 +65,6 @@ const SearchScreen: FC = (): JSX.Element => {
     setError(null)
   };
 
-  // place type
   return (
     <View style={styles.container}>
       <Text style={styles.label}>Search for a dog park near you:</Text>

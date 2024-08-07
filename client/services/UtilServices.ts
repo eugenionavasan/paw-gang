@@ -1,8 +1,11 @@
 import { LOCAL_IP_ADDRESS, SERVER_PORT } from '../config';
-import { LoginForm, IEvent, RegisterForm } from '../Types/DataTypes';
+import { LoginForm, IEvent, RegisterForm} from '../Types/DataTypes';
 import { createStackNavigator } from '@react-navigation/stack';
 import { Alert } from 'react-native';
-import moment, { Moment } from 'moment-timezone';
+import moment, {Moment} from 'moment-timezone';
+import { LoginScreenNavigationProp } from '../Types/NavigationTypes';
+import { ServerService } from './ServerApiServices';
+import { RootStackParamList } from '../Types/NavigationTypes';
 
 // Define the URL for the sign-up endpoint
 const SIGNUP_URL = `http://${LOCAL_IP_ADDRESS}:${SERVER_PORT}/users`;
@@ -31,11 +34,6 @@ export const handleSignUp = async (form: LoginForm): Promise<any> => {
     throw error;
   }
 };
-
-// Import necessary types and services
-import { LoginScreenNavigationProp } from '../Types/NavigationTypes';
-import { ServerService } from './ServerApiServices';
-import { RootStackParamList } from '../Types/NavigationTypes';
 
 // Function to handle user sign-in and navigate to the main screen
 export const handleSignIn = (
@@ -81,8 +79,6 @@ export const updateEventTime = async (
     });
   }
 };
-
-export const Stack = createStackNavigator<RootStackParamList>();
 
 export const isValidEmail = (email: string) => {
   return /\S+@\S+\.\S+/.test(email) || Alert.alert('Invalid email address');
@@ -143,4 +139,20 @@ export const isDayBeforeToday = (
   date: Moment,
 ): boolean => {
   return selectedDate.isSameOrBefore(date, 'day');
+};
+
+export const filterEventsByDateHour = (
+  date: Moment,
+  hour: string,
+  events: IEvent[] | [],
+): IEvent[] | [] => {
+  return events.filter((event) =>
+    moment(event.date)
+      .tz('Europe/Madrid')
+      .isSame(date.clone().hour(moment(hour, 'HH:mm').hour()), 'hour'),
+  );
+};
+
+export const today = (): Moment => {
+  return moment().tz('Europe/Madrid');
 };

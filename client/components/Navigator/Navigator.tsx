@@ -7,7 +7,7 @@ import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 
 export const Tab = createBottomTabNavigator();
 
-function MainTabs () {
+function MainTabs (): JSX.Element {
   return (
     <>
       <LogoHeader />

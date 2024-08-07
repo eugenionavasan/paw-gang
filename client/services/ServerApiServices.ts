@@ -1,7 +1,6 @@
 import axios from 'axios';
 import { SERVER_PORT, LOCAL_IP_ADDRESS } from '../config';
 import { IEvent, ServerMutationRes, ServerQueryRes } from '../Types/DataTypes';
-import { Event } from '../Types/DataTypes';
 
 interface apiService {
   getEvents: (userId: string) => Promise<Event[]>;
@@ -21,7 +20,7 @@ export const createApiService = (serverUrl: string): apiService => ({
   },
 });
 
-export const fetchEvents = async (place_id: string): Promise<Event[]> => {
+export const fetchEvents = async (place_id: string): Promise<IEvent[]> => {
   try {
     const response = await axios.get(`${SERVER_URL}/events/park/${place_id}`);
     return response.data;

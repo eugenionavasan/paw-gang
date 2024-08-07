@@ -2,14 +2,13 @@ import {useNavigation} from '@react-navigation/native';
 import React from 'react';
 import {Image, Text, TouchableOpacity, View} from 'react-native';
 import {styles} from './ProfileScreenStyles';
-import {ProfileScreenNavProp} from '../../Types/DataTypes';
+import {ProfileScreenNavigationProp} from '../../Types/NavigationTypes';
 
 
 const ProfileScreen: React.FC = () => {
-  const navigation = useNavigation<ProfileScreenNavProp>();
+  const navigation = useNavigation<ProfileScreenNavigationProp>();
 
   const handleLogout = () => {
-    // ^test without replace
     navigation.replace('Login');
   };
 
