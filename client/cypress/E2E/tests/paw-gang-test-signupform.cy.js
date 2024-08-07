@@ -22,5 +22,19 @@ describe('My First Test', () => {
     cy.get("input[placeholder*='Your Dog']").type('Remela');
     cy.get("div[data-testid='sign-up']").should('have.text', 'Sign up');
     cy.get("div[data-testid='sign-up']").click();
+    cy.get("input[placeholder='Enter location...']").type('Sao Paulo');
+    cy.intercept(
+      'POST',
+      'https://places.googleapis.com/v1/places:searchNearby',
+    ).as('getParks');
+    // cy.intercept('GET', 'https://places.googleapis.com/v1/*').as('getPhoto');
+    cy.get("div[data-testid='search-btn']").click();
+    cy.get('a[href="/Main/ProfileTab"]').click();
+    cy.contains('div', /User/)
+    cy.contains('div', /Name/)
+    cy.contains('div', /Dog/)
+    cy.contains('div', /Email/)
+    cy.contains('div', /Edit/)
+    cy.contains('div', /Log Out/).click()
   });
 });
