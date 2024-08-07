@@ -2,7 +2,7 @@
 import {
   FlatList,
 } from 'react-native';
-import {ParklistProps} from '../../types';
+import {ParklistProps} from '../../Types/DataTypes';
 import ParkItem from '../ParkItem/ParkItem';
 
 function ParkList (props: ParklistProps): JSX.Element {

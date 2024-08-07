@@ -1,5 +1,8 @@
 import { LOCAL_IP_ADDRESS, SERVER_PORT } from '../config';
-import { LoginForm, IEvent } from '../types';
+import { LoginForm, IEvent, RegisterForm } from '../Types/DataTypes';
+import { createStackNavigator } from '@react-navigation/stack';
+import { Alert } from 'react-native';
+import moment, { Moment } from 'moment-timezone';
 
 // Define the URL for the sign-up endpoint
 const SIGNUP_URL = `http://${LOCAL_IP_ADDRESS}:${SERVER_PORT}/users`;
@@ -20,23 +23,23 @@ export const handleSignUp = async (form: LoginForm): Promise<any> => {
       throw new Error(`HTTP error! Status: ${response.status}`);
     }
 
-    // Parse and return the response data
     const data = await response.json();
     return data;
   } catch (error) {
     console.error('Error during sign-up:', error);
+    Alert.alert('Internal Error: Sign Up Failed');
     throw error;
   }
 };
 
 // Import necessary types and services
-import { LoginScreenNavigationProp } from '../types';
-import moment, { Moment } from 'moment-timezone';
+import { LoginScreenNavigationProp } from '../Types/NavigationTypes';
 import { ServerService } from './ServerApiServices';
+import { RootStackParamList } from '../Types/NavigationTypes';
 
 // Function to handle user sign-in and navigate to the main screen
 export const handleSignIn = (
-  navigation: LoginScreenNavigationProp // Ensure this type matches the actual navigation prop type
+  navigation: LoginScreenNavigationProp, // Ensure this type matches the actual navigation prop type
 ) => {
   navigation.replace('Main'); // Navigate to the 'Main' screen
 };
@@ -77,4 +80,67 @@ export const updateEventTime = async (
       date: updatedEventDate,
     });
   }
+};
+
+export const Stack = createStackNavigator<RootStackParamList>();
+
+export const isValidEmail = (email: string) => {
+  return /\S+@\S+\.\S+/.test(email) || Alert.alert('Invalid email address');
+};
+
+export const isValidSignUp = (form: RegisterForm) => {
+  if (!form.email || !form.password || !form.username || !form.dogName) {
+    Alert.alert('All fields are required');
+    return false;
+  } else return true;
+};
+
+export const eventListByDate = (events: IEvent[]): Record<string, IEvent[]> => {
+  return events.reduce(
+    (acc, event) => {
+      const dateKey: string = moment(event.date)
+        .tz('Europe/Madrid')
+        .format('YYYY-MM-DD');
+      acc[dateKey] = [...acc[dateKey], event];
+      return acc;
+    },
+    {} as Record<string, IEvent[]>,
+  );
+};
+
+export const dateAndTimeToString = (date: Moment, time: string): string => {
+  return moment
+    .tz(`${dateToString(date)} ${time}`, 'YYYY-MM-DD HH:mm', 'Europe/Madrid')
+    .toISOString();
+};
+
+export const dateToString = (date: Moment): string => {
+  return date.format('YYYY-MM-DD');
+};
+
+export const dayHoursAsString = (): string[] => {
+  return Array.from({ length: 24 }, (_, i) =>
+    moment({ hour: i }).tz('Europe/Madrid').format('HH:00'),
+  );
+};
+
+export const timeToString = (time: Date): string => {
+  return moment(time).tz('Europe/Madrid').minute(0).format('HH:mm');
+};
+
+export const getEventsByDate = (
+  events: Record<string, IEvent[]>,
+  date: Moment,
+): IEvent[] | [] => {
+  const dateKey: string = dateToString(date);
+  if (events[dateKey]) {
+    return events[dateKey];
+  } else return [];
+};
+
+export const isDayBeforeToday = (
+  selectedDate: Moment,
+  date: Moment,
+): boolean => {
+  return selectedDate.isSameOrBefore(date, 'day');
 };

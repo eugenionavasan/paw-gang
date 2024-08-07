@@ -6,7 +6,7 @@ import {
 } from 'react-native';
 import CustomButton from '../customButton';
 import styles from './ParkItemStyles'
-import {IGmapsPlace, ParkItemProps} from "../../types";
+import {IGmapsPlace, ParkItemProps} from "../../Types/DataTypes";
 import {GoogleService} from '../../services/GoogleApiServices';
 import {NavigationProp, ParamListBase, useNavigation} from '@react-navigation/native';
 
@@ -18,7 +18,7 @@ function ParkItem (props: ParkItemProps): JSX.Element {
   const navigation: NavigationProp<ParamListBase> = useNavigation()
 
   const handlePlanVisit = (park: IGmapsPlace) => {
-    navigation.navigate('ParkSchedule', {place_id: park.id, name: park.displayName.text, vicinity: item.shortFormattedAddress});
+    navigation.navigate('ParkSchedule', {park});
   };
 
   return (

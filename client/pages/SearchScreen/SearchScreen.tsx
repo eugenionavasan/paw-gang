@@ -1,4 +1,4 @@
-import {useState} from 'react';
+import {FC, useState} from 'react';
 import {
   Text,
   View,
@@ -11,9 +11,9 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import ParkList from '../../components/ParkList/ParkList';
 import {GoogleService} from '../../services/GoogleApiServices';
 import styles from './SearchScreenStyles';
-import {IGmapsPlace} from '../../types';
+import {IGmapsPlace} from '../../Types/DataTypes';
 
-function SearchScreen () {
+const SearchScreen: FC = (): JSX.Element => {
   const [locationInput, setLocationInput] = useState('');
   const [dogParks, setDogParks] = useState<IGmapsPlace[] | []>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -21,19 +21,17 @@ function SearchScreen () {
 
 
   const fetchDogParks = async (location: string) => {
+    // ! outsource
     if (location.trim() === '') {
       setDogParks([]);
       return;
     }
     setIsLoading(true);
+    // ! outsource
     const geocodeResults = await GoogleService.getGeocode(location)
-    console.log('0', geocodeResults)
     if (geocodeResults && geocodeResults.length > 0) {
       const {lat, lng} = geocodeResults[0].geometry.location;
-      console.log('1')
-      console.log(lat, lng)
       const locations = await GoogleService.getDogParks(lat, lng)
-      console.log(locations)
       setDogParks(locations || []);
     } else {
       setDogParks([]);
@@ -98,7 +96,7 @@ function SearchScreen () {
         </View>
       )}
       {error && <Text style={styles.errorText}>Error: {error}</Text>}
-      <ParkList dogParks={dogParks}/>
+      <ParkList dogParks={dogParks} />
     </View>
   );
 }

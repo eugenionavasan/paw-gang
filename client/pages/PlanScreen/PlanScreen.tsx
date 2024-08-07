@@ -4,7 +4,7 @@ import {
 } from 'react-native';
 import React, {useState} from 'react';
 import {useFocusEffect} from '@react-navigation/native';
-import {IEvent} from '../../types';
+import {IEvent} from '../../Types/DataTypes';
 import {ServerService} from '../../services/ServerApiServices';
 import {filterSortUpcomingEvents} from '../../services/services';
 import styles from './PlanScreenStyles';

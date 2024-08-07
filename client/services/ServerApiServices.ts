@@ -1,13 +1,13 @@
 import axios from 'axios';
 import { SERVER_PORT, LOCAL_IP_ADDRESS } from '../config';
-import { IEvent, ServerMutationRes, ServerQueryRes } from '../types';
-import { Event } from '../types';
+import { IEvent, ServerMutationRes, ServerQueryRes } from '../Types/DataTypes';
+import { Event } from '../Types/DataTypes';
 
 interface apiService {
-  getEvents: (userId: string) => Promise<Event[]>
+  getEvents: (userId: string) => Promise<Event[]>;
 }
 
-const SERVER_URL = `http://${LOCAL_IP_ADDRESS}:${SERVER_PORT}`
+const SERVER_URL = `http://${LOCAL_IP_ADDRESS}:${SERVER_PORT}`;
 
 export const createApiService = (serverUrl: string): apiService => ({
   getEvents: async (userId: string) => {
@@ -31,10 +31,11 @@ export const fetchEvents = async (place_id: string): Promise<Event[]> => {
   }
 };
 
-export const saveEvent = async (eventToAdd: Event): Promise<void> => {
+export const saveEvent = async (eventToAdd: IEvent): Promise<IEvent> => {
   try {
     console.log('Sending event to server:', eventToAdd); // Log the event data being sent
-    await axios.post(`${SERVER_URL}/events`, eventToAdd);
+    const res = await axios.post(`${SERVER_URL}/events`, eventToAdd);
+    return res.data;
   } catch (error) {
     console.error('Error saving event:', error);
     throw error;
@@ -46,7 +47,9 @@ export const ServerService = {
   // Function to get events for a specific user
   async getEvents(userId: string): Promise<IEvent[]> {
     try {
-      const response = await axios.get<ServerQueryRes>(`${SERVER_URL}/events/user/${userId}`);
+      const response = await axios.get<ServerQueryRes>(
+        `${SERVER_URL}/events/user/${userId}`,
+      );
       // Check if response is an array of events
       if (Array.isArray(response.data)) {
         return response.data;
@@ -64,13 +67,18 @@ export const ServerService = {
   // Function to delete an event by id
   async deleteEvent(id: string): Promise<IEvent> {
     try {
-      const response = await axios.delete<ServerMutationRes>(`${SERVER_URL}/events/${id}`);
+      const response = await axios.delete<ServerMutationRes>(
+        `${SERVER_URL}/events/${id}`,
+      );
       // Check if response contains the deleted event
       if ('deletedEvent' in response.data) {
         return response.data.deletedEvent;
       } else {
         // Handle the error case
-        console.error('Error deleting event:', response.data.message || 'Unknown error occurred');
+        console.error(
+          'Error deleting event:',
+          response.data.message || 'Unknown error occurred',
+        );
         throw new Error(response.data.message || 'Unknown error occurred');
       }
     } catch (error) {
@@ -82,18 +90,24 @@ export const ServerService = {
   // Function to update an event by id
   async updateEvent(id: string, data: IEvent): Promise<IEvent> {
     try {
-      const response = await axios.put<ServerMutationRes>(`${SERVER_URL}/events/${id}`, data);
+      const response = await axios.put<ServerMutationRes>(
+        `${SERVER_URL}/events/${id}`,
+        data,
+      );
       // Check if response contains the updated event
       if ('updatedEvent' in response.data) {
         return response.data.updatedEvent;
       } else {
         // Handle the error case
-        console.error('Error updating event:', response.data.message || 'Unknown error occurred');
+        console.error(
+          'Error updating event:',
+          response.data.message || 'Unknown error occurred',
+        );
         throw new Error(response.data.message || 'Unknown error occurred');
       }
     } catch (error) {
       console.error('Error updating event:', error);
       throw error;
     }
-  }
+  },
 };

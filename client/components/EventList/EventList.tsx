@@ -6,12 +6,12 @@ import {
 import React, {useState} from 'react';
 import moment from 'moment-timezone';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
-import {IEvent} from '../../types';
+import {IEvent} from '../../Types/DataTypes';
 import {ServerService} from '../../services/ServerApiServices';
 import {updateEventTime} from '../../services/services';
 import EventItem from '../../components/EventItem/EventItem';
 import styles from './EventListStyles';
-import {EventlistProps} from '../../types';
+import {EventlistProps} from '../../Types/DataTypes';
 
 function EventList (props: EventlistProps): JSX.Element {
   const {events, setEvents} = props

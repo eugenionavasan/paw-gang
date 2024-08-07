@@ -1,35 +1,4 @@
-import { StackNavigationProp } from '@react-navigation/stack';
-import { Dispatch, SetStateAction } from 'react';
-import { GestureResponderEvent } from 'react-native';
-
 // Define types and interfaces used in the application
-
-export interface CustomButtonProps {
-  onPress: (event: GestureResponderEvent) => void;
-  title: string;
-}
-
-export type RootStackParamList = {
-  Login: undefined;
-  Profile: undefined;
-  ParkSchedule: { place_id: string; name: string };
-  Main?: undefined;
-};
-
-export type LoginScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Login'>;
-export type ProfileScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Profile'>;
-
-export interface Event {
-  _id: string;
-  place_id: string;
-  park_name: string;
-  address: string;
-  date: string;
-  user: string;
-  dog_avatar: string;
-  __v: number;
-}
-
 export interface Config {
   serverUrl: string;
   googleMapsApiKey: string;
@@ -47,32 +16,8 @@ export interface RegisterForm {
   dogName: string;
 }
 
-export interface ErrorBoundaryProps {
-  children: React.ReactNode;
-}
-
 export interface ErrorBoundaryState {
   hasError: boolean;
-}
-
-export interface EventlistProps {
-  events: IEvent[] | [];
-  setEvents: Dispatch<SetStateAction<IEvent[]>>;
-}
-
-export interface EventItemProps {
-  item: IEvent;
-  handleEdit: (event: IEvent) => void;
-  handleDelete: (id: string) => Promise<void>;
-}
-
-// Google Maps related types
-export interface ParklistProps {
-  dogParks: IGmapsPlace[];
-}
-
-export interface ParkItemProps {
-  item: IGmapsPlace;
 }
 
 // Event interface used in both frontend and backend
@@ -101,13 +46,13 @@ interface IGmapsPhoto {
   heightPx: number;
   widthPx: number;
   name: string;
-  authorAttributions: IGmapsPhotoAuthor[]
+  authorAttributions: IGmapsPhotoAuthor[];
 }
 
 interface IGmapsName {
   languageCode: string;
   text: string;
-};
+}
 
 interface IGmapsPhotoAuthor {
   displayName: string;
@@ -115,7 +60,11 @@ interface IGmapsPhotoAuthor {
   uri: string;
 }
 
-export type ServerMutationRes = (MutationSuccessResponse & MutatedEventResponse) | ServerErrorResponse;
+
+// server related
+export type ServerMutationRes =
+  | (MutationSuccessResponse & MutatedEventResponse)
+  | ServerErrorResponse;
 
 export type ServerQueryRes = IEvent[] | ServerErrorResponse;
 
@@ -144,7 +93,7 @@ export interface IGoogleService {
   getPhoto: (reference: string) => string;
   getDogParks: (
     lat: number | (() => number), // Updated to allow function
-    lng: number | (() => number)  // Updated to allow function
+    lng: number | (() => number), // Updated to allow function
   ) => Promise<IGmapsPlace[] | void>;
   getGeocode: (
     location: string,

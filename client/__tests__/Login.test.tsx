@@ -1,4 +1,5 @@
-import { fireEvent, render, waitFor } from '@testing-library/react-native';
+import {fireEvent, render, waitFor} from '@testing-library/react-native';
+import '@testing-library/jest-native/extend-expect';
 import React from 'react';
 import Login from '../pages/Login/Login';
 import { handleSignUp } from '../services/services';
