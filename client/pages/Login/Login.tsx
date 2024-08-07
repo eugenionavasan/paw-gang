@@ -162,7 +162,7 @@ const Login: React.FC<{ navigation: any }> = ({ navigation }) => {
                       loading && { backgroundColor: '#cccccc' },
                     ]}
                   >
-                    <Text style={styles.btnText}>
+                    <Text style={styles.btnText} testID='sign-up'>
                       {loading ? 'Signing up...' : 'Sign up'}
                     </Text>
                   </View>

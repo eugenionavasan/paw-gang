@@ -63,7 +63,7 @@ describe('My First Test', () => {
       fixture: 'mockedData.json',
     }).as('deleteEvent');
     //Cannot delete mocked event data
-    cy.get('[data-testid="delete-btn"]')
+    cy.get('[data-testid="delete-btn"]');
     // check that no events on page
     // get to park schedule & check no event
     // go to profile & logout
