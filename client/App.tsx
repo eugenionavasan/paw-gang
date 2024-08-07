@@ -1,7 +1,7 @@
 import {NavigationContainer} from '@react-navigation/native';
 import Login from './pages/Login/Login';
-import {Stack} from './services/UtilServices';
 import MainTabs from './components/Navigator/Navigator';
+import {Stack} from './components/SearchStack/SearchStack';
 
 
 export default function App () {

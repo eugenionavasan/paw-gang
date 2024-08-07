@@ -1,14 +1,13 @@
 import { LOCAL_IP_ADDRESS, SERVER_PORT } from '../config';
-import { LoginForm, IEvent, RegisterForm} from '../Types/DataTypes';
+import { LoginForm, IEvent, RegisterForm } from '../Types/DataTypes';
 import { createStackNavigator } from '@react-navigation/stack';
 import { Alert } from 'react-native';
-import moment, {Moment} from 'moment-timezone';
+import moment, { Moment } from 'moment-timezone';
 import { LoginScreenNavigationProp } from '../Types/NavigationTypes';
 import { ServerService } from './ServerApiServices';
-import { RootStackParamList } from '../Types/NavigationTypes';
 
 // Define the URL for the sign-up endpoint
-const SIGNUP_URL = `http://${LOCAL_IP_ADDRESS}:${SERVER_PORT}/users`;
+const SIGNUP_URL = `http://${LOCAL_IP_ADDRESS}:${SERVER_PORT}/users/`;
 
 // Function to handle user sign-up
 export const handleSignUp = async (form: LoginForm): Promise<any> => {
@@ -80,11 +79,11 @@ export const updateEventTime = async (
   }
 };
 
-export const isValidEmail = (email: string) => {
+export const isValidEmail = (email: string): boolean | void => {
   return /\S+@\S+\.\S+/.test(email) || Alert.alert('Invalid email address');
 };
 
-export const isValidSignUp = (form: RegisterForm) => {
+export const isValidSignUp = (form: RegisterForm): boolean => {
   if (!form.email || !form.password || !form.username || !form.dogName) {
     Alert.alert('All fields are required');
     return false;
@@ -97,7 +96,8 @@ export const eventListByDate = (events: IEvent[]): Record<string, IEvent[]> => {
       const dateKey: string = moment(event.date)
         .tz('Europe/Madrid')
         .format('YYYY-MM-DD');
-      acc[dateKey] = [...acc[dateKey], event];
+      const existEvents = acc[dateKey] || [];
+      acc[dateKey] = [...existEvents, event];
       return acc;
     },
     {} as Record<string, IEvent[]>,

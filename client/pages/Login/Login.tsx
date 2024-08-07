@@ -24,9 +24,9 @@ const Login: React.FC<{navigation: any}> = ({navigation}) => {
   const [isSignUp, setIsSignUp] = useState<boolean>(false);
   const [signUpSuccess, setSignUpSuccess] = useState<boolean>(false);
 
-  const onSubmitSignUp = async (): Promise<void> => {
+  const onSignUp = async (): Promise<void> => {
     try {
-      if (isValidSignUp(formData) && !isValidEmail(formData.email)) {
+      if (isValidSignUp(formData) && isValidEmail(formData.email)) {
         setLoading(true);
         const result = await handleSignUp(formData);
         if (result) {
@@ -53,6 +53,10 @@ const Login: React.FC<{navigation: any}> = ({navigation}) => {
     setSignUpSuccess(false);
   };
 
+  function onSignIn () {
+    navigation.replace('Main')
+  }
+
   return (
     <SafeAreaView style={{flex: 1, backgroundColor: '#cfcec9'}}>
       <View style={styles.container}>
@@ -75,7 +79,7 @@ const Login: React.FC<{navigation: any}> = ({navigation}) => {
         <View style={styles.form}>
           {signUpSuccess ? (
             <Text style={styles.successMessage}>Sign Up Successful</Text>
-          ) : isSignUp &&
+          ) :
           <>
             <View style={styles.input}>
               <Text style={styles.inputLabel}>Email address</Text>
@@ -109,43 +113,43 @@ const Login: React.FC<{navigation: any}> = ({navigation}) => {
                 value={formData.password}
               />
             </View>
-            {
-              isSignUp &&
-              <>
-                <View style={styles.input}>
-                  <Text style={styles.inputLabel}>Username</Text>
-                  {/* // */}
-                  <TextInput
-                    autoCorrect={false}
-                    clearButtonMode="while-editing"
+              {
+                isSignUp &&
+                <>
+                  <View style={styles.input}>
+                    <Text style={styles.inputLabel}>Username</Text>
+                    <TextInput
+                      autoCorrect={false}
+                      clearButtonMode="while-editing"
 
-                    onChangeText={(username) =>
-                      setFormData({...formData, username})
-                    }
-                    placeholder="Your Username"
-                    placeholderTextColor="grey"
-                    style={styles.inputControl}
-                    value={formData.username}
-                  />
-                </View>
+                      onChangeText={(username) =>
+                        setFormData({...formData, username})
+                      }
+                      placeholder="Your Username"
+                      placeholderTextColor="grey"
+                      style={styles.inputControl}
+                      value={formData.username}
+                    />
+                  </View>
 
-                <View style={styles.input}>
-                  <Text style={styles.inputLabel}>Dog's Name</Text>
-                  <TextInput
-                    autoCorrect={false}
-                    clearButtonMode="while-editing"
-                    onChangeText={(dogName) =>
-                      setFormData({...formData, dogName})
-                    }
-                    placeholder="Your Dog's Name"
-                    placeholderTextColor="grey"
-                    style={styles.inputControl}
-                    value={formData.dogName}
-                  />
-                </View>
-
+                  <View style={styles.input}>
+                    <Text style={styles.inputLabel}>Dog's Name</Text>
+                    <TextInput
+                      autoCorrect={false}
+                      clearButtonMode="while-editing"
+                      onChangeText={(dogName) =>
+                        setFormData({...formData, dogName})
+                      }
+                      placeholder="Your Dog's Name"
+                      placeholderTextColor="grey"
+                      style={styles.inputControl}
+                      value={formData.dogName}
+                    />
+                  </View>
+                </>
+              }
                 <View style={styles.formAction}>
-                  <TouchableOpacity onPress={isSignUp ? onSubmitSignUp : navigation.replace('Main')} disabled={loading}>
+                  <TouchableOpacity onPress={isSignUp ? onSignUp : onSignIn} disabled={loading}>
                     <View
                       style={[
                         styles.btn,
@@ -154,30 +158,26 @@ const Login: React.FC<{navigation: any}> = ({navigation}) => {
                     >
                       <Text
                         style={styles.btnText}
-                        testID={isSignUp ? 'sign-up' : 'sign-in'}>
-                        {(isSignUp && loading) ? 'Signing up...' : 'Sign up'}
-                        {(!isSignUp && loading) ? 'Navigating...' : 'Sign in'}
+                      testID={isSignUp ? 'sign-up' : 'sign-in'}>
+                      {loading && (isSignUp ? 'Signing up...' : 'Navigating...')}
+                      {!loading && (isSignUp ? 'Sign up' : 'Sign in')}
                       </Text>
                     </View>
                   </TouchableOpacity>
                 </View>
               </>
             }
-            {(isSignUp && !loading) && <Text style={styles.formLink}>Forgot password?</Text>}
+            {!isSignUp && <Text style={styles.formLink}>Forgot password?</Text>}
             <Text style={styles.formLink}>
-              {/* // ! double check {} */}
-              {(isSignUp && !loading) && `Already have an account?{' '}`}
-              {(!isSignUp && !loading) && `Don't have an account?{' '}`}
+              {(isSignUp && !loading) && `Already have an account? `}
+              {(!isSignUp && !loading) && `Don't have an account? `}
               <Text
                 style={{textDecorationLine: 'underline'}}
                 onPress={isSignUp ? switchToSignIn : switchToSignUp}
               >
-                {(isSignUp && !loading) && `Sign in`}
-                {(!isSignUp && !loading) && `Sign up`}
+              {isSignUp ? `Sign in` : `Sign up`}
               </Text>
             </Text>
-          </>
-          }
         </View>
       </View>
     </SafeAreaView>
@@ -273,7 +273,7 @@ export default Login;
         </View>
 
         <View style={styles.formAction}>
-          <TouchableOpacity onPress={onSubmitSignUp} disabled={loading}>
+          <TouchableOpacity onPress={onSignUp} disabled={loading}>
             <View
               style={[
                 styles.btn,

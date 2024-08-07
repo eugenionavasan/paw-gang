@@ -3,7 +3,7 @@ import ParkSchedule from '../../pages/ParkSchedule/ParkSchedule';
 import SearchScreen from '../../pages/SearchScreen/SearchScreen';
 import {RootStackParamList} from '../../Types/NavigationTypes';
 
-const Stack = createStackNavigator<RootStackParamList>();
+export const Stack = createStackNavigator<RootStackParamList>();
 
 function SearchStack (): JSX.Element {
   return (

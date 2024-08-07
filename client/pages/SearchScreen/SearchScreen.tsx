@@ -27,6 +27,7 @@ const SearchScreen: FC = (): JSX.Element => {
     }
     setIsLoading(true);
     const geocodeResults = await GoogleService.getGeocode(location)
+    console.log(geocodeResults)
     if (geocodeResults && geocodeResults.length > 0) {
       const {lat, lng} = geocodeResults[0].geometry.location;
       const locations = await GoogleService.getDogParks(lat, lng)

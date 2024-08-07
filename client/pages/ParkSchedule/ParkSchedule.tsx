@@ -40,6 +40,7 @@ const ParkSchedule: React.FC<ParkScheduleProps> = ({route}): JSX.Element => {
   async function fetchEventData (): Promise<void> {
     try {
       const eventData: IEvent[] | [] = await fetchEvents(park.id);
+      console.log(eventData)
       if (eventData.length > 0) {
         setEvents(eventListByDate(eventData));
       }
@@ -71,10 +72,13 @@ const ParkSchedule: React.FC<ParkScheduleProps> = ({route}): JSX.Element => {
       // check successful post
       if ('_id' in res) {
         const dateKey: string = dateToString(selectedDate);
-        setEvents((prevEvents: Record<string, IEvent[]>): Record<string, IEvent[]> => ({
-          ...prevEvents,
-          [dateKey]: [...prevEvents[dateKey], res],
-        }));
+        setEvents((prevEvents: Record<string, IEvent[]>): Record<string, IEvent[]> => {
+          const existEvents = prevEvents[dateKey] || []
+          return {
+            ...prevEvents,
+            [dateKey]: [...existEvents, res],
+          }
+        });
       } else Alert.alert('Error', 'An error occurred while saving the event.');
       setModalVisible(false);
       setNewEventDate('');
