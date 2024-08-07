@@ -10,7 +10,7 @@ import {
 } from 'react-native';
 import { handleSignUp } from '../../services/services';
 import { RegisterForm } from '../../types';
-import { styles } from './LoginStyles'; 
+import { styles } from './LoginStyles';
 
 const Login: React.FC<{ navigation: any }> = ({ navigation }) => {
   const [signupForm, setSignupForm] = useState<RegisterForm>({
@@ -218,7 +218,8 @@ const Login: React.FC<{ navigation: any }> = ({ navigation }) => {
                     style={[
                       styles.btn,
                       loading && { backgroundColor: '#cccccc' },
-                    ]}
+                        ]}
+                        testID='sign-in'
                   >
                     <Text style={styles.btnText}>
                       {loading ? 'Navigating...' : 'Sign in'}

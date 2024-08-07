@@ -38,7 +38,7 @@ const EventItem: FC<EventItemProps> = ({item, handleDelete, handleEdit}): JSX.El
         style={styles.deleteButton}
         onPress={handleItemDelete}
       >
-        <Icon name="trash" size={20} color="#fff" />
+        <Icon name="trash" size={20} color="#fff" testID='delete-btn' />
       </TouchableOpacity>
     </View>
   )

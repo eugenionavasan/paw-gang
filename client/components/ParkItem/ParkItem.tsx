@@ -22,7 +22,7 @@ function ParkItem (props: ParkItemProps): JSX.Element {
   };
 
   return (
-    <View style={styles.parkItem}>
+    <View style={styles.parkItem} testID='park-list'>
       <Text style={styles.parkName}>{item.displayName.text}</Text>
       {item.photos && item.photos.length > 0 && (
         <Image
