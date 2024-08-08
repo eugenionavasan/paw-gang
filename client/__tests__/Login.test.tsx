@@ -1,19 +1,20 @@
-import { fireEvent, render, waitFor } from '@testing-library/react-native';
+import {fireEvent, render, waitFor} from '@testing-library/react-native';
+import '@testing-library/jest-native/extend-expect';
 import React from 'react';
 import Login from '../pages/Login/Login';
-import { handleSignUp } from '../services/services';
+import {handleSignUp} from '../services/UtilServices';
 
 // Mock the handleSignUp function
-jest.mock('../services/services', () => ({
+jest.mock('../services/UtilServices', () => ({
   handleSignUp: jest.fn(),
 }));
 
 describe('Login Component', () => {
   it('shows an error when some sign-up fields are empty', async () => {
-    const navigation = { replace: jest.fn() };
+    const navigation = {replace: jest.fn()};
 
     // Render the component
-    const { getByText, getByPlaceholderText } = render(
+    const {getByText, getByPlaceholderText} = render(
       <Login navigation={navigation as any} />,
     );
 
@@ -36,10 +37,10 @@ describe('Login Component', () => {
     await waitFor(() => expect(handleSignUp).not.toHaveBeenCalled());
   });
   it('shows an error when the email format is invalid', async () => {
-    const navigation = { replace: jest.fn() };
+    const navigation = {replace: jest.fn()};
 
     // Render the component
-    const { getByText, getByPlaceholderText } = render(
+    const {getByText, getByPlaceholderText} = render(
       <Login navigation={navigation as any} />,
     );
 
@@ -63,12 +64,12 @@ describe('Login Component', () => {
   });
   it('renders correctly and allows sign-up', async () => {
     // Mock implementation of handleSignUp
-    (handleSignUp as jest.Mock).mockResolvedValue({ success: true });
+    (handleSignUp as jest.Mock).mockResolvedValue({success: true});
 
-    const navigation = { replace: jest.fn() };
+    const navigation = {replace: jest.fn()};
 
     // Render the component
-    const { getByText, getByPlaceholderText, queryByText } = render(
+    const {getByText, getByPlaceholderText, queryByText} = render(
       <Login navigation={navigation as any} />,
     );
 
@@ -106,10 +107,10 @@ describe('Login Component', () => {
   });
 
   it('renders sign-in mode and navigates to main', () => {
-    const navigation = { replace: jest.fn() };
+    const navigation = {replace: jest.fn()};
 
     // Render the component
-    const { getByText } = render(<Login navigation={navigation as any} />);
+    const {getByText} = render(<Login navigation={navigation as any} />);
 
     // Verify initial state
     expect(getByText('Sign in to Paw Gang')).toBeTruthy();

@@ -1,4 +1,4 @@
-import {useState} from 'react';
+import {FC, useState} from 'react';
 import {
   Text,
   View,
@@ -11,29 +11,25 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import ParkList from '../../components/ParkList/ParkList';
 import {GoogleService} from '../../services/GoogleApiServices';
 import styles from './SearchScreenStyles';
-import {IGmapsPlace} from '../../types';
+import {IGmapsPlace} from '../../Types/DataTypes';
 
-function SearchScreen () {
-  const [locationInput, setLocationInput] = useState('');
+const SearchScreen: FC = (): JSX.Element => {
+  const [locationInput, setLocationInput] = useState<string>('');
   const [dogParks, setDogParks] = useState<IGmapsPlace[] | []>([]);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
 
-  const fetchDogParks = async (location: string) => {
+  const fetchDogParks = async (location: string): Promise<void> => {
     if (location.trim() === '') {
       setDogParks([]);
       return;
     }
     setIsLoading(true);
     const geocodeResults = await GoogleService.getGeocode(location)
-    console.log('0', geocodeResults)
     if (geocodeResults && geocodeResults.length > 0) {
       const {lat, lng} = geocodeResults[0].geometry.location;
-      console.log('1')
-      console.log(lat, lng)
       const locations = await GoogleService.getDogParks(lat, lng)
-      console.log(locations)
       setDogParks(locations || []);
     } else {
       setDogParks([]);
@@ -44,25 +40,22 @@ function SearchScreen () {
   };
 
 
-  const handleLocationSubmit = () => {
+  const handleLocationSubmit = (): void => {
     fetchDogParks(locationInput);
   };
 
-  const handleLocateMe = async () => {
+  const handleLocateMe = async (): Promise<void> => {
     setIsLoading(true);
     try {
-      // ! implement service
       const {status} = await Location.requestForegroundPermissionsAsync();
       if (status !== 'granted') {
         setError('Permission to access location was denied');
         setIsLoading(false);
         return;
       }
-      // ! implement service
       const location = await Location.getCurrentPositionAsync({});
       const {latitude, longitude} = location.coords;
       const locations = await GoogleService.getDogParks(latitude, longitude)
-      console.log(locations)
       setDogParks(locations || []);
     } catch (error) {
       setDogParks([]);
@@ -72,7 +65,6 @@ function SearchScreen () {
     setError(null)
   };
 
-  // place type
   return (
     <View style={styles.container}>
       <Text style={styles.label}>Search for a dog park near you:</Text>
@@ -98,7 +90,7 @@ function SearchScreen () {
         </View>
       )}
       {error && <Text style={styles.errorText}>Error: {error}</Text>}
-      <ParkList dogParks={dogParks}/>
+      <ParkList dogParks={dogParks} />
     </View>
   );
 }

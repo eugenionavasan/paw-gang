@@ -1,5 +1,4 @@
 import {FC} from "react";
-import {IEvent} from "../../types";
 import {
   View,
   Text,
@@ -8,13 +7,11 @@ import {
 import styles from './EventItemStyles'
 import Icon from 'react-native-vector-icons/Ionicons';
 import moment from 'moment-timezone';
-import { EventItemProps } from "../../types";
+import {EventItemProps} from "../../Types/PropTypes";
 
 
 const EventItem: FC<EventItemProps> = ({item, handleDelete, handleEdit}): JSX.Element => {
-
-
-  if (item._id) {}
+  if (item._id) { }
   const handleItemDelete = () => {
     if (item._id) {
       handleDelete(item._id)

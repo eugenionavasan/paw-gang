@@ -1,10 +1,9 @@
 // import Constants from 'expo-constants';
 import axios from 'axios';
 import { GOOGLE_MAPS_API_KEY } from '../config';
-import { IGmapsPlace, IGoogleService } from '../types';
+import { IGmapsPlace, IGoogleService } from '../Types/DataTypes';
 
 // Ensure GOOGLE_MAPS_API_KEY is correctly set in your configuration
-// ! Delete:
 const apiKey = GOOGLE_MAPS_API_KEY;
 
 // Export GoogleService object with methods to interact with Google APIs

@@ -25,7 +25,7 @@ app.use(errorHandler); // Error middleware
 // ! add server.close()
 const startServer = async (): Promise<void> => {
   try {
-    
+    console.log(process.env.GOOGLE_MAPS_API_KEY)
     await connectToDatabase();
     if (process.env.NODE_ENV !== 'test') {
       app.listen(Number(SERVER_PORT), LOCAL_IP_ADDRESS, () => {

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, {useState} from 'react';
 import {
   Alert,
   Image,
@@ -8,47 +8,33 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import { handleSignUp } from '../../services/services';
-import { RegisterForm } from '../../types';
-import { styles } from './LoginStyles';
+import {handleSignUp, isValidSignUp} from '../../services/UtilServices';
+import {RegisterForm} from '../../Types/DataTypes';
+import {styles} from './LoginStyles';
+import {isValidEmail} from '../../services/UtilServices';
 
-const Login: React.FC<{ navigation: any }> = ({ navigation }) => {
-  const [signupForm, setSignupForm] = useState<RegisterForm>({
+const Login: React.FC<{navigation: any}> = ({navigation}) => {
+  const [formData, setFormData] = useState<RegisterForm>({
     email: '',
     password: '',
     username: '',
     dogName: '',
   });
-  const [loading, setLoading] = useState(false);
-  const [isSignUp, setIsSignUp] = useState(false);
-  const [signUpSuccess, setSignUpSuccess] = useState(false);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [isSignUp, setIsSignUp] = useState<boolean>(false);
+  const [signUpSuccess, setSignUpSuccess] = useState<boolean>(false);
 
-  const isValidEmail = (email: string) => /\S+@\S+\.\S+/.test(email);
-
-  const onSubmitSignUp = async () => {
-    if (
-      !signupForm.email ||
-      !signupForm.password ||
-      !signupForm.username ||
-      !signupForm.dogName
-    ) {
-      Alert.alert('All fields are required');
-      return;
-    }
-
-    if (!isValidEmail(signupForm.email)) {
-      Alert.alert('Invalid email address');
-      return;
-    }
-
-    setLoading(true);
+  const onSignUp = async (): Promise<void> => {
     try {
-      const result = await handleSignUp(signupForm);
-      console.log('Sign up successful:', result);
-      setSignUpSuccess(true);
-      setIsSignUp(false);
-      // Navigate to the 'Main' screen upon successful sign-up
-      navigation.replace('Main');
+      if (isValidSignUp(formData) && isValidEmail(formData.email)) {
+        setLoading(true);
+        const result = await handleSignUp(formData);
+        if (result) {
+          setSignUpSuccess(true);
+          setIsSignUp(false);
+          navigation.replace('Main');
+        }
+      }
     } catch (error) {
       console.error('Sign up failed:', error);
       Alert.alert('Sign Up Failed', 'Please check your details and try again.');
@@ -57,18 +43,22 @@ const Login: React.FC<{ navigation: any }> = ({ navigation }) => {
     }
   };
 
-  const switchToSignUp = () => {
+  const switchToSignUp = (): void => {
     setIsSignUp(true);
     setSignUpSuccess(false);
   };
 
-  const switchToSignIn = () => {
+  const switchToSignIn = (): void => {
     setIsSignUp(false);
     setSignUpSuccess(false);
   };
 
+  function onSignIn () {
+    navigation.replace('Main')
+  }
+
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: '#cfcec9' }}>
+    <SafeAreaView style={{flex: 1, backgroundColor: '#cfcec9'}}>
       <View style={styles.container}>
         <View style={styles.header}>
           <Image
@@ -79,7 +69,7 @@ const Login: React.FC<{ navigation: any }> = ({ navigation }) => {
           />
           <Text style={styles.title}>
             {isSignUp ? 'Sign up to' : 'Sign in to'}{' '}
-            <Text style={{ color: '#008CBA' }}>Paw Gang</Text>
+            <Text style={{color: '#008CBA'}}>Paw Gang</Text>
           </Text>
           <Text style={styles.subtitle}>
             Get your dog's tail wagging with a playdate!
@@ -89,157 +79,105 @@ const Login: React.FC<{ navigation: any }> = ({ navigation }) => {
         <View style={styles.form}>
           {signUpSuccess ? (
             <Text style={styles.successMessage}>Sign Up Successful</Text>
-          ) : isSignUp ? (
-            <>
-              <View style={styles.input}>
-                <Text style={styles.inputLabel}>Email address</Text>
-                <TextInput
-                  autoCapitalize="none"
-                  autoCorrect={false}
-                  clearButtonMode="while-editing"
-                  keyboardType="email-address"
-                  onChangeText={(email) =>
-                    setSignupForm({ ...signupForm, email })
-                  }
-                  placeholder="hachiko@example.com"
-                  placeholderTextColor="grey"
-                  style={styles.inputControl}
-                  value={signupForm.email}
-                />
-              </View>
+          ) :
+          <>
+            <View style={styles.input}>
+              <Text style={styles.inputLabel}>Email address</Text>
+              <TextInput
+                autoCapitalize="none"
+                autoCorrect={false}
+                clearButtonMode="while-editing"
+                keyboardType="email-address"
+                onChangeText={(email) =>
+                  setFormData({...formData, email})
+                }
+                placeholder="hachiko@example.com"
+                placeholderTextColor="grey"
+                style={styles.inputControl}
+                value={formData.email}
+              />
+            </View>
 
-              <View style={styles.input}>
-                <Text style={styles.inputLabel}>Password</Text>
-                <TextInput
-                  autoCorrect={false}
-                  clearButtonMode="while-editing"
-                  onChangeText={(password) =>
-                    setSignupForm({ ...signupForm, password })
-                  }
-                  placeholder="********"
-                  placeholderTextColor="grey"
-                  style={styles.inputControl}
-                  secureTextEntry={true}
-                  value={signupForm.password}
-                />
-              </View>
+            <View style={styles.input}>
+              <Text style={styles.inputLabel}>Password</Text>
+              <TextInput
+                autoCorrect={false}
+                clearButtonMode="while-editing"
+                onChangeText={(password) =>
+                  setFormData({...formData, password})
+                }
+                placeholder="********"
+                placeholderTextColor="grey"
+                style={styles.inputControl}
+                secureTextEntry={true}
+                value={formData.password}
+              />
+            </View>
+              {
+                isSignUp &&
+                <>
+                  <View style={styles.input}>
+                    <Text style={styles.inputLabel}>Username</Text>
+                    <TextInput
+                      autoCorrect={false}
+                      clearButtonMode="while-editing"
 
-              <View style={styles.input}>
-                <Text style={styles.inputLabel}>Username</Text>
-                <TextInput
-                  autoCorrect={false}
-                  clearButtonMode="while-editing"
-                  onChangeText={(username) =>
-                    setSignupForm({ ...signupForm, username })
-                  }
-                  placeholder="Your Username"
-                  placeholderTextColor="grey"
-                  style={styles.inputControl}
-                  value={signupForm.username}
-                />
-              </View>
-
-              <View style={styles.input}>
-                <Text style={styles.inputLabel}>Dog's Name</Text>
-                <TextInput
-                  autoCorrect={false}
-                  clearButtonMode="while-editing"
-                  onChangeText={(dogName) =>
-                    setSignupForm({ ...signupForm, dogName })
-                  }
-                  placeholder="Your Dog's Name"
-                  placeholderTextColor="grey"
-                  style={styles.inputControl}
-                  value={signupForm.dogName}
-                />
-              </View>
-
-              <View style={styles.formAction}>
-                <TouchableOpacity onPress={onSubmitSignUp} disabled={loading}>
-                  <View
-                    style={[
-                      styles.btn,
-                      loading && { backgroundColor: '#cccccc' },
-                    ]}
-                  >
-                    <Text style={styles.btnText} testID='sign-up'>
-                      {loading ? 'Signing up...' : 'Sign up'}
-                    </Text>
+                      onChangeText={(username) =>
+                        setFormData({...formData, username})
+                      }
+                      placeholder="Your Username"
+                      placeholderTextColor="grey"
+                      style={styles.inputControl}
+                      value={formData.username}
+                    />
                   </View>
-                </TouchableOpacity>
-              </View>
 
-              <Text style={styles.formLink}>
-                Already have an account?{' '}
-                <Text
-                  style={{ textDecorationLine: 'underline' }}
-                  onPress={switchToSignIn}
-                >
-                  Sign in
-                </Text>
-              </Text>
-            </>
-          ) : (
-            <>
-              <View style={styles.input}>
-                <Text style={styles.inputLabel}>Email address</Text>
-                <TextInput
-                  autoCapitalize="none"
-                  autoCorrect={false}
-                  clearButtonMode="while-editing"
-                  keyboardType="email-address"
-                  placeholder="hachiko@example.com"
-                  placeholderTextColor="grey"
-                  style={styles.inputControl}
-                />
-              </View>
-
-              <View style={styles.input}>
-                <Text style={styles.inputLabel}>Password</Text>
-                <TextInput
-                  autoCorrect={false}
-                  clearButtonMode="while-editing"
-                  placeholder="********"
-                  placeholderTextColor="grey"
-                  style={styles.inputControl}
-                  secureTextEntry={true}
-                />
-              </View>
-
-              <View style={styles.formAction}>
-                <TouchableOpacity
-                  onPress={() => {
-                    // Handle sign-in logic here if necessary
-                    navigation.replace('Main'); // Direct navigation for sign-in
-                  }}
-                  disabled={loading}
-                >
-                  <View
-                    style={[
-                      styles.btn,
-                      loading && { backgroundColor: '#cccccc' },
-                        ]}
-                        testID='sign-in'
-                  >
-                    <Text style={styles.btnText}>
-                      {loading ? 'Navigating...' : 'Sign in'}
-                    </Text>
+                  <View style={styles.input}>
+                    <Text style={styles.inputLabel}>Dog's Name</Text>
+                    <TextInput
+                      autoCorrect={false}
+                      clearButtonMode="while-editing"
+                      onChangeText={(dogName) =>
+                        setFormData({...formData, dogName})
+                      }
+                      placeholder="Your Dog's Name"
+                      placeholderTextColor="grey"
+                      style={styles.inputControl}
+                      value={formData.dogName}
+                    />
                   </View>
-                </TouchableOpacity>
-              </View>
-
-              <Text style={styles.formLink}>Forgot password?</Text>
-              <Text style={styles.formLink}>
-                Don't have an account?{' '}
-                <Text
-                  style={{ textDecorationLine: 'underline' }}
-                  onPress={switchToSignUp}
-                >
-                  Sign up
-                </Text>
+                </>
+              }
+                <View style={styles.formAction}>
+                  <TouchableOpacity onPress={isSignUp ? onSignUp : onSignIn} disabled={loading}>
+                    <View
+                      style={[
+                        styles.btn,
+                        loading && {backgroundColor: '#cccccc'},
+                      ]}
+                    >
+                      <Text
+                        style={styles.btnText}
+                      testID={isSignUp ? 'sign-up' : 'sign-in'}>
+                      {loading && (isSignUp ? 'Signing up...' : 'Navigating...')}
+                      {!loading && (isSignUp ? 'Sign up' : 'Sign in')}
+                      </Text>
+                    </View>
+                  </TouchableOpacity>
+                </View>
+              </>
+            }
+            {!isSignUp && <Text style={styles.formLink}>Forgot password?</Text>}
+            <Text style={styles.formLink}>
+              {(isSignUp && !loading) && `Already have an account? `}
+              {(!isSignUp && !loading) && `Don't have an account? `}
+              <Text
+                style={{textDecorationLine: 'underline'}}
+                onPress={isSignUp ? switchToSignIn : switchToSignUp}
+              >
+              {isSignUp ? `Sign in` : `Sign up`}
               </Text>
-            </>
-          )}
+            </Text>
         </View>
       </View>
     </SafeAreaView>
@@ -247,3 +185,179 @@ const Login: React.FC<{ navigation: any }> = ({ navigation }) => {
 };
 
 export default Login;
+
+
+{/* <View style={styles.container}>
+  <View style={styles.header}>
+    <Image
+      alt="App Logo"
+      resizeMode="contain"
+      style={styles.headerImg}
+      source={require('../../assets/logo.jpg')}
+    />
+    <Text style={styles.title}>
+      {isSignUp ? 'Sign up to' : 'Sign in to'}{' '}
+      <Text style={{color: '#008CBA'}}>Paw Gang</Text>
+    </Text>
+    <Text style={styles.subtitle}>
+      Get your dog's tail wagging with a playdate!
+    </Text>
+  </View>
+
+  <View style={styles.form}>
+    {signUpSuccess ? (
+      <Text style={styles.successMessage}>Sign Up Successful</Text>
+    ) : isSignUp ? (
+      <>
+        <View style={styles.input}>
+          <Text style={styles.inputLabel}>Email address</Text>
+          <TextInput
+            autoCapitalize="none"
+            autoCorrect={false}
+            clearButtonMode="while-editing"
+            keyboardType="email-address"
+            onChangeText={(email) =>
+              setFormData({...formData, email})
+            }
+            placeholder="hachiko@example.com"
+            placeholderTextColor="grey"
+            style={styles.inputControl}
+            value={formData.email}
+          />
+        </View>
+
+        <View style={styles.input}>
+          <Text style={styles.inputLabel}>Password</Text>
+          <TextInput
+            autoCorrect={false}
+            clearButtonMode="while-editing"
+            onChangeText={(password) =>
+              setFormData({...formData, password})
+            }
+            placeholder="********"
+            placeholderTextColor="grey"
+            style={styles.inputControl}
+            secureTextEntry={true}
+            value={formData.password}
+          />
+        </View>
+
+        <View style={styles.input}>
+          <Text style={styles.inputLabel}>Username</Text>
+          <TextInput
+            autoCorrect={false}
+            clearButtonMode="while-editing"
+            onChangeText={(username) =>
+              setFormData({...formData, username})
+            }
+            placeholder="Your Username"
+            placeholderTextColor="grey"
+            style={styles.inputControl}
+            value={formData.username}
+          />
+        </View>
+
+        <View style={styles.input}>
+          <Text style={styles.inputLabel}>Dog's Name</Text>
+          <TextInput
+            autoCorrect={false}
+            clearButtonMode="while-editing"
+            onChangeText={(dogName) =>
+              setFormData({...formData, dogName})
+            }
+            placeholder="Your Dog's Name"
+            placeholderTextColor="grey"
+            style={styles.inputControl}
+            value={formData.dogName}
+          />
+        </View>
+
+        <View style={styles.formAction}>
+          <TouchableOpacity onPress={onSignUp} disabled={loading}>
+            <View
+              style={[
+                styles.btn,
+                loading && {backgroundColor: '#cccccc'},
+              ]}
+            >
+              <Text style={styles.btnText}>
+                {loading ? 'Signing up...' : 'Sign up'}
+              </Text>
+            </View>
+          </TouchableOpacity>
+        </View>
+
+        <Text style={styles.formLink}>
+          Already have an account?{' '}
+          <Text
+            style={{textDecorationLine: 'underline'}}
+            onPress={switchToSignIn}
+          >
+            Sign in
+          </Text>
+        </Text>
+      </>
+    ) : (
+      <>
+        <View style={styles.input}>
+          <Text style={styles.inputLabel}>Email address</Text>
+          <TextInput
+            autoCapitalize="none"
+            autoCorrect={false}
+            clearButtonMode="while-editing"
+            keyboardType="email-address"
+            placeholder="hachiko@example.com"
+            placeholderTextColor="grey"
+            style={styles.inputControl}
+          />
+        </View>
+
+        <View style={styles.input}>
+          <Text style={styles.inputLabel}>Password</Text>
+          <TextInput
+            autoCorrect={false}
+            clearButtonMode="while-editing"
+            placeholder="********"
+            placeholderTextColor="grey"
+            style={styles.inputControl}
+            secureTextEntry={true}
+          />
+        </View>
+
+        <View style={styles.formAction}>
+          <TouchableOpacity
+            onPress={() => {
+              // Handle sign-in logic here if necessary
+              navigation.replace('Main'); // Direct navigation for sign-in
+            }}
+            disabled={loading}
+          >
+            <View
+              style={[
+                styles.btn,
+                loading && {backgroundColor: '#cccccc'},
+              ]}
+              testID='sign-in'
+            >
+              <Text style={styles.btnText}>
+                {loading ? 'Navigating...' : 'Sign in'}
+              </Text>
+            </View>
+          </TouchableOpacity>
+        </View>
+
+        <Text style={styles.formLink}>Forgot password?</Text>
+        <Text style={styles.formLink}>
+          Don't have an account?{' '}
+          <Text
+            style={{textDecorationLine: 'underline'}}
+            onPress={switchToSignUp}
+          >
+            Sign up
+          </Text>
+        </Text>
+      </>
+    )}
+  </View>
+</View>
+ */}

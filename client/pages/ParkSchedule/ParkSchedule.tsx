@@ -1,109 +1,85 @@
-import { RouteProp } from '@react-navigation/native';
-import moment from 'moment-timezone';
-import React, { useEffect, useState } from 'react';
+import {Moment} from 'moment-timezone';
+import React, {useEffect, useState} from 'react';
 import {
   Alert,
   Button,
   FlatList,
-  Image,
   Modal,
   Text,
   TouchableOpacity,
   View,
 } from 'react-native';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
-import DateTimePicker from '@react-native-community/datetimepicker';
-import { fetchEvents, saveEvent } from '../../services/ServerApiServices';
-import { Event, RootStackParamList } from '../../types';
-import { styles } from './ParkScheduleStyles'; // Import styles from the new file
+import {fetchEvents, saveEvent} from '../../services/ServerApiServices';
+import {IEvent} from '../../Types/DataTypes';
+import {styles} from './ParkScheduleStyles'; // Import styles from the new file
+import ScheduleItem from '../../components/ScheduleItem/ScheduleItem';
+import {dateAndTimeToString, dateToString, dayHoursAsString, eventListByDate, getEventsByDate, isDayBeforeToday, timeToString, today} from '../../services/UtilServices';
+import {ParkScheduleProps} from '../../Types/PropTypes';
 
-type ParkScheduleRouteProp = RouteProp<RootStackParamList, 'ParkSchedule'>;
+const ParkSchedule: React.FC<ParkScheduleProps> = ({route}): JSX.Element => {
+  const {park} = route.params; // send place
 
-interface ParkScheduleProps {
-  route: ParkScheduleRouteProp;
-}
+  const [selectedDate, setSelectedDate] = useState<Moment>(today());
+  const [events, setEvents] = useState<Record<string, IEvent[] | []>>({
+    [dateToString(selectedDate)]: []
+  });
+  const [modalVisible, setModalVisible] = useState<boolean>(false);
+  const [newEventDate, setNewEventDate] = useState<string>('');
+  const [isTimePickerVisible, setTimePickerVisibility] = useState<boolean>(false);
+  const [isPrevDayDisabled, setIsPrevDayDisabled] = useState<boolean>(true);
 
-const ParkSchedule: React.FC<ParkScheduleProps> = ({ route }) => {
-  const { place_id, name } = route.params;
-  const [selectedDate, setSelectedDate] = useState(
-    moment().tz('Europe/Madrid'),
-  );
-  const [events, setEvents] = useState<Record<string, Event[]>>({});
-  const [modalVisible, setModalVisible] = useState(false);
-  const [newEventDate, setNewEventDate] = useState('');
-  const [isTimePickerVisible, setTimePickerVisibility] = useState(false);
-  const [isPrevDayDisabled, setIsPrevDayDisabled] = useState(true);
-
-  useEffect(() => {
-    const fetchEventData = async () => {
-      try {
-        const data = await fetchEvents(place_id);
-        const formattedEvents = data.reduce(
-          (acc, event) => {
-            const dateKey = moment(event.date)
-              .tz('Europe/Madrid')
-              .format('YYYY-MM-DD');
-            if (!acc[dateKey]) {
-              acc[dateKey] = [];
-            }
-            acc[dateKey].push(event);
-            return acc;
-          },
-          {} as Record<string, Event[]>,
-        );
-        setEvents(formattedEvents);
-      } catch (error) {
-        console.error('Error fetching events:', error);
-      }
-    };
-
+  useEffect((): void => {
     fetchEventData();
-  }, [place_id]);
+  }, [park]);
 
-  useEffect(() => {
-    const today = moment().tz('Europe/Madrid').startOf('day');
-    setIsPrevDayDisabled(selectedDate.isSameOrBefore(today, 'day'));
+  useEffect((): void => {
+    setIsPrevDayDisabled(isDayBeforeToday(selectedDate, today().startOf('day')));
   }, [selectedDate]);
 
-  const handlePrevDay = () => {
+  async function fetchEventData (): Promise<void> {
+    try {
+      const eventData: IEvent[] | [] = await fetchEvents(park.id);
+      console.log(eventData)
+      if (eventData.length > 0) {
+        setEvents(eventListByDate(eventData));
+      }
+    } catch (error) {
+      console.error('Error fetching events:', error);
+    }
+  };
+
+  const handlePrevDay = (): void => {
     setSelectedDate(selectedDate.clone().subtract(1, 'day'));
   };
 
-  const handleNextDay = () => {
+  const handleNextDay = (): void => {
     setSelectedDate(selectedDate.clone().add(1, 'day'));
   };
 
-  const handleSaveEvent = async () => {
-    console.log(newEventDate)
-    const eventDate = moment
-      .tz(
-        `${selectedDate.format('YYYY-MM-DD')} ${newEventDate}`,
-        'YYYY-MM-DD HH:mm',
-        'Europe/Madrid',
-      )
-      .toISOString();
-
-    const eventToAdd: Event = {
-      _id: '',
-      date: eventDate,
-      place_id,
-      park_name: name,
-      address: 'Your Address Here',
-      user: 'eugenio',
-      dog_avatar:
-        'https://i.ibb.co/86gL7yK/Whats-App-Image-2024-07-25-at-15-20-30-modified.png',
-      __v: 0,
-    };
-
-    console.log('Event to add:', eventToAdd); // Log the event data
-
+  const handleSaveEvent = async (): Promise<void> => {
+    const eventDate: string = dateAndTimeToString(selectedDate, newEventDate)
     try {
-      await saveEvent(eventToAdd);
-      const dateKey = selectedDate.format('YYYY-MM-DD');
-      setEvents((prevEvents) => ({
-        ...prevEvents,
-        [dateKey]: [...(prevEvents[dateKey] || []), eventToAdd],
-      }));
+      const res: IEvent = await saveEvent({
+        date: eventDate,
+        place_id: park.id,
+        park_name: park.displayName.text,
+        address: park.shortFormattedAddress,
+        user: 'eugenio',
+        dog_avatar:
+          'https://i.ibb.co/86gL7yK/Whats-App-Image-2024-07-25-at-15-20-30-modified.png',
+      });
+      // check successful post
+      if ('_id' in res) {
+        const dateKey: string = dateToString(selectedDate);
+        setEvents((prevEvents: Record<string, IEvent[]>): Record<string, IEvent[]> => {
+          const existEvents = prevEvents[dateKey] || []
+          return {
+            ...prevEvents,
+            [dateKey]: [...existEvents, res],
+          }
+        });
+      } else Alert.alert('Error', 'An error occurred while saving the event.');
       setModalVisible(false);
       setNewEventDate('');
     } catch (error) {
@@ -112,109 +88,70 @@ const ParkSchedule: React.FC<ParkScheduleProps> = ({ route }) => {
     }
   };
 
-  const renderEvent = ({ item }: { item: Event }) => (
-    <View style={styles.event}>
-      <Image source={{ uri: item.dog_avatar }} style={styles.dogAvatar} />
-    </View>
-  );
+  const toggleTimePicker = (visible: boolean): void => {
+    setTimePickerVisibility(!visible)
+  }
 
-  const renderItem = ({ item }: { item: string }) => {
-    const dayEvents = events[selectedDate.format('YYYY-MM-DD')] || [];
-    const slotEvents = dayEvents.filter((event) =>
-      moment(event.date)
-        .tz('Europe/Madrid')
-        .isSame(
-          selectedDate.clone().hour(moment(item, 'HH:mm').hour()),
-          'hour',
-        ),
-    );
-
-    return (
-      <View
-        style={[styles.slot, slotEvents.length > 0 && styles.slotWithEvent]}
-      >
-        <Text style={styles.time}>{item}</Text>
-        {slotEvents.length > 0 && (
-          <FlatList
-            horizontal
-            data={slotEvents}
-            renderItem={renderEvent}
-            keyExtractor={(event) => event._id}
-            style={styles.eventList}
-          />
-        )}
-      </View>
-    );
-  };
-
-  const hours = Array.from({ length: 24 }, (_, i) =>
-    moment({ hour: i }).tz('Europe/Madrid').format('HH:00'),
-  );
-
-  const showTimePicker = () => setTimePickerVisibility(true);
-
-  const hideTimePicker = () => setTimePickerVisibility(false);
-
-  const handleConfirm = (time: Date) => {
-    const formattedTime = moment(time)
-      .tz('Europe/Madrid')
-      .minute(0)
-      .format('HH:mm');
-    setNewEventDate(formattedTime);
-    hideTimePicker();
+  const handleConfirm = (time: Date): void => {
+    setNewEventDate(timeToString(time));
+    toggleTimePicker(isTimePickerVisible)
   };
 
   return (
-    <View style={styles.container}>
-      <View style={styles.header}>
-        <Button
-          title="Prev Day"
-          onPress={handlePrevDay}
-          disabled={isPrevDayDisabled}
-        />
-        <Text style={styles.date}>{selectedDate.format('dddd, D MMM')}</Text>
-        <Button title="Next Day" onPress={handleNextDay} />
-      </View>
-      <FlatList
-        data={hours}
-        renderItem={renderItem}
-        keyExtractor={(item) => item}
-      />
-      <TouchableOpacity
-        style={styles.addButton}
-        onPress={() => setModalVisible(true)}
-      >
-        <Text style={styles.addButtonText}>Add visit 🐕</Text>
-      </TouchableOpacity>
-      <Modal
-        visible={modalVisible}
-        animationType="slide"
-        onRequestClose={() => setModalVisible(false)}
-        testID="modal"
-      >
-        <View style={styles.modalContent}>
-          <Text style={styles.modalTitle}>Plan your visit 🐶</Text>
-          <TouchableOpacity onPress={showTimePicker} style={styles.input}>
-            <Text
-              style={newEventDate ? styles.inputText : styles.placeholderText}
-            >
-              {newEventDate || 'Start Time (HH:00)'}
-            </Text>
-          </TouchableOpacity>
-          <DateTimePickerModal
-            isVisible={isTimePickerVisible}
-            mode="time"
-            onConfirm={handleConfirm}
-            onCancel={hideTimePicker}
-            minuteInterval={30}
-          />
-          <View style={styles.modalButtons}>
-            <Button title="Cancel" onPress={() => setModalVisible(false)} />
-            <Button title="Save" onPress={handleSaveEvent} />
+    <>
+      {
+        <View style={styles.container}>
+          <View style={styles.header}>
+            <Button
+              title="Prev Day"
+              onPress={handlePrevDay}
+              disabled={isPrevDayDisabled}
+            />
+            <Text style={styles.date}>{selectedDate.format('dddd, D MMM')}</Text>
+            <Button title="Next Day" onPress={handleNextDay} />
           </View>
+          <FlatList
+            data={dayHoursAsString() as string[]}
+            renderItem={({item}) => <ScheduleItem hour={item} selectedDate={selectedDate} events={getEventsByDate(events, selectedDate)} />}
+            keyExtractor={(item) => item}
+          />
+          <TouchableOpacity
+            style={styles.addButton}
+            onPress={() => setModalVisible(true)}
+          >
+            <Text style={styles.addButtonText}>Add visit 🐕</Text>
+          </TouchableOpacity>
+          <Modal
+            visible={modalVisible}
+            animationType="slide"
+            onRequestClose={() => setModalVisible(false)}
+            testID="modal"
+          >
+            <View style={styles.modalContent}>
+              <Text style={styles.modalTitle}>Plan your visit 🐶</Text>
+              <TouchableOpacity onPress={() => toggleTimePicker(isTimePickerVisible)} style={styles.input}>
+                <Text
+                  style={newEventDate ? styles.inputText : styles.placeholderText}
+                >
+                  {newEventDate || 'Start Time (HH:00)'}
+                </Text>
+              </TouchableOpacity>
+              <DateTimePickerModal
+                isVisible={isTimePickerVisible}
+                mode="time"
+                onConfirm={handleConfirm}
+                onCancel={() => toggleTimePicker(isTimePickerVisible)}
+                minuteInterval={30}
+              />
+              <View style={styles.modalButtons}>
+                <Button title="Cancel" onPress={() => setModalVisible(false)} />
+                <Button title="Save" onPress={handleSaveEvent} />
+              </View>
+            </View>
+          </Modal>
         </View>
-      </Modal>
-    </View>
+      }
+    </>
   );
 };
 

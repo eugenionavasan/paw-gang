@@ -2,25 +2,25 @@
 /* eslint-disable react-native/no-color-literals */
 /* eslint-disable react/destructuring-assignment */
 /* eslint-disable no-unused-vars */
-import { Component } from 'react';
-import { Text, View, StyleSheet } from 'react-native';
-import { ErrorBoundaryProps, ErrorBoundaryState } from './types';
+import {Component} from 'react';
+import {Text, View, StyleSheet} from 'react-native';
+import {ErrorBoundaryProps, ErrorBoundaryState} from './Types/DataTypes';
 
 class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
   constructor(props: ErrorBoundaryProps) {
     super(props);
-    this.state = { hasError: false };
+    this.state = {hasError: false};
   }
 
-  static getDerivedStateFromError(error: Error): ErrorBoundaryState {
-    return { hasError: true };
+  static getDerivedStateFromError (error: Error): ErrorBoundaryState {
+    return {hasError: true};
   }
 
-  componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
+  componentDidCatch (error: Error, errorInfo: React.ErrorInfo) {
     console.error('ErrorBoundary caught an error', error, errorInfo);
   }
 
-  render() {
+  render () {
     if (this.state.hasError) {
       return (
         <View style={styles.container}>

@@ -4,9 +4,9 @@ import {
 } from 'react-native';
 import React, {useState} from 'react';
 import {useFocusEffect} from '@react-navigation/native';
-import {IEvent} from '../../types';
+import {IEvent} from '../../Types/DataTypes';
 import {ServerService} from '../../services/ServerApiServices';
-import {filterSortUpcomingEvents} from '../../services/services';
+import {filterSortUpcomingEvents} from '../../services/UtilServices';
 import styles from './PlanScreenStyles';
 import EventList from '../../components/EventList/EventList';
 
@@ -14,8 +14,6 @@ function PlanScreen (): JSX.Element {
   const [events, setEvents] = useState<IEvent[] | []>([]);
   const [loading, setLoading] = useState<boolean>(true);
 
-
-  // ! useEffect works as well?
   useFocusEffect(
     React.useCallback(() => {
       fetchEvents();
@@ -24,7 +22,7 @@ function PlanScreen (): JSX.Element {
 
 
   // functions
-  const fetchEvents = async () => {
+  const fetchEvents = async (): Promise<void> => {
     try {
       const response: IEvent[] | void = await ServerService.getEvents('eugenio')
       if (response) {

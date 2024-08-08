@@ -81,7 +81,6 @@ exports.getEventById = getEventById;
 // POST EVENT
 const postEvents = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        console.log('Request body:', req.body); // Log the request body to debug
         const { place_id, park_name, address, date, user, dog_avatar } = req.body;
         if (!(0, utils_1.isValidEvent)(req.body)) {
             return (0, utils_1.missingBodyHandler)(res, 'EventController/postEvents', 'Event');

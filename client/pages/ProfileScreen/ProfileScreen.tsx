@@ -1,18 +1,9 @@
-/* eslint-disable react-native/sort-styles */
-/* eslint-disable global-require */
-/* eslint-disable prettier/prettier */
-/* eslint-disable react-native/no-color-literals */
-import { useNavigation } from '@react-navigation/native';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import {useNavigation} from '@react-navigation/native';
 import React from 'react';
-import { Image, Text, TouchableOpacity, View } from 'react-native';
-import { RootStackParamList } from '../../types'; // Adjust the path if necessary
-import { styles } from './ProfileScreenStyles'; // Import styles from the new file
+import {Image, Text, TouchableOpacity, View} from 'react-native';
+import {styles} from './ProfileScreenStyles';
+import {ProfileScreenNavigationProp} from '../../Types/NavigationTypes';
 
-type ProfileScreenNavigationProp = NativeStackNavigationProp<
-  RootStackParamList,
-  'Profile'
->;
 
 const ProfileScreen: React.FC = () => {
   const navigation = useNavigation<ProfileScreenNavigationProp>();

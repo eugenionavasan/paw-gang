@@ -19,21 +19,6 @@ export const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
   },
-  dogAvatar: {
-    borderRadius: 40,
-    height: 90,
-    width: 90,
-  },
-  event: {
-    backgroundColor: '#f5f5f5',
-    borderRadius: 5,
-    marginHorizontal: 0,
-    padding: 10,
-  },
-  eventList: {
-    flex: 1,
-    paddingLeft: 0,
-  },
   header: {
     alignItems: 'center',
     backgroundColor: '#f5f5f5',
@@ -71,21 +56,5 @@ export const styles = StyleSheet.create({
   placeholderText: {
     color: '#ccc',
     fontSize: 16,
-  },
-  slot: {
-    alignItems: 'center',
-    borderBottomColor: '#eee',
-    borderBottomWidth: 1,
-    flexDirection: 'row',
-    paddingHorizontal: 20,
-    paddingVertical: 35,
-  },
-  slotWithEvent: {
-    paddingVertical: 0,
-  },
-  time: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    width: 60,
   },
 });

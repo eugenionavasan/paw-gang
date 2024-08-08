@@ -6,12 +6,12 @@ import {
 import React, {useState} from 'react';
 import moment from 'moment-timezone';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
-import {IEvent} from '../../types';
+import {IEvent} from '../../Types/DataTypes';
 import {ServerService} from '../../services/ServerApiServices';
-import {updateEventTime} from '../../services/services';
+import {updateEventTime} from '../../services/UtilServices';
 import EventItem from '../../components/EventItem/EventItem';
 import styles from './EventListStyles';
-import {EventlistProps} from '../../types';
+import {EventlistProps} from '../../Types/PropTypes';
 
 function EventList (props: EventlistProps): JSX.Element {
   const {events, setEvents} = props
@@ -39,7 +39,6 @@ function EventList (props: EventlistProps): JSX.Element {
     // ! what is state needed for?
     // const newTime = moment(time).tz('Europe/Madrid').format('HH:mm');
     // setNewEventTime(newTime);
-
     if (selectedEvent) {
       const response = await updateEventTime(selectedEvent, time)
       if (response) {
@@ -58,7 +57,7 @@ function EventList (props: EventlistProps): JSX.Element {
       <FlatList
         data={events}
         renderItem={({item}) => <EventItem item={item} handleEdit={handleEdit} handleDelete={handleDelete} />}
-        keyExtractor={(item) => item._id as string} /* ! Better way ? */
+        keyExtractor={(item) => item._id as string}
         ListEmptyComponent={
           <Text style={styles.text}>No upcoming events found</Text>
         }
@@ -68,7 +67,7 @@ function EventList (props: EventlistProps): JSX.Element {
         mode="time"
         onConfirm={handleConfirm}
         onCancel={() => setTimePickerVisibility(false)}
-        minuteInterval={30} /* ! Revisit to check if intended functionality */
+        minuteInterval={30}
       />
     </>
   );

@@ -35,6 +35,7 @@ exports.app.use(errorHandler_1.errorHandler); // Error middleware
 // ! add server.close()
 const startServer = () => __awaiter(void 0, void 0, void 0, function* () {
     try {
+        console.log(process.env.GOOGLE_MAPS_API_KEY);
         yield (0, index_1.default)();
         if (process.env.NODE_ENV !== 'test') {
             exports.app.listen(Number(config_1.SERVER_PORT), config_1.LOCAL_IP_ADDRESS, () => {
