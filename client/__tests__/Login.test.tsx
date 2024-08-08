@@ -5,7 +5,7 @@ import Login from '../pages/Login/Login';
 import {handleSignUp} from '../services/UtilServices';
 
 // Mock the handleSignUp function
-jest.mock('../services/services', () => ({
+jest.mock('../services/UtilServices', () => ({
   handleSignUp: jest.fn(),
 }));
 

@@ -4,7 +4,7 @@ import { GOOGLE_MAPS_API_KEY } from '../config';
 import { IGmapsPlace, IGoogleService } from '../Types/DataTypes';
 
 // Ensure GOOGLE_MAPS_API_KEY is correctly set in your configuration
-const apiKey = GOOGLE_MAPS_API_KEY
+const apiKey = GOOGLE_MAPS_API_KEY;
 
 // Export GoogleService object with methods to interact with Google APIs
 export const GoogleService: IGoogleService = {
